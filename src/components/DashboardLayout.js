@@ -1,0 +1,553 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Home,
+  User,
+  Compass,
+  BookOpen,
+  Calendar,
+  Award,
+  Settings as SettingsIcon,
+  LogOut,
+  ChevronDown,
+  Search,
+  Bell,
+  Menu,
+  X
+} from 'lucide-react';
+
+// Custom SVG Logo matching the screenshot
+const ShieldLogo = ({ onClick }) => (
+  <div onClick={onClick} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
+    <svg width="38" height="42" viewBox="0 0 100 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 0L10 20V55C10 77.2 27.2 97.4 50 105C72.8 97.4 90 77.2 90 55V20L50 0Z" fill="#ED1C24" />
+      <path d="M50 8L18 24V55C18 73.2 31.8 89.8 50 96.5C68.2 89.8 82 73.2 82 55V24L50 8Z" fill="#ED1C24" stroke="white" strokeWidth="4" />
+      <text x="50" y="68" fill="white" fontSize="45" fontWeight="900" textAnchor="middle" fontFamily="sans-serif">I</text>
+    </svg>
+    <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
+      <span style={{ fontSize: 9, textTransform: 'uppercase', color: '#666', letterSpacing: 1.5, fontWeight: 700 }}>The</span>
+      <span style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 900, fontSize: 22, color: '#ED1C24', letterSpacing: '-0.5px' }}>iSCALE</span>
+    </div>
+  </div>
+);
+
+const DashboardLayout = ({ children, activeTab, setCurrentPage }) => {
+  const [user, setUser] = useState({ name: 'User' });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [coursesDropdownOpen, setCoursesDropdownOpen] = useState(false);
+  const [moreDropdownOpen, setMoreDropdownOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  
+  const [notifications, setNotifications] = useState([
+    { id: 1, title: 'Welcome to iSCALE!', message: 'Start exploring courses to boost your career.', time: '2 hours ago', read: false },
+    { id: 2, title: 'Upcoming Live Webinar', message: 'Figma to Code Masterclass starts tomorrow at 6 PM.', time: '1 day ago', read: true }
+  ]);
+
+  useEffect(() => {
+    // Attempt to load user from local storage or API simulation
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (e) { }
+    } else {
+      // Mock user for now if missing
+      setUser({ name: 'Ridhi Mishra' });
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setCurrentPage('home');
+  };
+
+  const navigateToTab = (tab) => {
+    setCurrentPage(tab);
+    setMobileMenuOpen(false);
+  };
+
+  const markAllNotificationsRead = () => {
+    setNotifications(notifications.map(n => ({ ...n, read: true })));
+  };
+
+  return (
+    <div className="dashboard-container">
+      <style dangerouslySetInnerHTML={{__html: `
+        .dashboard-container {
+          min-height: 100vh;
+          background: linear-gradient(135deg, #fdf4f7 0%, #faf5fc 100%);
+          display: flex;
+          flex-direction: column;
+          font-family: 'Inter', sans-serif;
+        }
+        .db-header {
+          position: sticky;
+          top: 0;
+          z-index: 50;
+          background: #ffffff;
+          border-bottom: 1px solid #eaeaea;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        }
+        .db-header-inner {
+          max-width: 1320px;
+          margin: 0 auto;
+          padding: 0 24px;
+          height: 72px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .db-nav-left {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+        }
+        .courses-trigger-btn {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          background: #f4f5f7;
+          border: 1px solid #e1e3e8;
+          color: #1e293b;
+          padding: 8px 16px;
+          border-radius: 9999px;
+          font-size: 14px;
+          font-weight: 500;
+          transition: all 0.2s;
+          cursor: pointer;
+        }
+        .courses-trigger-btn:hover {
+          background: #e2e8f0;
+          border-color: #cbd5e1;
+        }
+        .db-nav-center {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+        .db-nav-link {
+          background: none;
+          border: none;
+          color: #475569;
+          font-size: 15px;
+          font-weight: 500;
+          padding: 8px 16px;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.2s;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+        .db-nav-link:hover {
+          color: #ED1C24;
+        }
+        .db-nav-link.active {
+          color: #ED1C24;
+          font-weight: 600;
+        }
+        .cohort-badge {
+          background: #ED1C24;
+          color: #fff;
+          font-size: 9px;
+          font-weight: 700;
+          padding: 2px 5px;
+          border-radius: 4px;
+          margin-left: 4px;
+          text-transform: uppercase;
+        }
+        .db-nav-right {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+        .header-profile-trigger {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 6px 12px;
+          border-radius: 8px;
+          border: 1px solid #e2e8f0;
+          cursor: pointer;
+          background: none;
+          transition: all 0.2s;
+        }
+        .header-profile-trigger:hover {
+          background: #f8fafc;
+        }
+        .header-profile-icon {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: #f1f5f9;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #64748b;
+          border: 1.5px solid #cbd5e1;
+        }
+        
+        .main-layout {
+          display: flex;
+          flex: 1;
+          position: relative;
+          max-width: 1280px;
+          margin: 0 auto;
+          width: 100%;
+          padding: 30px 24px;
+          gap: 30px;
+        }
+        .sidebar {
+          width: 260px;
+          background: #ffffff;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          flex-shrink: 0;
+          border: none;
+        }
+        .sidebar-btn {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          width: 100%;
+          padding: 14px 20px;
+          background: none;
+          border: none;
+          border-radius: 8px;
+          color: #64748b;
+          font-size: 15px;
+          font-weight: 500;
+          text-align: left;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sidebar-btn:hover {
+          background: #f8fafc;
+          color: #0f172a;
+          transform: translateX(4px);
+        }
+        .sidebar-btn.active {
+          background: #fff1f2;
+          color: #ED1C24;
+          font-weight: 600;
+        }
+        .sidebar-btn svg {
+          stroke-width: 1.5;
+        }
+        .sidebar-section-title {
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+          color: #94a3b8;
+          padding: 24px 20px 8px;
+          letter-spacing: 1.2px;
+        }
+        .content-area {
+          flex: 1;
+          background: transparent;
+          min-width: 0;
+          display: flex;
+          flex-direction: column;
+          border-radius: 16px;
+          /* If we want a shadow around the main content like the screenshot */
+        }
+        
+        /* Dropdowns */
+        .dropdown-menu {
+          position: absolute;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+          padding: 8px;
+          z-index: 100;
+        }
+        
+        /* Footer */
+        .db-footer {
+          background: #0B0E14;
+          color: #94A3B8;
+          padding: 60px 0 30px;
+          border-top: 1px solid #1E293B;
+        }
+        .footer-grid {
+          max-width: 1320px;
+          margin: 0 auto;
+          padding: 0 24px;
+          display: grid;
+          grid-template-columns: 2fr 1.2fr 1.2fr 1.6fr;
+          gap: 48px;
+        }
+        .footer-heading {
+          color: #ffffff;
+          font-size: 16px;
+          font-weight: 600;
+          margin-bottom: 20px;
+          font-family: 'Poppins', sans-serif;
+        }
+        .footer-links-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .footer-link-btn {
+          background: none;
+          border: none;
+          color: #94A3B8;
+          font-size: 14px;
+          text-align: left;
+          padding: 0;
+          cursor: pointer;
+          transition: color 0.2s;
+        }
+        .footer-link-btn:hover {
+          color: #ED1C24;
+        }
+        .social-icons-row {
+          display: flex;
+          gap: 10px;
+          margin-top: 20px;
+        }
+        .social-circle-btn {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background: #1E293B;
+          color: #fff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.2s;
+          border: none;
+          font-size: 14px;
+        }
+        .social-circle-btn:hover {
+          background: #ED1C24;
+          transform: translateY(-2px);
+        }
+        
+        @media (max-width: 1024px) {
+          .db-nav-center { display: none; }
+          .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
+        }
+        @media (max-width: 768px) {
+          .main-layout { 
+            padding: 16px 10px; 
+            gap: 16px; 
+            flex-direction: column;
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+            box-sizing: border-box;
+          }
+          .sidebar {
+            position: absolute; left: -260px; top: 0; bottom: 0; z-index: 1000;
+            transition: left 0.3s ease; box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+          }
+          .sidebar.open { left: 0; }
+          .stats-grid { grid-template-columns: 1fr; gap: 16px; }
+          .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+          .db-header-inner { padding: 0 12px; gap: 8px; }
+          .courses-trigger-btn { display: none !important; }
+          .profile-name-text { display: none !important; }
+          .header-profile-trigger { padding: 4px; border: none; }
+          .header-profile-icon { width: 36px; height: 36px; }
+          .db-nav-left { gap: 8px; }
+          .db-nav-right { gap: 8px; }
+        }
+      `}} />
+
+      <header className="db-header">
+        <div className="db-header-inner">
+          <div className="db-nav-left">
+            <button 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'none', padding: 4 }}
+              className="md-menu-toggle-btn"
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+            <style dangerouslySetInnerHTML={{__html: `@media (max-width: 768px) { .md-menu-toggle-btn { display: block !important; } }`}} />
+
+            <ShieldLogo onClick={() => setCurrentPage('home')} />
+
+            <div style={{ position: 'relative', marginLeft: 8 }}>
+              <button onClick={() => setCoursesDropdownOpen(!coursesDropdownOpen)} className="courses-trigger-btn">
+                <span>▦ Courses</span>
+                <ChevronDown size={14} />
+              </button>
+              {coursesDropdownOpen && (
+                <div className="dropdown-menu" style={{ top: '100%', left: 0, minWidth: 220, marginTop: 8 }}>
+                  {['Data Science & ML', 'Full Stack Developer', 'Generative AI', 'Business Analytics', 'Digital Marketing'].map((course, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => { setCoursesDropdownOpen(false); navigateToTab('explore-courses'); }}
+                      style={{ display: 'block', width: '100%', padding: '10px 14px', textAlign: 'left', background: 'none', border: 'none', fontSize: 14, color: '#334155', borderRadius: 6, cursor: 'pointer' }}
+                      onMouseEnter={e => e.target.style.background = '#f1f5f9'} onMouseLeave={e => e.target.style.background = 'none'}
+                    >
+                      {course}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <nav className="db-nav-center">
+            <button onClick={() => setCurrentPage('home')} className="db-nav-link">Home</button>
+            <button onClick={() => navigateToTab('explore-courses')} className={`db-nav-link ${activeTab === 'explore-courses' ? 'active' : ''}`}>Explore Courses</button>
+            <button onClick={() => navigateToTab('explore-courses')} className="db-nav-link" style={{ color: '#ED1C24' }}>
+              Cohort Courses
+              <span className="cohort-badge">New</span>
+            </button>
+            <div style={{ position: 'relative' }}>
+              <button onClick={() => setMoreDropdownOpen(!moreDropdownOpen)} className="db-nav-link">
+                More <ChevronDown size={14} />
+              </button>
+              {moreDropdownOpen && (
+                <div className="dropdown-menu" style={{ top: '100%', right: 0, minWidth: 180, marginTop: 8 }}>
+                  <button onClick={() => { setMoreDropdownOpen(false); setCurrentPage('job-updates'); }} style={{ display: 'block', width: '100%', padding: '10px 14px', textAlign: 'left', background: 'none', border: 'none', fontSize: 14, color: '#334155', borderRadius: 6, cursor: 'pointer' }} onMouseEnter={e => e.target.style.background = '#f1f5f9'} onMouseLeave={e => e.target.style.background = 'none'}>Job Updates</button>
+                  <button onClick={() => { setMoreDropdownOpen(false); setCurrentPage('success-story'); }} style={{ display: 'block', width: '100%', padding: '10px 14px', textAlign: 'left', background: 'none', border: 'none', fontSize: 14, color: '#334155', borderRadius: 6, cursor: 'pointer' }} onMouseEnter={e => e.target.style.background = '#f1f5f9'} onMouseLeave={e => e.target.style.background = 'none'}>Success Stories</button>
+                  <button onClick={() => { setMoreDropdownOpen(false); setCurrentPage('placement-talks'); }} style={{ display: 'block', width: '100%', padding: '10px 14px', textAlign: 'left', background: 'none', border: 'none', fontSize: 14, color: '#334155', borderRadius: 6, cursor: 'pointer' }} onMouseEnter={e => e.target.style.background = '#f1f5f9'} onMouseLeave={e => e.target.style.background = 'none'}>Placement Talks</button>
+                </div>
+              )}
+            </div>
+          </nav>
+
+          <div className="db-nav-right">
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }} className="db-search-wrapper">
+              <input type="text" placeholder="Search your courses..." style={{ background: '#f1f5f9', border: 'none', borderRadius: '8px', padding: '8px 12px 8px 36px', fontSize: 13, width: 200, outline: 'none', transition: 'width 0.2s' }} onFocus={e => e.target.style.width = '240px'} onBlur={e => e.target.style.width = '200px'} />
+              <Search size={14} style={{ position: 'absolute', left: 12, color: '#94a3b8' }} />
+            </div>
+            <style dangerouslySetInnerHTML={{__html: `@media (max-width: 640px) { .db-search-wrapper { display: none !important; } }`}} />
+
+            <div style={{ position: 'relative' }}>
+              <button onClick={() => setNotificationsOpen(!notificationsOpen)} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#f1f5f9'} onMouseLeave={e => e.currentTarget.style.background = '#f8fafc'}>
+                <Bell size={18} />
+                {notifications.some(n => !n.read) && <span style={{ position: 'absolute', top: 2, right: 2, width: 8, height: 8, background: '#ED1C24', borderRadius: '50%' }} />}
+              </button>
+              {notificationsOpen && (
+                <div className="dropdown-menu" style={{ top: '100%', right: 0, width: 280, marginTop: 8, padding: 12 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, borderBottom: '1px solid #f1f5f9', paddingBottom: 6 }}>
+                    <span style={{ fontWeight: 600, fontSize: 13, color: '#0f172a' }}>Notifications</span>
+                    <button onClick={markAllNotificationsRead} style={{ background: 'none', border: 'none', color: '#ED1C24', fontSize: 11, fontWeight: 500, cursor: 'pointer' }}>Mark read</button>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 220, overflowY: 'auto' }}>
+                    {notifications.map(n => (
+                      <div key={n.id} style={{ padding: 6, borderRadius: 6, background: n.read ? '#fff' : '#fff5f5', borderLeft: n.read ? '2px solid #e2e8f0' : '2px solid #ED1C24' }}>
+                        <div style={{ fontWeight: 600, fontSize: 12, color: '#1e293b' }}>{n.title}</div>
+                        <div style={{ fontSize: 11, color: '#64748b', margin: '2px 0 4px' }}>{n.message}</div>
+                        <div style={{ fontSize: 9, color: '#94a3b8' }}>{n.time}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div style={{ position: 'relative' }}>
+              <button onClick={() => setProfileDropdownOpen(!profileDropdownOpen)} className="header-profile-trigger">
+                <div className="header-profile-icon"><User size={16} /></div>
+                <span className="profile-name-text" style={{ fontWeight: 600, fontSize: 14, color: '#1e293b' }}>{user.name ? user.name.split(' ')[0] : 'User'}</span>
+                <ChevronDown className="profile-name-text" size={14} style={{ color: '#64748b' }} />
+              </button>
+              {profileDropdownOpen && (
+                <div className="dropdown-menu" style={{ top: '100%', right: 0, minWidth: 180, marginTop: 8 }}>
+                  <button onClick={() => { setProfileDropdownOpen(false); navigateToTab('my-profile'); }} style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '10px 14px', textAlign: 'left', background: 'none', border: 'none', fontSize: 14, color: '#334155', borderRadius: 6, cursor: 'pointer' }} onMouseEnter={e => e.target.style.background = '#f1f5f9'} onMouseLeave={e => e.target.style.background = 'none'}><User size={14} /> My Profile</button>
+                  <button onClick={() => { setProfileDropdownOpen(false); navigateToTab('settings'); }} style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '10px 14px', textAlign: 'left', background: 'none', border: 'none', fontSize: 14, color: '#334155', borderRadius: 6, cursor: 'pointer' }} onMouseEnter={e => e.target.style.background = '#f1f5f9'} onMouseLeave={e => e.target.style.background = 'none'}><SettingsIcon size={14} /> Settings</button>
+                  <div style={{ height: 1, background: '#f1f5f9', margin: '4px 0' }} />
+                  <button onClick={() => { setProfileDropdownOpen(false); handleLogout(); }} style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '10px 14px', textAlign: 'left', background: 'none', border: 'none', fontSize: 14, color: '#b91c1c', borderRadius: 6, cursor: 'pointer' }} onMouseEnter={e => e.target.style.background = '#fef2f2'} onMouseLeave={e => e.target.style.background = 'none'}><LogOut size={14} /> Logout</button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="main-layout">
+        <aside className={`sidebar ${mobileMenuOpen ? 'open' : ''}`}>
+          <button onClick={() => navigateToTab('dashboard')} className={`sidebar-btn ${activeTab === 'dashboard' ? 'active' : ''}`}>
+            <Home size={18} /><span>Dashboard</span>
+          </button>
+          <button onClick={() => navigateToTab('my-profile')} className={`sidebar-btn ${activeTab === 'my-profile' ? 'active' : ''}`}>
+            <User size={18} /><span>My Profile</span>
+          </button>
+          <button onClick={() => navigateToTab('explore-courses')} className={`sidebar-btn ${activeTab === 'explore-courses' ? 'active' : ''}`}>
+            <Compass size={18} /><span>Explore Courses</span>
+          </button>
+          <button onClick={() => navigateToTab('enrolled-courses')} className={`sidebar-btn ${activeTab === 'enrolled-courses' ? 'active' : ''}`}>
+            <BookOpen size={18} /><span>Enrolled Courses</span>
+          </button>
+          <button onClick={() => navigateToTab('enrolled-events')} className={`sidebar-btn ${activeTab === 'enrolled-events' ? 'active' : ''}`}>
+            <Calendar size={18} /><span>Enrolled Events</span>
+          </button>
+          <button onClick={() => navigateToTab('test-series-result')} className={`sidebar-btn ${activeTab === 'test-series-result' ? 'active' : ''}`}>
+            <Award size={18} /><span>Test Series Result</span>
+          </button>
+          <div className="sidebar-section-title">User</div>
+          <button onClick={() => navigateToTab('settings')} className={`sidebar-btn ${activeTab === 'settings' ? 'active' : ''}`}>
+            <SettingsIcon size={18} /><span>Settings</span>
+          </button>
+          <button onClick={handleLogout} className="sidebar-btn" style={{ color: '#b91c1c' }}>
+            <LogOut size={18} /><span>Logout</span>
+          </button>
+        </aside>
+
+        {mobileMenuOpen && (
+          <div onClick={() => setMobileMenuOpen(false)} style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.3)', zIndex: 90 }} />
+        )}
+
+        <div className="content-area">
+          {children}
+        </div>
+      </div>
+
+      <footer className="db-footer">
+        <div className="footer-grid">
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+              <ShieldLogo onClick={() => {}} />
+            </div>
+            <p style={{ fontSize: 14, color: '#94A3B8', lineHeight: 1.6, marginBottom: 20 }}>Mastering Skills, Scaling Success.</p>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" height="40" style={{ cursor: 'pointer' }} />
+          </div>
+          <div>
+            <h3 className="footer-heading">Quick Links</h3>
+            <ul className="footer-links-list">
+              <li><button className="footer-link-btn" onClick={() => setCurrentPage('home')}>About Us</button></li>
+              <li><button className="footer-link-btn">Our Clients</button></li>
+              <li><button className="footer-link-btn">Allied Colleges</button></li>
+              <li><button className="footer-link-btn">Hire with Us</button></li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="footer-heading">Helpful Links</h3>
+            <ul className="footer-links-list">
+              <li><button className="footer-link-btn">Contact Us</button></li>
+              <li><button className="footer-link-btn">Terms & Conditions</button></li>
+              <li><button className="footer-link-btn">Privacy Policy</button></li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="footer-heading">Reach Us Out</h3>
+            <ul className="footer-links-list" style={{ gap: 16 }}>
+              <li style={{ fontSize: 14, display: 'flex', gap: 8 }}><span style={{ color: '#ED1C24' }}>Phone:</span> +91 7880113112</li>
+              <li style={{ fontSize: 14, display: 'flex', gap: 8 }}><span style={{ color: '#ED1C24' }}>Whatsapp:</span> +91 7880113112</li>
+              <li style={{ fontSize: 14, display: 'flex', gap: 8 }}><span style={{ color: '#ED1C24' }}>E-mail:</span> contact@theiscale.com | info@theiscale.com</li>
+              <li style={{ fontSize: 14, display: 'flex', gap: 8, lineHeight: 1.5 }}><span style={{ color: '#ED1C24' }}>Working Location:</span> Bangalore || Chhattisgarh</li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default DashboardLayout;

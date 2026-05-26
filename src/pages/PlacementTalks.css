@@ -1,0 +1,164 @@
+.placement-page-container {
+  background-color: #fafbfc;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+/* Banner Section */
+.placement-banner {
+  background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+  padding: 80px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.placement-banner .container {
+  position: relative;
+  z-index: 2;
+}
+
+.breadcrumb-nav {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.breadcrumb-nav span {
+  color: #888;
+  margin: 0 8px;
+}
+
+.page-title {
+  font-size: 48px;
+  font-weight: 800;
+  color: #111;
+  margin-bottom: 15px;
+  font-family: var(--font-display);
+}
+
+.page-subtitle {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  margin: 60px 0 40px;
+  font-family: var(--font-display);
+}
+
+.page-subtitle span {
+  color: var(--red);
+}
+
+/* Grid Layout */
+.placement-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  position: relative;
+  z-index: 3;
+}
+
+@media (max-width: 1200px) {
+  .placement-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 991px) {
+  .placement-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .placement-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Placement Card */
+.placement-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  padding: 30px 20px;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.placement-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  border-color: #eee;
+}
+
+.placement-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 20px;
+  border: 4px solid #fff;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.placement-card:hover .placement-avatar {
+  transform: scale(1.05);
+}
+
+.placement-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 4px;
+  font-family: var(--font-display);
+}
+
+.placement-role {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.placement-divider {
+  width: 40px;
+  height: auto;
+  margin: 0 auto 15px;
+  opacity: 0.5;
+}
+
+.placement-company-logo {
+  height: 40px;
+  object-fit: contain;
+  margin: 0 auto 10px;
+}
+
+.placement-company-name {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.placement-btn {
+  background: var(--red);
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-block;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(237, 28, 36, 0.3);
+}
+
+.placement-btn:hover {
+  background: var(--red-dark);
+  transform: translateY(-2px);
+  color: #fff;
+}
