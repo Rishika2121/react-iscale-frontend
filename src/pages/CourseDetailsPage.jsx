@@ -1,0 +1,1812 @@
+import React, { useState, useEffect } from 'react';
+import { Play, Download, Eye, Calendar, Globe, ChevronDown, ChevronUp, FileText, CheckCircle, XCircle, CreditCard, Video, ArrowRight, User, BookOpen, Award, Sparkles, Star, Search, Lock, Check, ShieldCheck, Printer } from 'lucide-react';
+
+const coursesDatabase = {
+  'data-science-with-generative-ai-course': {
+    id: 'data-science-with-generative-ai-course',
+    title: 'Data Science With Generative AI Course',
+    description: "The iScale's Full Stack Data Science With Generative AI Course is an Job-Oriented course designed to equip aspiring data scientists with the latest and most wanted data skills. Become a Certified Data Scientist with The iScale Skills and utilize the Power of Generative AI with machine learning, NLP, etc. Learn top-in-demand skills from the best in the industry. Transform your career in a high-demand data science field.",
+    views: 28574,
+    lastUpdated: '10 May, 2026',
+    language: 'Hinglish',
+    thumbnail: 'https://www.theiscale.com/myadmin/uploads/courses/Data_science_Course_paid_compressed.png',
+    overviewHtml: `
+      <p style="color: #64748b; font-size: 16px; line-height: 1.8; margin-bottom: 24px;">
+        The iScale's Full Stack Data Science With Generative AI Course is an Job-Oriented course designed to equip aspiring data scientists with the latest and most wanted data skills. Become a Certified Data Scientist with The iScale Skills and utilize the Power of Generative AI with machine learning, NLP, etc. Learn top-in-demand skills from the best in the industry. Transform your career in a high-demand data science field.
+      </p>
+      <p style="color: #64748b; font-size: 16px; line-height: 1.8; margin-bottom: 32px;">
+        <strong>The iScale's</strong> programs in <strong>Full Stack Data Science With Generative AI program</strong> is designed for aspiring Data Scientists. With a job-oriented approach, learners master industry-demanded tools, work on real-world projects, and receive personalized mentorship to students. From resume building to exclusive job portals and mock interviews, we provide comprehensive career support.
+      </p>
+      <h3 style="text-align: center; color: #cbd5e1; font-size: 32px; font-weight: 800; font-family: var(--font-display); letter-spacing: 1px; text-transform: uppercase;">
+        Take the leap to success with The iScale!
+      </h3>
+    `,
+    curriculum: [
+  { title: 'Curriculum Python', modules: ['Lecture Video'] },
+  { title: 'M 1 : Python Basics Unit 01 - 06', modules: ['Lecture Video'] },
+  { title: 'M 1 : Python Foundation Unit 07- 11', modules: ['Lecture Video'] },
+  { title: 'M 1 : Python Advanced Unit 12 - 14', modules: ['Lecture Video'] },
+  { title: 'MODULE 2 : Python Libraries Level 1', modules: ['Lecture Video'] },
+  { title: 'MODULE 2 : Python Libraries Level 2', modules: ['Lecture Video'] },
+  { title: 'MODULE 2 : Python Libraries Level 3', modules: ['Lecture Video'] },
+  { title: 'MODULE 2 : Python Libraries Level 4', modules: ['Lecture Video'] },
+  { title: 'MODULE 2 : Python Libraries Level 5', modules: ['Lecture Video'] },
+  { title: 'M-2 : Project- Covid-19 Impact Analysis', modules: ['Lecture Video'] },
+  { title: 'M-2 : Project- Google Image Scrapping', modules: ['Lecture Video'] },
+  { title: 'M-2 : Project- WhatsApp Chat Analysis', modules: ['Lecture Video'] },
+  { title: 'M-2 : Project- Movie Recommendation', modules: ['Lecture Video'] },
+  { title: 'M-2 : Project- Price Comparison', modules: ['Lecture Video'] },
+  { title: 'Module 3 : Statistics Unit 01 - 03', modules: ['Lecture Video'] },
+  { title: 'Module 3 : Statistics Unit 04 - 06', modules: ['Lecture Video'] },
+  { title: 'Module 3 Statistics Unit 07 - 09', modules: ['Lecture Video'] },
+  { title: 'Module 4 : Feature Engineering', modules: ['Lecture Video'] },
+  { title: 'Modue 5 : Exploratory Data Analysis : Unit 01', modules: ['Lecture Video'] },
+  { title: 'Modue 5 : Exploratory Data Analysis : Unit 02', modules: ['Lecture Video'] },
+  { title: 'Modue 6 : Machine Learning Part 1 : Regression', modules: ['Lecture Video'] },
+  { title: 'Machine Learning Part 1 : Project', modules: ['Lecture Video'] },
+  { title: 'Modue 6 : Machine Learning Part 2 : Logistic Regression', modules: ['Lecture Video'] },
+  { title: 'Machine Learning Part 2 : Project', modules: ['Lecture Video'] },
+  { title: 'Machine Learning Part 3 : Decision Tree', modules: ['Lecture Video'] },
+  { title: 'Machine Learning Part 4 : Support Vector Machines', modules: ['Lecture Video'] },
+  { title: 'Machine Learning Part 5 : Naive Bayes', modules: ['Lecture Video'] },
+  { title: 'Machine Learning Part 5 : Project', modules: ['Lecture Video'] },
+  { title: 'Machine Learning Part 6 : ET & its Types', modules: ['Lecture Video'] },
+  { title: 'Machine Learning Part 7 : Boosting', modules: ['Lecture Video'] },
+  { title: 'Machine Learning Part 8 : KNN Algorithm', modules: ['Lecture Video'] },
+  { title: 'Machine Learning II : PCA', modules: ['Lecture Video'] },
+  { title: 'Machine Learning II : Clustering Algorithms', modules: ['Lecture Video'] },
+  { title: 'Machine Learning II : Anomaly Detection', modules: ['Lecture Video'] },
+  { title: 'Machine Learning II : Time Series', modules: ['Lecture Video'] },
+  { title: 'Deep Learning : Lecture 1 to 10', modules: ['Lecture Video'] },
+  { title: 'Deep Learning : Lecture 11 to 17', modules: ['Lecture Video'] },
+  { title: 'Module 9 - NLP', modules: ['Lecture Video'] },
+  { title: 'NLP : Part 2', modules: ['Lecture Video'] },
+  { title: 'NLP : Projects', modules: ['Lecture Video'] },
+  { title: 'Computer Vision', modules: ['Lecture Video'] },
+  { title: 'Computer Vision : Project 1', modules: ['Lecture Video'] },
+  { title: 'Computer Vision : Project 2', modules: ['Lecture Video'] },
+  { title: 'Computer Vision : Project 3', modules: ['Lecture Video'] },
+  { title: 'Module 12 AGENTIC AI', modules: ['Lecture Video'] },
+  { title: 'Module 12 : AGENTIC AI Project', modules: ['Lecture Video'] },
+  { title: 'Module- GENERATIVE AI', modules: ['Lecture Video'] },
+  { title: 'MODULE 11 : SQL | Notes & Study Material', modules: ['Lecture Video'] },
+  { title: 'SQL : Unit 01 - 04', modules: ['Lecture Video'] },
+  { title: 'SQL : Unit 05 - 08', modules: ['Lecture Video'] },
+  { title: 'SQL : Unit 09 - 14', modules: ['Lecture Video'] },
+  { title: 'SQL : Unit 15 - 18', modules: ['Lecture Video'] },
+  { title: 'SQL : Unit 19', modules: ['Lecture Video'] },
+  { title: 'SQL : Unit 20', modules: ['Lecture Video'] },
+  { title: 'SQL Project - Music Store Data', modules: ['Lecture Video'] },
+  { title: 'UPDATED POWER BI LECTURES', modules: ['Lecture Video'] },
+  { title: 'MODULE 12 : Power BI | Notes & Study Material', modules: ['Lecture Video'] },
+  { title: 'Power BI : Unit 01 - 07', modules: ['Lecture Video'] },
+  { title: 'Power BI : Unit 08 - 12', modules: ['Lecture Video'] },
+  { title: 'Power BI : Project 1', modules: ['Lecture Video'] },
+  { title: 'Project - Real Estate', modules: ['Lecture Video'] },
+  { title: 'Power BI : Project 2', modules: ['Lecture Video'] },
+  { title: 'DAX FUNCTIONS & POWER QUERY', modules: ['Lecture Video'] },
+  { title: 'MODULE 13 : Advance Excel | Notes & Study Material', modules: ['Lecture Video'] },
+  { title: 'Basic Excel', modules: ['Lecture Video'] },
+  { title: 'Intermediate Excel', modules: ['Lecture Video'] },
+  { title: 'Moderate Excel', modules: ['Lecture Video'] },
+  { title: 'Advance Excel', modules: ['Lecture Video'] },
+  { title: 'Project- Analysis the Online Store Annual Report', modules: ['Lecture Video'] },
+  { title: 'MODULE 14 : Tableau | Notes & Study Material', modules: ['Lecture Video'] },
+  { title: 'Tableau : Unit 01', modules: ['Lecture Video'] },
+  { title: 'Tableau : Unit 02', modules: ['Lecture Video'] },
+  { title: 'Tableau : Unit 03', modules: ['Lecture Video'] },
+  { title: 'Tableau : Unit 04', modules: ['Lecture Video'] },
+  { title: 'Tableau Capstone Project - 01', modules: ['Lecture Video'] },
+  { title: 'Tableau Capstone Project - 02 & 03', modules: ['Lecture Video'] },
+  { title: 'SPECIAL VIRTUAL CLASS', modules: ['Lecture Video'] },
+  { title: '20+ AI Tools Lectures', modules: ['Lecture Video'] }
+]
+,
+    details: [
+      {
+        title: 'Resume Building',
+        desc: 'Craft a winning resume highlighting your skills and experience, opening doors to top job opportunities in data analytics.',
+        img: 'https://www.theiscale.com/myadmin/uploads/course_features/DS_-_resume_building.jpg'
+      },
+      {
+        title: 'Exclusive Job Portal',
+        desc: 'Access unique job opportunities with organizations seeking skilled data analysts, offering potential salary hikes and career growth.',
+        img: 'https://www.theiscale.com/myadmin/uploads/course_features/job_potal_ds_(2).png'
+      },
+      {
+        title: 'Mock Interviews',
+        desc: 'Practice and polish your interview skills, boosting confidence and readiness to ace job interviews in the competitive data analytics industry.',
+        img: 'https://www.theiscale.com/myadmin/uploads/course_features/Mock_interview_ds_(1).png'
+      },
+      {
+        title: 'LinkedIn Profile Building',
+        desc: 'Create a professional online presence, attracting recruiters and enhancing your visibility for lucrative job offers in data analytics.',
+        img: 'https://www.theiscale.com/myadmin/uploads/course_features/linked_da_(1)1.png'
+      },
+      {
+        title: 'Portfolio',
+        desc: 'Showcase Your Projects And Skills Via Portfolio Which Will Make You Stand Out To Potential Employers Seeking Practical Expertise.',
+        img: 'https://www.theiscale.com/myadmin/uploads/course_features/Portfoli_ds_(1).png'
+      }
+    ],
+    highlights: [
+      { title: '365 Days Course Duration', img: 'https://www.theiscale.com/myadmin/uploads/course_training/21.png' },
+      { title: 'Live & Scheduled Classes', img: 'https://www.theiscale.com/myadmin/uploads/course_training/31.png' },
+      { title: 'Business Case Study', img: 'https://www.theiscale.com/myadmin/uploads/course_training/5.png' },
+      { title: 'Doubt Assistance', img: 'https://www.theiscale.com/myadmin/uploads/course_training/71.png' },
+      { title: 'LMS Access', img: 'https://www.theiscale.com/myadmin/uploads/course_training/101.png' },
+      { title: 'Industry-Oriented Curriculum', img: 'https://www.theiscale.com/myadmin/uploads/course_training/1.png' },
+      { title: 'Placement Updates', img: 'https://www.theiscale.com/myadmin/uploads/course_training/41.png' },
+      { title: 'Certificate of Training', img: 'https://www.theiscale.com/myadmin/uploads/course_training/61.png' },
+      { title: 'Soft Skills Guidance', img: 'https://www.theiscale.com/myadmin/uploads/course_training/8.png' },
+      { title: 'Hands-on Projects', img: 'https://www.theiscale.com/myadmin/uploads/course_training/91.png' }
+    ],
+    certificateText: 'Earn an ISO-certified certificate from The iScale, your gateway to industry-oriented online courses. Our certificates are recognized by leading industries, validating your proficiency in cutting-edge skills. Enhance your career prospects with credentials that reflect real-world expertise. Join The iScale today and unlock opportunities in the competitive professional landscape.',
+    certificateImg: 'https://www.theiscale.com/assets/images/Sample%20Certificate.png',
+    faqs: [
+      { q: 'Q 1) Do I Need To Pay Extra For The Certificate?', a: 'No, the certificate is included in the course fee.' },
+      { q: 'Q 2) In Which Mode And Medium The Courses Are Available?', a: 'Courses are available online via our LMS in Hinglish.' },
+      { q: 'Q 3) What Certificate Will I Be Given Upon Course Completion?', a: 'You will receive an ISO-certified Data Science professional certificate.' }
+    ],
+    videoUrl: 'https://www.youtube.com/embed/N7b7uMIeigU',
+    fees: {
+      basic: { price: '₹19,999', original: '₹25,999', link: '#' },
+      premium: { price: '₹29,999', original: '₹35,999', link: '#' },
+      pro: { price: '₹39,999', original: '₹49,999', link: '#' },
+      features: [
+        { name: 'LMS Software Access (Web + Android)', basic: true, premium: true, pro: true },
+        { name: 'Recorded Lectures with Notes', basic: true, premium: true, pro: true },
+        { name: 'LIVE Doubt Classes (4 Days/Week)', basic: false, premium: true, pro: true },
+        { name: '1:1 Doubt Assistance (Email/Call/Msg)', basic: false, premium: true, pro: true },
+        { name: '1 Doubt Support Per Week - Saturday', basic: true, premium: true, pro: true },
+        { name: 'Data Story Telling', basic: true, premium: true, pro: true },
+        { name: 'Monthly LIVE Test', basic: true, premium: true, pro: true },
+        { name: 'Placement Preparation Module', basic: true, premium: true, pro: true },
+        { name: 'Resume & Portfolio Building', basic: true, premium: true, pro: true },
+        { name: 'AI Mock Interview', basic: true, premium: true, pro: true },
+        { name: 'Progress Interview', basic: false, premium: true, pro: true },
+        { name: 'Job Portal Access', basic: false, premium: true, pro: true },
+        { name: 'Course Duration', basic: '6 Months', premium: '6 Months', pro: '12 Months' },
+        { name: '1:1 Portfolio Assistance', basic: false, premium: false, pro: true },
+        { name: '1:1 Mock Interview (2 Tech + 2 HR)', basic: false, premium: false, pro: true },
+        { name: '1:1 Dedicated Job Assistance', basic: false, premium: false, pro: true },
+        { name: 'Course Completion Certificate', basic: true, premium: true, pro: true },
+        { name: 'Academic Internship Certificate', basic: false, premium: false, pro: true },
+        { name: 'Free Master of Data Analytics Course', basic: true, premium: true, pro: true },
+        { name: 'Master of Data Analytics Certificate', basic: false, premium: false, pro: true }
+      ]
+    },
+    tools: [
+      { name: 'Python', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a11.png' },
+      { name: 'Matplotlib', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a21.jpg' },
+      { name: 'NumPy', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a31.png' },
+      { name: 'Pandas', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a51.png' },
+      { name: 'Xampp', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a121.png' },
+      { name: 'MySQL', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a131.png' },
+      { name: 'Power BI', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a71.jpg' },
+      { name: 'SciPy', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a81.png' },
+      { name: 'TensorFlow', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a141.png' },
+      { name: 'Anaconda', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a91.png' },
+      { name: 'Flask', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a23.png' },
+      { name: 'Excel', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a61.jpg' },
+      { name: 'Jupyter', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a101.png' },
+      { name: 'OpenCV', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a24.png' },
+      { name: 'Scikit-Learn', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a41.png' },
+      { name: 'GENSIM', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a27.png' },
+      { name: 'PyCharm', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a111.png' },
+      { name: 'PostgreSQL', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a28.png' },
+      { name: 'Power Query', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a29.png' },
+      { name: 'DAX', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a30.png' },
+      { name: 'Plotly', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a32.png' },
+      { name: 'PyTorch', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a25.png' },
+      { name: 'Seaborn', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a34.png' },
+      { name: 'Streamlit', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a35.png' },
+      { name: 'Tableau', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a36.png' },
+      { name: 'Keras', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a26.png' },
+      { name: 'BeautifulSoup', img: 'https://www.theiscale.com/myadmin/uploads/course_tool/a38.png' }
+    ],
+    instructors: [
+      { name: 'Swati Mam', role: 'Mentor', img: 'https://www.theiscale.com/myadmin/uploads/courses/swati2.png' },
+      { name: 'Nishant Sir', role: 'Mentor', img: 'https://www.theiscale.com/myadmin/uploads/courses/nikki_(1).png' },
+      { name: 'Bijay Sir', role: 'Mentor', img: 'https://www.theiscale.com/myadmin/uploads/courses/Bijay_(1).png' },
+      { name: 'Sweta', role: 'Mentor', img: 'https://www.theiscale.com/myadmin/uploads/courses/Sweta_(1).png' }
+    ],
+    reviews: [
+      { name: 'Shweta Shandilya', companyImg: 'https://www.theiscale.com/myadmin/uploads/more/IBM-removebg-preview.png', img: 'https://www.theiscale.com/myadmin/uploads/more/Shweta_Shandilya-Edit.jpg' },
+      { name: 'Mr. Uday Narang', companyImg: 'https://www.theiscale.com/myadmin/uploads/more/osm.png', img: 'https://www.theiscale.com/myadmin/uploads/more/uday_smaall.png' },
+      { name: 'Prasad Menon', companyImg: 'https://www.theiscale.com/myadmin/uploads/more/amagi1.png', img: 'https://www.theiscale.com/myadmin/uploads/more/prasad_menon.png' },
+      { name: 'Jaibir Siwach', companyImg: 'https://www.theiscale.com/myadmin/uploads/more/kabira.png', img: 'https://www.theiscale.com/myadmin/uploads/more/Jaibir_Siwach_small1.png' },
+      { name: 'Sardar Ji', companyImg: 'https://www.theiscale.com/myadmin/uploads/more/reliance_jio.png', img: 'https://www.theiscale.com/myadmin/uploads/more/sardar_ji.png' },
+      { name: 'Rahil Hop', companyImg: 'https://www.theiscale.com/myadmin/uploads/more/Untitled-1.png', img: 'https://www.theiscale.com/myadmin/uploads/more/Rahil_Hop_small1.png' }
+    ]
+  },
+  'master-of-data-analytics-program': {
+    id: 'master-of-data-analytics-program',
+    title: 'Master Of Data Analytics Program',
+    description: "Accelerate your path to success with The iScale's Master of Data Analytics course - where job readiness meets cutting-edge skills! The iScale is the gateway to lucrative job opportunities in the digital age.",
+    views: 28749,
+    lastUpdated: '10 May, 2026',
+    language: 'Hinglish',
+    category: 'Data Analyst Courses',
+    videoUrl: 'https://www.youtube.com/embed/HpgZ5GP4yHM',
+    thumbnail: 'https://www.theiscale.com/myadmin/uploads/courses/Data_science_Course_paid_compressed.png',
+    overviewHtml: `
+      <p style="color: #64748b; font-size: 16px; line-height: 1.8; margin-bottom: 24px;">
+        Accelerate your path to success with The iScale's Master of Data Analytics course - where job readiness meets cutting-edge skills!
+      </p>
+    `
+  },
+  'ai-engineer-advance-program': {
+    id: 'ai-engineer-advance-program',
+    title: 'AI Engineer Advance Program',
+    description: "Master the principles of Artificial Intelligence and deep learning in this advanced program. Build complex neural networks and real-world AI applications.",
+    views: 15432,
+    lastUpdated: '12 May, 2026',
+    language: 'English',
+    category: 'AI Courses',
+    thumbnail: 'https://www.theiscale.com/myadmin/uploads/courses/Your_paragraph_text_(10).jpg',
+    videoUrl: 'https://www.youtube.com/embed/N7b7uMIeigU',
+    overviewHtml: '<p style="color: #64748b; font-size: 16px;">This program covers advanced AI topics including computer vision, NLP, and reinforcement learning.</p>',
+    curriculum: [
+  { title: 'Curriculum Python', modules: ['Lecture Video'] },
+  { title: 'M 1 : Python Basics Unit 01 - 06', modules: ['Lecture Video'] },
+  { title: 'M 1 : Python Foundation Unit 07- 11', modules: ['Lecture Video'] },
+  { title: 'M 1 : Python Advanced Unit 12 - 14', modules: ['Lecture Video'] },
+  { title: 'MODULE 2 : Python Libraries Level 1', modules: ['Lecture Video'] },
+  { title: 'MODULE 2 : Python Libraries Level 2', modules: ['Lecture Video'] },
+  { title: 'MODULE 2 : Python Libraries Level 3', modules: ['Lecture Video'] },
+  { title: 'MODULE 2 : Python Libraries Level 4', modules: ['Lecture Video'] },
+  { title: 'MODULE 2 : Python Libraries Level 5', modules: ['Lecture Video'] },
+  { title: 'M-2 : Project- Covid-19 Impact Analysis', modules: ['Lecture Video'] },
+  { title: 'M-2 : Project- Google Image Scrapping', modules: ['Lecture Video'] },
+  { title: 'M-2 : Project- WhatsApp Chat Analysis', modules: ['Lecture Video'] },
+  { title: 'M-2 : Project- Movie Recommendation', modules: ['Lecture Video'] },
+  { title: 'M-2 : Project- Price Comparison', modules: ['Lecture Video'] },
+  { title: 'Module 3 : Statistics Unit 01 - 03', modules: ['Lecture Video'] },
+  { title: 'Module 3 : Statistics Unit 04 - 06', modules: ['Lecture Video'] },
+  { title: 'Module 3 Statistics Unit 07 - 09', modules: ['Lecture Video'] },
+  { title: 'Module 4 : Feature Engineering', modules: ['Lecture Video'] },
+  { title: 'Modue 5 : Exploratory Data Analysis : Unit 01', modules: ['Lecture Video'] },
+  { title: 'Modue 5 : Exploratory Data Analysis : Unit 02', modules: ['Lecture Video'] },
+  { title: 'Modue 6 : Machine Learning Part 1 : Regression', modules: ['Lecture Video'] },
+  { title: 'Machine Learning Part 1 : Project', modules: ['Lecture Video'] },
+  { title: 'Modue 6 : Machine Learning Part 2 : Logistic Regression', modules: ['Lecture Video'] },
+  { title: 'Machine Learning Part 2 : Project', modules: ['Lecture Video'] },
+  { title: 'Machine Learning Part 3 : Decision Tree', modules: ['Lecture Video'] },
+  { title: 'Machine Learning Part 4 : Support Vector Machines', modules: ['Lecture Video'] },
+  { title: 'Machine Learning Part 5 : Naive Bayes', modules: ['Lecture Video'] },
+  { title: 'Machine Learning Part 5 : Project', modules: ['Lecture Video'] },
+  { title: 'Machine Learning Part 6 : ET & its Types', modules: ['Lecture Video'] },
+  { title: 'Machine Learning Part 7 : Boosting', modules: ['Lecture Video'] },
+  { title: 'Machine Learning Part 8 : KNN Algorithm', modules: ['Lecture Video'] },
+  { title: 'Machine Learning II : PCA', modules: ['Lecture Video'] },
+  { title: 'Machine Learning II : Clustering Algorithms', modules: ['Lecture Video'] },
+  { title: 'Machine Learning II : Anomaly Detection', modules: ['Lecture Video'] },
+  { title: 'Machine Learning II : Time Series', modules: ['Lecture Video'] },
+  { title: 'Deep Learning : Lecture 1 to 10', modules: ['Lecture Video'] },
+  { title: 'Deep Learning : Lecture 11 to 17', modules: ['Lecture Video'] },
+  { title: 'Module 9 - NLP', modules: ['Lecture Video'] },
+  { title: 'NLP : Part 2', modules: ['Lecture Video'] },
+  { title: 'NLP : Projects', modules: ['Lecture Video'] },
+  { title: 'Computer Vision', modules: ['Lecture Video'] },
+  { title: 'Computer Vision : Project 1', modules: ['Lecture Video'] },
+  { title: 'Computer Vision : Project 2', modules: ['Lecture Video'] },
+  { title: 'Computer Vision : Project 3', modules: ['Lecture Video'] },
+  { title: 'Module 12 AGENTIC AI', modules: ['Lecture Video'] },
+  { title: 'Module 12 : AGENTIC AI Project', modules: ['Lecture Video'] },
+  { title: 'Module- GENERATIVE AI', modules: ['Lecture Video'] },
+  { title: 'MODULE 11 : SQL | Notes & Study Material', modules: ['Lecture Video'] },
+  { title: 'SQL : Unit 01 - 04', modules: ['Lecture Video'] },
+  { title: 'SQL : Unit 05 - 08', modules: ['Lecture Video'] },
+  { title: 'SQL : Unit 09 - 14', modules: ['Lecture Video'] },
+  { title: 'SQL : Unit 15 - 18', modules: ['Lecture Video'] },
+  { title: 'SQL : Unit 19', modules: ['Lecture Video'] },
+  { title: 'SQL : Unit 20', modules: ['Lecture Video'] },
+  { title: 'SQL Project - Music Store Data', modules: ['Lecture Video'] },
+  { title: 'UPDATED POWER BI LECTURES', modules: ['Lecture Video'] },
+  { title: 'MODULE 12 : Power BI | Notes & Study Material', modules: ['Lecture Video'] },
+  { title: 'Power BI : Unit 01 - 07', modules: ['Lecture Video'] },
+  { title: 'Power BI : Unit 08 - 12', modules: ['Lecture Video'] },
+  { title: 'Power BI : Project 1', modules: ['Lecture Video'] },
+  { title: 'Project - Real Estate', modules: ['Lecture Video'] },
+  { title: 'Power BI : Project 2', modules: ['Lecture Video'] },
+  { title: 'DAX FUNCTIONS & POWER QUERY', modules: ['Lecture Video'] },
+  { title: 'MODULE 13 : Advance Excel | Notes & Study Material', modules: ['Lecture Video'] },
+  { title: 'Basic Excel', modules: ['Lecture Video'] },
+  { title: 'Intermediate Excel', modules: ['Lecture Video'] },
+  { title: 'Moderate Excel', modules: ['Lecture Video'] },
+  { title: 'Advance Excel', modules: ['Lecture Video'] },
+  { title: 'Project- Analysis the Online Store Annual Report', modules: ['Lecture Video'] },
+  { title: 'MODULE 14 : Tableau | Notes & Study Material', modules: ['Lecture Video'] },
+  { title: 'Tableau : Unit 01', modules: ['Lecture Video'] },
+  { title: 'Tableau : Unit 02', modules: ['Lecture Video'] },
+  { title: 'Tableau : Unit 03', modules: ['Lecture Video'] },
+  { title: 'Tableau : Unit 04', modules: ['Lecture Video'] },
+  { title: 'Tableau Capstone Project - 01', modules: ['Lecture Video'] },
+  { title: 'Tableau Capstone Project - 02 & 03', modules: ['Lecture Video'] },
+  { title: 'SPECIAL VIRTUAL CLASS', modules: ['Lecture Video'] },
+  { title: '20+ AI Tools Lectures', modules: ['Lecture Video'] }
+]
+,
+    details: [
+      { title: 'Resume Building', desc: 'Craft a winning resume highlighting your AI skills.', img: 'https://www.theiscale.com/myadmin/uploads/course_features/DS_-_resume_building.jpg' },
+      { title: 'Projects & Portfolios', desc: 'Build an impressive portfolio with 15+ real-world industry case studies.', img: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=400&q=80' }
+    ]
+  },
+
+  'advance-python-with-ai-tools': {
+    id: 'advance-python-with-ai-tools',
+    title: 'Advance Python with AI Tools',
+    description: "This Advanced Python Course with AI Integration is designed to transform you from a learner into an AI-driven architect. In 2026, Python is no longer just about scripts; it is the backbone of autonomous agents, real-time data intelligence, and generative media.",
+    views: 765,
+    lastUpdated: '18 Apr, 2026',
+    language: 'English',
+    category: 'Foundation Courses',
+    videoUrl: 'https://www.youtube.com/embed/QXeEoD0pB3E',
+    cssThumbnailConfig: {
+      badge: 'APP + WEB COURSE',
+      bgImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80',
+      lines: [
+        { text: 'ADVANCE', style: { color: '#fbbf24', fontSize: 44, fontWeight: 900, lineHeight: 1.1, fontFamily: 'var(--font-display)', letterSpacing: -1 } },
+        { text: 'PYTHON', style: { color: '#fbbf24', fontSize: 44, fontWeight: 900, lineHeight: 1.1, fontFamily: 'var(--font-display)', letterSpacing: -1 } },
+        { text: 'WITH AI TOOLS', style: { color: '#cbd5e1', fontSize: 24, fontWeight: 800, lineHeight: 1.2, marginTop: 8, letterSpacing: 1 } }
+      ]
+    }
+  },
+  'power-bi-tableau-for-data-visualization': {
+    id: 'power-bi-tableau-for-data-visualization',
+    title: 'Power BI & Tableau For Data Visualization',
+    description: "Master industry-leading data visualization tools. Turn complex data into clear, actionable insights with Power BI and Tableau.",
+    views: 163,
+    lastUpdated: '18 Apr, 2026',
+    language: 'English',
+    category: 'Foundation Courses',
+    videoUrl: 'https://www.youtube.com/embed/TmhQCQr_DCA',
+    cssThumbnailConfig: {
+      badge: 'APP + WEB COURSE',
+      bgImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80',
+      lines: [
+        { text: 'POWER BI', style: { color: '#fbbf24', fontSize: 38, fontWeight: 900, lineHeight: 1.1, fontFamily: 'var(--font-display)', letterSpacing: -1 } },
+        { text: '& TABLEAU', style: { color: '#fbbf24', fontSize: 38, fontWeight: 900, lineHeight: 1.1, fontFamily: 'var(--font-display)', letterSpacing: -1 } },
+        { text: 'FOR DATA VISUALIZATION', style: { color: '#cbd5e1', fontSize: 18, fontWeight: 800, lineHeight: 1.2, marginTop: 8, letterSpacing: 1 } }
+      ]
+    }
+  },
+  'ai-powered-excel-full-course': {
+    id: 'ai-powered-excel-full-course',
+    title: 'AI Powered Excel Full Course',
+    description: "Become industry-ready with The iScale's AI Powered Excel Full Course. This practical and career-focused program helps learners master Advanced Excel, AI-integrated workflows, business reporting, and data analysis techniques used by top companies.",
+    views: 158,
+    lastUpdated: '13 May, 2026',
+    language: 'English',
+    category: 'Foundation Courses',
+    videoUrl: 'https://www.youtube.com/embed/Vl0H-qT87tE',
+    cssThumbnailConfig: {
+      badge: 'APP + WEB COURSE',
+      bgImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80',
+      lines: [
+        { text: 'ADVANCE', style: { color: '#fbbf24', fontSize: 38, fontWeight: 900, lineHeight: 1.1, fontFamily: 'var(--font-display)', letterSpacing: -1 } },
+        { text: 'EXCEL', style: { color: '#fbbf24', fontSize: 38, fontWeight: 900, lineHeight: 1.1, fontFamily: 'var(--font-display)', letterSpacing: -1 } },
+        { text: 'MASTER CLASS', style: { color: '#fbbf24', fontSize: 38, fontWeight: 900, lineHeight: 1.1, fontFamily: 'var(--font-display)', letterSpacing: -1 } },
+        { text: 'WITH AI', style: { color: '#cbd5e1', fontSize: 24, fontWeight: 800, lineHeight: 1.2, marginTop: 8, letterSpacing: 1 } }
+      ]
+    }
+  },
+  'ai-cohort-course': {
+    id: 'ai-cohort-course',
+    title: 'AI Cohort Course',
+    description: "Unlock the power of Artificial Intelligence with our intensive 45-Days AI Cohort Batch. This program is meticulously designed to fast-track your journey into the world of AI, providing you with high-demand skills through a curriculum of 30+ comprehensive lectures.",
+    views: 693,
+    lastUpdated: '19 May, 2026',
+    language: 'English',
+    category: 'Foundation Courses',
+    videoUrl: 'https://www.youtube.com/embed/2eWuYf-aZE4',
+    cssThumbnailConfig: {
+      badge: '🔴 LIVE',
+      bgImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80',
+      lines: [
+        { text: 'AI COHORT', style: { color: '#fbbf24', fontSize: 38, fontWeight: 900, lineHeight: 1.1, fontFamily: 'var(--font-display)', letterSpacing: -1 } },
+        { text: 'COURSE', style: { color: '#fbbf24', fontSize: 38, fontWeight: 900, lineHeight: 1.1, fontFamily: 'var(--font-display)', letterSpacing: -1 } },
+        { text: 'BATCH 01', style: { color: '#cbd5e1', fontSize: 22, fontWeight: 800, lineHeight: 1.2, marginTop: 8, letterSpacing: 1 } },
+        { text: '📅 05th May 2026', style: { color: '#94a3b8', fontSize: 14, fontWeight: 600, lineHeight: 1.2, marginTop: 4 } }
+      ]
+    }
+  },
+  'ai-for-everyone-complete-guide': {
+    id: 'ai-for-everyone-complete-guide',
+    title: 'AI For Everyone : Complete Guide',
+    description: "Master the Complete AI Ecosystem. 15+ Modules | 50+ Tools | 75+ Hours | This hands-on course covers image, video, and website creation alongside no-code product development. Learn to build advanced workflow pipelines and end-to-end AI-powered systems using MCP and multi-modal agents.",
+    views: 1278,
+    lastUpdated: '21 May, 2026',
+    language: 'Hinglish',
+    category: 'Cohort Courses',
+    videoUrl: 'https://www.youtube.com/embed/S2Y2IPwD77Q',
+    cssThumbnailConfig: {
+      bgImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80',
+      lines: [
+        { text: 'AI COHORT 1.0', style: { color: '#d8b4fe', fontSize: 44, fontWeight: 900, lineHeight: 1.1, fontFamily: 'var(--font-display)', letterSpacing: -1, textShadow: '0 2px 10px rgba(168, 85, 247, 0.5)' } },
+        { text: 'FOR EVERYONE: COMPLETE GUIDE', style: { color: '#cbd5e1', fontSize: 16, fontWeight: 700, lineHeight: 1.2, marginTop: 8, letterSpacing: 1 } },
+        { text: 'WITH 🔴 LIVE', style: { color: '#fff', fontSize: 18, fontWeight: 800, lineHeight: 1.2, marginTop: 12 } },
+        { text: 'MARATHON CLASS', style: { color: '#cbd5e1', fontSize: 18, fontWeight: 800, lineHeight: 1.2, marginTop: 2 } }
+      ]
+    }
+  },
+  'free-data-science-course': {
+    id: 'free-data-science-course',
+    title: 'Free Data Science Course',
+    description: "Embark a data science journey by learning statistics, ML, & data analysis with hands-on Python, SQL, Power BI related Projects.",
+    views: 45739,
+    lastUpdated: '18 Apr, 2026',
+    language: 'English',
+    category: 'Free Category',
+    videoUrl: 'https://www.youtube.com/embed/ua-CiDNNj30',
+    cssThumbnailConfig: {
+      badge: 'Free YouTube',
+      bgImage: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=600&q=80',
+      lines: [
+        { text: 'DATA', style: { color: '#fbbf24', fontSize: 48, fontWeight: 900, lineHeight: 1.1, fontFamily: 'var(--font-display)', letterSpacing: -1 } },
+        { text: 'SCIENCE', style: { color: '#fbbf24', fontSize: 48, fontWeight: 900, lineHeight: 1.1, fontFamily: 'var(--font-display)', letterSpacing: -1 } }
+      ]
+    }
+  },
+  'free-data-analytics-course': {
+    id: 'free-data-analytics-course',
+    title: 'Free Data Analytics Course',
+    description: "Join our Free Data Analytics Course! Gain Python skills, explore libraries, tackle industry projects, and prepare for interviews in 30 days",
+    views: 337047,
+    lastUpdated: '24 Dec, 2025',
+    language: 'English',
+    category: 'Free Category',
+    videoUrl: 'https://www.youtube.com/embed/vK1E-mG0lXw',
+    cssThumbnailConfig: {
+      badge: 'Free YouTube',
+      bgImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80',
+      lines: [
+        { text: 'DATA', style: { color: '#fbbf24', fontSize: 48, fontWeight: 900, lineHeight: 1.1, fontFamily: 'var(--font-display)', letterSpacing: -1 } },
+        { text: 'ANALYTICS', style: { color: '#fbbf24', fontSize: 48, fontWeight: 900, lineHeight: 1.1, fontFamily: 'var(--font-display)', letterSpacing: -1 } }
+      ]
+    }
+  }
+};
+
+const courseLecturesDb = {
+  'data-science-with-generative-ai-course': [
+    { id: 'ds-1', title: 'Lecture 1: Introduction to Data Science & GenAI', duration: '15 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/ua-CiDNNj30' },
+    { id: 'ds-2', title: 'Lecture 2: Python Foundations for Data Science', duration: '25 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/ua-CiDNNj30' },
+    { id: 'ds-3', title: 'Lecture 3: Data Analysis with Pandas & NumPy', duration: '30 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/ua-CiDNNj30' },
+    { id: 'ds-4', title: 'Lecture 4: Data Visualization with Matplotlib & Power BI', duration: '20 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/ua-CiDNNj30' },
+    { id: 'ds-5', title: 'Lecture 5: Statistics & Machine Learning Basics', duration: '45 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/ua-CiDNNj30' },
+    { id: 'ds-6', title: 'Lecture 6: Supervised vs Unsupervised Learning', duration: '35 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/ua-CiDNNj30' },
+    { id: 'ds-7', title: 'Lecture 7: Deep Learning & Neural Networks', duration: '40 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/ua-CiDNNj30' },
+    { id: 'ds-8', title: 'Lecture 8: Intro to Generative AI & LLMs', duration: '30 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/ua-CiDNNj30' },
+    { id: 'ds-9', title: 'Lecture 9: Building AI Agents & Prompt Engineering', duration: '50 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/ua-CiDNNj30' },
+    { id: 'ds-10', title: 'Lecture 10: Capstone Project Showcase & Wrap-up', duration: '25 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/ua-CiDNNj30' }
+  ],
+  'ai-cohort-course': [
+    { id: 'ai-1', title: 'Lecture 1: Introduction to AI & Prompt Engineering', duration: '15 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/2eWuYf-aZE4' },
+    { id: 'ai-2', title: 'Lecture 2: Midjourney Mastery & Creative Prompts', duration: '20 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/2eWuYf-aZE4' },
+    { id: 'ai-3', title: 'Lecture 3: Large Language Models (LLMs) Overview', duration: '30 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/2eWuYf-aZE4' },
+    { id: 'ai-4', title: 'Lecture 4: Custom GPTs & No-Code AI tools', duration: '25 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/2eWuYf-aZE4' },
+    { id: 'ai-5', title: 'Lecture 5: AI-powered Workflows & Automation', duration: '35 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/2eWuYf-aZE4' },
+    { id: 'ai-6', title: 'Lecture 6: Fine-Tuning & Prompt Pipelines', duration: '40 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/2eWuYf-aZE4' },
+    { id: 'ai-7', title: 'Lecture 7: Agentic AI & Multi-Modal Frameworks', duration: '45 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/2eWuYf-aZE4' },
+    { id: 'ai-8', title: 'Lecture 8: Building AI Products & Final Launch', duration: '30 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/2eWuYf-aZE4' }
+  ],
+  'ai-engineer-advance-program': [
+    { id: 'aie-1', title: 'Lecture 1: Introduction to Advanced AI Principles', duration: '15 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/N7b7uMIeigU' },
+    { id: 'aie-2', title: 'Lecture 2: Neural Networks & Deep Learning Foundations', duration: '25 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/N7b7uMIeigU' },
+    { id: 'aie-3', title: 'Lecture 3: Computer Vision & Object Detection', duration: '30 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/N7b7uMIeigU' },
+    { id: 'aie-4', title: 'Lecture 4: Natural Language Processing (NLP) & Transformers', duration: '20 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/N7b7uMIeigU' },
+    { id: 'aie-5', title: 'Lecture 5: Reinforcement Learning & Q-Learning', duration: '45 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/N7b7uMIeigU' },
+    { id: 'aie-6', title: 'Lecture 6: Multi-Modal Agentic Workflows', duration: '35 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/N7b7uMIeigU' },
+    { id: 'aie-7', title: 'Lecture 7: Fine-Tuning LLMs & Production Deployment', duration: '40 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/N7b7uMIeigU' },
+    { id: 'aie-8', title: 'Lecture 8: Capstone AI Engineering Project', duration: '30 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/N7b7uMIeigU' }
+  ],
+  'advance-python-with-ai-tools': [
+    { id: 'pyt-1', title: 'Lecture 1: Python Basics & Modern Setup', duration: '20 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/QXeEoD0pB3E' },
+    { id: 'pyt-2', title: 'Lecture 2: Advanced Data Structures & Memory Mgmt', duration: '30 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/QXeEoD0pB3E' },
+    { id: 'pyt-3', title: 'Lecture 3: OOP & Meta-Programming in Python', duration: '25 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/QXeEoD0pB3E' },
+    { id: 'pyt-4', title: 'Lecture 4: Python Libraries for AI & Machine Learning', duration: '35 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/QXeEoD0pB3E' },
+    { id: 'pyt-5', title: 'Lecture 5: Developing Custom AI APIs in Python', duration: '40 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/QXeEoD0pB3E' },
+    { id: 'pyt-6', title: 'Lecture 6: Integrating Claude/OpenAI APIs & Multi-Agent SDKs', duration: '30 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/QXeEoD0pB3E' },
+    { id: 'pyt-7', title: 'Lecture 7: Deploying Serverless Python AI Functions', duration: '45 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/QXeEoD0pB3E' }
+  ],
+  'power-bi-tableau-for-data-visualization': [
+    { id: 'pbt-1', title: 'Lecture 1: Visualization Principles & Storytelling', duration: '20 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/TmhQCQr_DCA' },
+    { id: 'pbt-2', title: 'Lecture 2: Power BI Desktop: Connectors & Modeling', duration: '30 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/TmhQCQr_DCA' },
+    { id: 'pbt-3', title: 'Lecture 3: DAX Calculations & Advanced Logic', duration: '35 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/TmhQCQr_DCA' },
+    { id: 'pbt-4', title: 'Lecture 4: Tableau Foundations & Desktop Interface', duration: '40 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/TmhQCQr_DCA' },
+    { id: 'pbt-5', title: 'Lecture 5: Calculated Fields & Parameters in Tableau', duration: '30 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/TmhQCQr_DCA' },
+    { id: 'pbt-6', title: 'Lecture 6: Designing Interactive Visual Dashboards', duration: '45 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/TmhQCQr_DCA' }
+  ],
+  'ai-powered-excel-full-course': [
+    { id: 'exc-1', title: 'Lecture 1: Excel Essentials & Powerful Functions', duration: '20 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/Vl0H-qT87tE' },
+    { id: 'exc-2', title: 'Lecture 2: Data Cleansing & Modeling with Power Query', duration: '30 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/Vl0H-qT87tE' },
+    { id: 'exc-3', title: 'Lecture 3: Pivot Tables & Advanced Visual Reports', duration: '35 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/Vl0H-qT87tE' },
+    { id: 'exc-4', title: 'Lecture 4: Copilot & AI Integration in Excel Worksheets', duration: '40 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/Vl0H-qT87tE' },
+    { id: 'exc-5', title: 'Lecture 5: VBA Programming & Macro Automation', duration: '45 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/Vl0H-qT87tE' }
+  ],
+  'master-of-data-analytics-program': [
+    { id: 'mda-1', title: 'Lecture 1: Data Analytics Foundations', duration: '20 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/vK1E-mG0lXw' },
+    { id: 'mda-2', title: 'Lecture 2: Advanced SQL Queries & Data Modeling', duration: '30 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/vK1E-mG0lXw' },
+    { id: 'mda-3', title: 'Lecture 3: Excel for Analysts & Pivot Tables', duration: '25 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/vK1E-mG0lXw' },
+    { id: 'mda-4', title: 'Lecture 4: Power BI Dashboards & DAX Functions', duration: '35 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/vK1E-mG0lXw' },
+    { id: 'mda-5', title: 'Lecture 5: Tableau Visualization Best Practices', duration: '40 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/vK1E-mG0lXw' },
+    { id: 'mda-6', title: 'Lecture 6: Python for Data Analysis', duration: '30 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/vK1E-mG0lXw' },
+    { id: 'mda-7', title: 'Lecture 7: Predictive Analytics & Forecasting', duration: '45 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/vK1E-mG0lXw' },
+    { id: 'mda-8', title: 'Lecture 8: Capstone Analytics Project Delivery', duration: '50 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/vK1E-mG0lXw' }
+  ],
+  'ai-for-everyone-complete-guide': [
+    { id: 'afe-1', title: 'Lecture 1: Introduction to the AI Ecosystem', duration: '15 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/S2Y2IPwD77Q' },
+    { id: 'afe-2', title: 'Lecture 2: Using ChatGPT & Claude for Daily Productivity', duration: '20 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/S2Y2IPwD77Q' },
+    { id: 'afe-3', title: 'Lecture 3: Image Generation with Midjourney & DALL-E', duration: '25 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/S2Y2IPwD77Q' },
+    { id: 'afe-4', title: 'Lecture 4: Video Generation Tools (Runway, Sora, Pika)', duration: '30 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/S2Y2IPwD77Q' },
+    { id: 'afe-5', title: 'Lecture 5: Building Websites using No-Code AI tools', duration: '35 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/S2Y2IPwD77Q' },
+    { id: 'afe-6', title: 'Lecture 6: AI Agents, MCP and Automation Pipelines', duration: '45 mins', isFree: false, videoUrl: 'https://www.youtube.com/embed/S2Y2IPwD77Q' }
+  ],
+  'free-data-science-course': [
+    { id: 'fds-1', title: 'Lecture 1: Introduction to Data Science', duration: '20 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/ua-CiDNNj30' },
+    { id: 'fds-2', title: 'Lecture 2: Python basics & programming constructs', duration: '30 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/ua-CiDNNj30' },
+    { id: 'fds-3', title: 'Lecture 3: Pandas and Numpy libraries', duration: '25 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/ua-CiDNNj30' },
+    { id: 'fds-4', title: 'Lecture 4: Statistics for Data Science', duration: '35 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/ua-CiDNNj30' },
+    { id: 'fds-5', title: 'Lecture 5: Machine learning overview', duration: '45 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/ua-CiDNNj30' }
+  ],
+  'free-data-analytics-course': [
+    { id: 'fda-1', title: 'Lecture 1: Python for Data Analysis', duration: '20 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/vK1E-mG0lXw' },
+    { id: 'fda-2', title: 'Lecture 2: SQL and Relational Databases', duration: '30 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/vK1E-mG0lXw' },
+    { id: 'fda-3', title: 'Lecture 3: Data Visualization using Power BI', duration: '35 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/vK1E-mG0lXw' },
+    { id: 'fda-4', title: 'Lecture 4: Tableau Basics for Data Storytelling', duration: '40 mins', isFree: true, videoUrl: 'https://www.youtube.com/embed/vK1E-mG0lXw' }
+  ]
+};
+
+const TabButton = ({ active, label, onClick }) => (
+  <button
+    onClick={onClick}
+    style={{
+      padding: '12px 24px',
+      background: active ? 'var(--red)' : 'var(--bg-secondary)',
+      color: active ? '#fff' : 'var(--text-secondary)',
+      border: 'none',
+      borderRadius: 100,
+      fontWeight: 700,
+      fontSize: 15,
+      cursor: 'pointer',
+      whiteSpace: 'nowrap',
+      transition: 'all 0.2s',
+      boxShadow: active ? '0 4px 15px rgba(237, 28, 36, 0.3)' : 'none'
+    }}
+  >
+    {label}
+  </button>
+);
+
+const Accordion = ({ title, items }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [showMore, setShowMore] = useState(false);
+  const displayItems = showMore ? items : items.slice(0, 3);
+
+  return (
+    <div style={{ borderBottom: '1px solid var(--border-color)', marginBottom: 16 }}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        style={{
+          width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          padding: '20px 0', background: 'none', border: 'none', cursor: 'pointer',
+          fontSize: 18, fontWeight: 800, color: 'var(--text-primary)'
+        }}
+      >
+        {title}
+        {isOpen ? <ChevronUp size={20} color="var(--red)" /> : <ChevronDown size={20} color="#64748b" />}
+      </button>
+      {isOpen && (
+        <div style={{ paddingBottom: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {displayItems.map((item, idx) => (
+            <div key={idx} style={{ padding: '16px 24px', background: 'var(--bg-secondary)', borderRadius: 8, color: 'var(--text-primary)', fontWeight: 600, fontSize: 15, display: 'flex', alignItems: 'center', gap: 12 }}>
+              <FileText size={18} color="var(--red)" />
+              {item}
+            </div>
+          ))}
+          {items.length > 3 && (
+            <button onClick={() => setShowMore(!showMore)} style={{ color: 'var(--red)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignSelf: 'flex-start', marginTop: 8 }}>
+              {showMore ? 'Show Less' : 'Show More'}
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const CourseDetailsPage = ({ courseId, setCurrentPage }) => {
+  const [activeTab, setActiveTab] = useState('Overview');
+  const [apiData, setApiData] = useState(null);
+const [loading, setLoading] = useState(true);
+const [fetchError, setFetchError] = useState(null);
+  const [videoOpen, setVideoOpen] = useState(false);
+  const [overviewShowMore, setOverviewShowMore] = useState(false);
+  const [faqShowMore, setFaqShowMore] = useState(false);
+  const [curriculumShowMore, setCurriculumShowMore] = useState(false);
+
+  const [subjects, setSubjects] = useState([]);
+  const [subjectsLoading, setSubjectsLoading] = useState(false);
+
+  const [features, setFeatures] = useState([]);
+  const [featuresLoading, setFeaturesLoading] = useState(false);
+
+  const [trainingHighlights, setTrainingHighlights] = useState([]);
+  const [toolsList, setToolsList] = useState([]);
+  const [instructorsList, setInstructorsList] = useState([]);
+
+  useEffect(() => {
+    if (!courseId) return;
+
+    // Fetch Course
+    setLoading(true);
+    fetch(`https://iscale-backend.onrender.com/api/course/public-course/${courseId}`)
+      .then((res) => res.json())
+      .then((result) => {
+        setApiData(result.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setFetchError(err.message);
+        setLoading(false);
+      });
+
+    // Fetch Subjects
+    setSubjectsLoading(true);
+    fetch(`https://iscale-backend.onrender.com/api/subject/public-get-subjects/${courseId}`)
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.status && Array.isArray(result.data)) {
+          setSubjects(result.data);
+        } else {
+          setSubjects([]);
+        }
+      })
+      .catch((err) => {
+        setSubjects([]);
+      })
+      .finally(() => {
+        setSubjectsLoading(false);
+      });
+
+    // Fetch Features
+    setFeaturesLoading(true);
+    fetch(`https://iscale-backend.onrender.com/api/features/public-get-all-features/${courseId}`)
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.status && Array.isArray(result.data)) {
+          setFeatures(result.data);
+        } else {
+          setFeatures([]);
+        }
+      })
+      .catch((err) => {
+        console.error("Features API Error:", err);
+        setFeatures([]);
+      })
+      .finally(() => {
+        setFeaturesLoading(false);
+      });
+
+    // Fetch Training Highlights
+    fetch(`https://iscale-backend.onrender.com/api/training/public-get-th/${courseId}`)
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.status && Array.isArray(result.data)) {
+          setTrainingHighlights(result.data);
+        } else {
+          setTrainingHighlights([]);
+        }
+      })
+      .catch((err) => setTrainingHighlights([]));
+
+    // Fetch Tools
+    fetch(`https://iscale-backend.onrender.com/api/tools/public-get-tools/${courseId}`)
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.status && Array.isArray(result.data)) {
+          setToolsList(result.data);
+        } else {
+          setToolsList([]);
+        }
+      })
+      .catch((err) => setToolsList([]));
+
+    // Fetch Instructors
+    fetch(`https://iscale-backend.onrender.com/api/instructors/public-get-all-instructors`)
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.status && Array.isArray(result.data)) {
+          setInstructorsList(result.data);
+        } else {
+          setInstructorsList([]);
+        }
+      })
+      .catch((err) => setInstructorsList([]));
+  }, [courseId]);
+
+
+const getImageUrl = (url) => {
+  if (!url || url === 'N/A') return '';
+  const cleaned = url.replace(/\\/g, '/');
+  return cleaned.startsWith('http') ? cleaned : `https://iscale-backend.onrender.com/${cleaned.replace(/^src\//, '')}`;
+};
+
+const data = {
+  id: apiData?._id || courseId,
+  title: apiData?.title || '',
+  description: apiData?.description || '',
+  thumbnail: getImageUrl(apiData?.banner) || coursesDatabase['data-science-with-generative-ai-course'].thumbnail,
+  videoUrl: apiData?.video_link || coursesDatabase['data-science-with-generative-ai-course'].videoUrl,
+};
+const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-science-with-generative-ai-course'];
+  
+  // Find the requested course, fallback to the generative AI one if unknown
+ 
+  // Player state declarations
+ 
+  
+  const [activeCohortLecture, setActiveCohortLecture] = useState(() => {
+    return currentLectures[0] || null;
+  });
+  const [isPlayingLecture, setIsPlayingLecture] = useState(false);
+
+  const [playlistSearch, setPlaylistSearch] = useState('');
+  const [isBwTheme, setIsBwTheme] = useState(false);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+
+  // Enrollment state
+  const [isEnrolled, setIsEnrolled] = useState(() => {
+    try {
+      const enrolled = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
+      return enrolled.some(c => c.id === data.id);
+    } catch (e) {
+      return false;
+    }
+  });
+
+  // Track completed lectures list
+  const [completedLectures, setCompletedLectures] = useState(() => {
+    try {
+      const stored = localStorage.getItem(`completed_lectures_${data.id}`);
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const [studentName, setStudentName] = useState(() => {
+    try {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        const u = JSON.parse(userStr);
+        if (u && u.name) return u.name;
+      }
+    } catch(e) {}
+    return 'Ridhi Mishra';
+  });
+  useEffect(() => {
+    if (currentLectures && currentLectures.length > 0) {
+      setActiveCohortLecture(currentLectures[0]);
+    } else {
+      setActiveCohortLecture(null);
+    }
+    try {
+      const enrolled = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
+      setIsEnrolled(enrolled.some(c => c.id === data.id));
+    } catch (e) {
+      setIsEnrolled(false);
+    }
+    try {
+      const stored = localStorage.getItem(`completed_lectures_${data.id}`);
+      setCompletedLectures(stored ? JSON.parse(stored) : []);
+    } catch (e) {
+      setCompletedLectures([]);
+    }
+    setPlaylistSearch('');
+  }, [data.id]);
+
+  if (loading) {
+    return <div>Loading Course...</div>;
+  }
+
+  if (fetchError) {
+    return <div>{fetchError}</div>;
+  }
+
+  const isCertUnlocked = isEnrolled && currentLectures.length > 0 && completedLectures.length === currentLectures.length;
+
+  const getVerificationId = () => {
+    let code = 'UPS';
+    if (data.id === 'data-science-with-generative-ai-course') code = 'DAT';
+    else if (data.id === 'master-of-data-analytics-program') code = 'MAS';
+    else if (data.id === 'ai-engineer-advance-program') code = 'AIE';
+    else if (data.id === 'advance-python-with-ai-tools') code = 'PYT';
+    else if (data.id === 'power-bi-tableau-for-data-visualization') code = 'PBT';
+    else if (data.id === 'ai-powered-excel-full-course') code = 'EXC';
+    else if (data.id === 'ai-cohort-course') code = 'AIC';
+    else if (data.id === 'ai-for-everyone-complete-guide') code = 'AFE';
+    else if (data.id === 'free-data-science-course') code = 'FDS';
+    else if (data.id === 'free-data-analytics-course') code = 'FDA';
+    
+    // stable 4-digit code based on the course ID length
+    const hash = ((data.id.length * 7) + 123) % 9000 + 1000;
+    return `ISC-${code}-${hash}`;
+  };
+
+  const handleToggleComplete = (lectureId) => {
+    setCompletedLectures(prev => {
+      const next = prev.includes(lectureId) 
+        ? prev.filter(id => id !== lectureId) 
+        : [...prev, lectureId];
+      
+      localStorage.setItem(`completed_lectures_${data.id}`, JSON.stringify(next));
+
+      // Calculate new progress percentage
+      const percent = currentLectures.length > 0 
+        ? Math.round((next.length / currentLectures.length) * 100) 
+        : 0;
+
+      // Update enrollment progress in enrolled_courses localStorage
+      try {
+        const enrolled = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
+        const updated = enrolled.map(c => {
+          if (c.id === data.id) {
+            return { ...c, progress: percent };
+          }
+          return c;
+        });
+        localStorage.setItem('enrolled_courses', JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+
+      return next;
+    });
+  };
+
+  const handleEnrollClick = () => {
+    // 1. Mark as enrolled in state
+    setIsEnrolled(true);
+
+    // 2. Add course to localStorage enrolled_courses
+    try {
+      const enrolled = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
+      if (!enrolled.some(c => c.id === data.id)) {
+        const newCourse = {
+          id: data.id,
+          title: data.title,
+          category: data.category || 'Data Science',
+          progress: currentLectures.length > 0 
+            ? Math.round((completedLectures.length / currentLectures.length) * 100) 
+            : 0,
+          bgGradient: data.id === 'data-science-with-generative-ai-course' 
+            ? 'linear-gradient(135deg, #ffebee, #ffcdd2)'
+            : 'linear-gradient(135deg, #e0f2fe, #bae6fd)',
+          img: data.thumbnail
+        };
+        enrolled.push(newCourse);
+        localStorage.setItem('enrolled_courses', JSON.stringify(enrolled));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    
+    alert(`Successfully enrolled in "${data.title}"! All lectures are now unlocked.`);
+  };
+
+  // Optional: fallback arrays if data doesn't exist for the other courses yet
+  const curriculum = subjects && subjects.length > 0 
+    ? subjects.map(s => ({ title: s.m_subject_title || s.title || 'Untitled Subject', modules: ['Lecture Video'] }))
+    : [];
+  const details = features && features.length > 0
+    ? features.map(f => ({
+        title: f.m_feature_title || 'Feature',
+        desc: f.m_feature_desc || '',
+        img: getImageUrl(f.m_feature_image)
+      }))
+    : [];
+  const highlights = trainingHighlights && trainingHighlights.length > 0 
+    ? trainingHighlights.map(th => ({ title: th.title || th.m_feature_title || 'Highlight', img: getImageUrl(th.icon || th.m_feature_image) }))
+    : [];
+  const faqs = data.faqs || coursesDatabase['data-science-with-generative-ai-course'].faqs;
+  const certText = data.certificateText || coursesDatabase['data-science-with-generative-ai-course'].certificateText;
+  const certImg = data.certificateImg || coursesDatabase['data-science-with-generative-ai-course'].certificateImg;
+  const videoUrl = data.videoUrl || coursesDatabase['data-science-with-generative-ai-course'].videoUrl;
+  // Normalize common video URLs to embeddable player URLs (YouTube / Vimeo)
+  const getEmbedUrl = (url) => {
+    if (!url) return '';
+    try {
+      const u = new URL(url);
+      const host = u.hostname.replace('www.', '').toLowerCase();
+
+      if (host.includes('youtube.com')) {
+        const v = u.searchParams.get('v');
+        if (v) return `https://www.youtube.com/embed/${v}`;
+        // fallback: convert /watch to /embed
+        return url.replace('/watch', '/embed');
+      }
+
+      if (host === 'youtu.be') {
+        const id = u.pathname.replace('/', '');
+        return `https://www.youtube.com/embed/${id}`;
+      }
+
+      if (host.includes('vimeo.com')) {
+        const parts = u.pathname.split('/');
+        const id = parts.pop() || parts.pop();
+        return `https://player.vimeo.com/video/${id}`;
+      }
+
+      return url;
+    } catch (e) {
+      return url;
+    }
+  };
+
+  const embedUrl = getEmbedUrl(videoUrl);
+  const feesData = data.fees || coursesDatabase['data-science-with-generative-ai-course'].fees;
+  const toolsData = toolsList && toolsList.length > 0
+    ? toolsList.map(t => ({ name: t.title || t.m_tool_title || t.name || 'Tool', img: getImageUrl(t.image || t.m_tool_image || t.icon) }))
+    : [];
+  const instructorsData = instructorsList && instructorsList.length > 0
+    ? instructorsList.map(i => ({ 
+        name: i.m_instructor_name || 'Instructor', 
+        role: 'Mentor', 
+        img: i.m_instructor_profile 
+               ? getImageUrl(i.m_instructor_profile) 
+               : `https://ui-avatars.com/api/?name=${encodeURIComponent(i.m_instructor_name || 'Instructor')}&background=random` 
+      }))
+    : [];
+  const reviewsData = data.reviews || coursesDatabase['data-science-with-generative-ai-course'].reviews;
+
+  const tabs = ['Overview', 'Course Content', 'Details', 'Highlights', 'Certificate', 'FAQ\'s', 'Fees', 'Tools', 'Instructor', 'Review'];
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+    const element = document.getElementById(tab.replace(/['\s]/g, '').toLowerCase());
+    if (element) {
+      const y = element.getBoundingClientRect().top + window.scrollY - 150;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', fontFamily: 'var(--font-body)', paddingBottom: 100 }}>
+      {videoOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.9)', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '80%', maxWidth: 1000, position: 'relative' }}>
+            <button onClick={() => setVideoOpen(false)} style={{ position: 'absolute', top: -40, right: -40, background: 'none', border: 'none', color: '#fff', fontSize: 40, cursor: 'pointer' }}>&times;</button>
+            <div style={{ paddingBottom: '56.25%', position: 'relative', height: 0, overflow: 'hidden' }}>
+              {embedUrl ? (
+                <iframe
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                  src={embedUrl + (embedUrl.includes('?') ? '&autoplay=1' : '?autoplay=1')}
+                  title="Course Video"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>Video unavailable</div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Hero Section */}
+      <section style={{ 
+        background: 'var(--gradient-hero)', 
+        padding: '60px 0',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <div className="container mobile-col" style={{ display: 'flex', gap: 60, alignItems: 'center' }}>
+          
+          {/* Left Content */}
+          <div style={{ flex: 1 }}>
+            <div style={{ color: 'var(--text-secondary)', fontSize: 14, fontWeight: 600, marginBottom: 24 }}>
+              <span style={{ cursor: 'pointer' }} onClick={() => setCurrentPage('home')}>Home</span> 
+              <span style={{ margin: '0 8px' }}>&gt;</span> 
+              <span style={{ color: 'var(--red)' }}>{data.category || 'Data Science Courses'}</span>
+            </div>
+            
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 48, fontWeight: 900, color: 'var(--text-primary)', lineHeight: 1.2, marginBottom: 24 }}>
+              {data.title}
+            </h1>
+            
+            <p style={{ color: 'var(--text-secondary)', fontSize: 16, lineHeight: 1.6, marginBottom: 32, maxWidth: 600 }}>
+              {data.description}
+            </p>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 32 }}>
+              <div style={{ background: '#e0e7ff', color: 'var(--text-primary)', padding: '6px 16px', borderRadius: 100, fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
+                Popular <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>({data.views} No Of Views)</span>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 24, color: 'var(--text-secondary)', fontSize: 14, fontWeight: 500 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Calendar size={16} /> Last updated {data.lastUpdated}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Globe size={16} /> {data.language}</div>
+            </div>
+
+            {/* Course Highlight Chips to fill space */}
+            <div style={{ marginTop: 40, display: 'flex', flexWrap: 'wrap', gap: 14 }}>
+              {[
+                { icon: <ShieldCheck size={18} />, text: "100% Job Assistance" },
+                { icon: <Award size={18} />, text: "Verified Certificate" },
+                { icon: <CheckCircle size={18} />, text: "Real-world Projects" },
+                { icon: <User size={18} />, text: "1-on-1 Mentorship" },
+                { icon: <Video size={18} />, text: "Lifetime Access" }
+              ].map((f, i) => (
+                <div key={i} style={{ 
+                  display: 'flex', alignItems: 'center', gap: 10, padding: '10px 20px', 
+                  borderRadius: 100, fontSize: 13, fontWeight: 700, 
+                  background: 'var(--bg-secondary)', border: '1px solid var(--border-color)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                  animation: `fadeUp 0.6s ${0.2 + (i*0.05)}s ease both`
+                }}>
+                  <div style={{ color: 'var(--red)', display: 'flex' }}>{f.icon}</div>
+                  <span style={{ color: 'var(--text-primary)' }}>{f.text}</span>
+                </div>
+              ))}
+            </div>
+
+          </div>
+
+          {/* Right Content - Video Thumbnail */}
+          <div style={{ width: '100%', maxWidth: 500 }}>
+            <div 
+              onClick={() => setVideoOpen(true)}
+              style={{ 
+                position: 'relative', borderRadius: 16, overflow: 'hidden', 
+                boxShadow: '0 20px 40px rgba(0,0,0,0.1)', marginBottom: 20,
+                cursor: 'pointer', background: '#000'
+              }}
+            >
+              {data.cssThumbnailConfig ? (
+                <div style={{ width: '100%', aspectRatio: '16/9', background: 'linear-gradient(to right, #1a0b16, #000)', position: 'relative', display: 'flex' }}>
+                  {data.cssThumbnailConfig.badge && (
+                    <div style={{ position: 'absolute', top: 12, left: 16, background: '#ef4444', color: '#fff', fontSize: 10, fontWeight: 800, padding: '4px 8px', borderRadius: 4, zIndex: 10 }}>
+                      {data.cssThumbnailConfig.badge}
+                    </div>
+                  )}
+                  <div style={{ flex: 1, padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'center', zIndex: 1, marginTop: data.cssThumbnailConfig.badge ? 20 : 0 }}>
+                    {data.cssThumbnailConfig.lines.map((line, idx) => (
+                      <div key={idx} style={line.style}>{line.text}</div>
+                    ))}
+                  </div>
+                  <div style={{ position: 'absolute', right: 0, top: 0, width: '60%', height: '100%', background: `url(${data.cssThumbnailConfig.bgImage}) center/cover`, opacity: 0.6, clipPath: 'polygon(20% 0, 100% 0, 100% 100%, 0 100%)' }} />
+                </div>
+              ) : data.id === 'master-of-data-analytics-program' ? (
+                <div style={{ width: '100%', aspectRatio: '16/9', background: 'linear-gradient(to right, #450a0a, #000)', position: 'relative', display: 'flex' }}>
+                  <div style={{ flex: 1, padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'center', zIndex: 1 }}>
+                    <div style={{ color: '#fff', fontSize: 26, fontWeight: 900, lineHeight: 1.1, fontFamily: 'var(--font-display)' }}>MASTER OF</div>
+                    <div style={{ color: '#fbbf24', fontSize: 44, fontWeight: 900, lineHeight: 1.1, marginTop: 4, fontFamily: 'var(--font-display)', letterSpacing: -1 }}>DATA<br/>ANALYTICS</div>
+                    <div style={{ color: '#cbd5e1', fontSize: 22, fontWeight: 800, lineHeight: 1.2, marginTop: 8, letterSpacing: 2 }}>PROGRAM</div>
+                  </div>
+                  <div style={{ position: 'absolute', right: 0, top: 0, width: '60%', height: '100%', background: 'url(https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80) center/cover', opacity: 0.6, clipPath: 'polygon(20% 0, 100% 0, 100% 100%, 0 100%)' }} />
+                </div>
+              ) : (
+                <img src={data.thumbnail} alt={data.title} style={{ width: '100%', display: 'block' }} />
+              )}
+              <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ position: 'relative', width: 80, height: 80, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: -20 }}>
+                  <div style={{ position: 'absolute', width: 140, height: 140, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.4)' }} />
+                  <div style={{ position: 'absolute', width: 110, height: 110, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.6)' }} />
+                  <div style={{ position: 'relative', width: 80, height: 80, background: 'var(--card-bg)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 10px 30px rgba(0,0,0,0.2)' }}>
+                    <Play size={32} color="var(--red)" fill="var(--red)" style={{ marginLeft: 4 }} />
+                  </div>
+                </div>
+              </div>
+              <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: 70, background: 'linear-gradient(transparent, rgba(0,0,0,0.9))', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', paddingBottom: 20 }}>
+                <div style={{ color: '#fff', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8, fontSize: 15 }}>
+                  <Eye size={18} /> Preview this course
+                </div>
+              </div>
+            </div>
+
+            <button 
+              onClick={() => {
+                const el = document.getElementById('coursecontent');
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }}
+              style={{ width: '100%', padding: '16px', background: '#0f172a', color: '#fff', borderRadius: 8, fontWeight: 700, fontSize: 16, border: 'none', cursor: 'pointer', marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'all 0.2s' }}
+            >
+              <BookOpen size={20} /> View Course Curriculum
+            </button>
+            {isEnrolled ? (
+              <button 
+                onClick={() => {
+                  const el = document.getElementById('coursecontent');
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }}
+                style={{ width: '100%', padding: '16px', background: '#22c55e', color: '#fff', borderRadius: 8, fontWeight: 700, fontSize: 16, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'all 0.2s', boxShadow: '0 4px 15px rgba(34, 197, 94, 0.3)' }}
+              >
+                Already Enrolled - Resume <Check size={18} />
+              </button>
+            ) : (
+              <button 
+                onClick={handleEnrollClick}
+                className="btn-shine"
+                style={{ width: '100%', padding: '16px', background: 'var(--red)', color: '#fff', borderRadius: 8, fontWeight: 700, fontSize: 16, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'all 0.2s', boxShadow: '0 4px 15px rgba(237, 28, 36, 0.3)' }}
+              >
+                Enroll Now <ArrowRight size={20} />
+              </button>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Tabs Section */}
+      <div style={{ position: 'sticky', top: 70, background: 'var(--nav-bg)', backdropFilter: 'blur(10px)', zIndex: 50, borderBottom: '1px solid var(--border-color)', boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
+        <div className="container">
+          <div style={{ display: 'flex', gap: 16, overflowX: 'auto', padding: '20px 0', scrollbarWidth: 'none' }}>
+            {tabs.map(tab => (
+              <TabButton key={tab} active={activeTab === tab} label={tab} onClick={() => handleTabClick(tab)} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Content Section */}
+      <section style={{ padding: '60px 0' }}>
+        <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: 60 }}>
+          
+          {/* Overview */}
+          <div id="overview" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
+            <div style={{ maxHeight: overviewShowMore ? 'none' : 80, overflow: 'hidden', position: 'relative' }}>
+              <div dangerouslySetInnerHTML={{ __html: data.overviewHtml }} />
+              {!overviewShowMore && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 40, background: 'linear-gradient(transparent, var(--card-bg))' }} />}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 }}>
+              <button onClick={() => setOverviewShowMore(!overviewShowMore)} style={{ color: 'var(--red)', fontWeight: 800, background: 'none', border: 'none', cursor: 'pointer', fontSize: 16 }}>
+                {overviewShowMore ? 'Show Less' : 'Show More'}
+              </button>
+              <button onClick={handleEnrollClick} style={{ background: 'var(--red)', color: '#fff', border: 'none', padding: '10px 24px', borderRadius: 8, fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 15px rgba(237, 28, 36, 0.3)' }}>
+                Enroll Now <ArrowRight size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* Course Content - Curriculum */}
+          <div id="coursecontent" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 32 }}>Course Curriculum</h2>
+            <div>
+              {curriculum && curriculum.length > 0 ? (
+                <>
+                  {curriculum.slice(0, curriculumShowMore ? curriculum.length : 5).map((curr, idx) => (
+                    <Accordion key={idx} title={curr.title} items={curr.modules || ['Lecture Video']} />
+                  ))}
+                  {curriculum.length > 5 && (
+                    <button onClick={() => setCurriculumShowMore(!curriculumShowMore)} style={{ color: 'var(--red)', fontWeight: 800, background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, marginTop: 16 }}>
+                      {curriculumShowMore ? 'Show Less' : 'Show More'}
+                    </button>
+                  )}
+                </>
+              ) : (
+                <p style={{ color: 'var(--text-secondary)' }}>Curriculum details coming soon.</p>
+              )}
+            </div>
+            
+            <div style={{ marginTop: 32, display: 'flex', justifyContent: 'center', gap: 16, borderTop: '1px solid var(--border-color)', paddingTop: 32, flexWrap: 'wrap' }}>
+               <button style={{ background: 'var(--card-bg)', color: 'var(--red)', border: '1px solid var(--red)', padding: '12px 32px', borderRadius: 8, fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8, boxShadow: 'var(--card-shadow)', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.background='var(--red)'; e.currentTarget.style.color='#fff'; }} onMouseLeave={e => { e.currentTarget.style.background='var(--card-bg)'; e.currentTarget.style.color='var(--red)'; }}>
+                 <Download size={18} /> Download Syllabus
+               </button>
+               <button onClick={handleEnrollClick} style={{ background: 'var(--red)', color: '#fff', border: 'none', padding: '12px 32px', borderRadius: 8, fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 15px rgba(237, 28, 36, 0.3)' }}>
+                 Enroll Now <ArrowRight size={18} />
+               </button>
+            </div>
+          </div>
+
+          {/* Tools (Moved up near Curriculum) */}
+          {toolsData && (
+            <div id="tools" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 40 }}>Tools Covered</h2>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 32, justifyContent: 'flex-start' }}>
+                {toolsData.map((tool, idx) => (
+                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                    <img src={tool.img} alt={tool.name} style={{ height: 48, objectFit: 'contain' }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+
+          {/* Course Details List */}
+          <div id="details" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 48 }}>Course Details</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 48 }}>
+              {details.map((detail, idx) => (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
+                  <img src={detail.img} alt={detail.title} style={{ width: 140, height: 110, objectFit: 'contain' }} />
+                  <div style={{ flex: 1, textAlign: 'center' }}>
+                    <h3 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 16, textDecoration: 'underline', textDecorationColor: 'var(--border-color)', textUnderlineOffset: 8 }}>
+                      {detail.title}
+                    </h3>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: 16, lineHeight: 1.6, maxWidth: 600, margin: '0 auto' }}>
+                      {detail.desc}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Highlights */}
+          <div id="highlights" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 48 }}>Highlights</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '40px 24px' }}>
+              {highlights.map((item, idx) => (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <img src={item.img} alt={item.title} style={{ width: 48, height: 48, objectFit: 'contain' }} />
+                  <span style={{ color: 'var(--text-secondary)', fontSize: 16, fontWeight: 500 }}>{item.title}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Certificate */}
+          <div id="certificate" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32, flexWrap: 'wrap', gap: 16 }}>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>Certificate of Completion</h2>
+              {isCertUnlocked ? (
+                <span style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <CheckCircle size={14} /> Unlocked
+                </span>
+              ) : (
+                <span style={{ background: 'rgba(148, 163, 184, 0.1)', color: 'var(--text-secondary)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Lock size={14} /> Locked (Progress: {currentLectures.length > 0 ? Math.round((completedLectures.length / currentLectures.length) * 100) : 0}%)
+                </span>
+              )}
+            </div>
+
+            {isCertUnlocked ? (
+              <div>
+                <div style={{
+                  background: 'rgba(34, 197, 94, 0.04)',
+                  border: '1.5px solid rgba(34, 197, 94, 0.2)',
+                  borderRadius: 16,
+                  padding: 24,
+                  marginBottom: 32,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 16,
+                  color: '#15803d',
+                  textAlign: 'left'
+                }}>
+                  <Sparkles size={28} />
+                  <div>
+                    <h3 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>Congratulations, you have unlocked your certificate!</h3>
+                    <p style={{ fontSize: 13, margin: '4px 0 0 0', opacity: 0.9 }}>Confirm your legal name below to generate your official, shareable credentials.</p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 32, alignItems: 'flex-start' }}>
+                  
+                  {/* Name Input & Info */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, textAlign: 'left' }}>
+                      <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-secondary)' }}>Student Name on Certificate</label>
+                      <input
+                        type="text"
+                        value={studentName}
+                        onChange={(e) => {
+                          setStudentName(e.target.value);
+                          try {
+                            const userStr = localStorage.getItem('user');
+                            if (userStr) {
+                              const u = JSON.parse(userStr);
+                              u.name = e.target.value;
+                              localStorage.setItem('user', JSON.stringify(u));
+                            }
+                          } catch (e) {}
+                        }}
+                        style={{
+                          padding: '12px 16px',
+                          border: '1.5px solid var(--border-color)',
+                          borderRadius: 10,
+                          fontSize: 15,
+                          background: 'var(--bg-secondary)',
+                          color: 'var(--text-primary)',
+                          outline: 'none'
+                        }}
+                        placeholder="Enter your name"
+                      />
+                      <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>Make sure this matches your government ID exactly for official verification.</span>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, borderTop: '1px solid var(--border-color)', paddingTop: 20 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
+                        <span style={{ color: 'var(--text-secondary)' }}>Certificate Status</span>
+                        <span style={{ fontWeight: 700, color: '#22c55e' }}>VERIFIED SECURE</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
+                        <span style={{ color: 'var(--text-secondary)' }}>Verification ID</span>
+                        <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{getVerificationId()}</span>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
+                      <button
+                        onClick={() => {
+                          const printWindow = window.open('', '_blank');
+                          printWindow.document.write(`
+                            <!DOCTYPE html>
+                            <html>
+                              <head>
+                                <title>Verified Certificate - ${studentName}</title>
+                                <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@700;800&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+                                <style>
+                                  body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f0f0; }
+                                  .certificate-container { position: relative; width: 1000px; height: 707px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); background: var(--card-bg); border: 15px double #d4af37; box-sizing: border-box; padding: 30px; text-align: center; font-family: 'Inter', sans-serif; }
+                                  .cert-border { border: 2px solid #ca8a04; height: 100%; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; padding: 30px; position: relative; border-radius: 4px; }
+                                  .cert-title { font-family: 'Poppins', sans-serif; font-size: 38px; color: #ca8a04; font-weight: 800; letter-spacing: 3px; margin: 0 0 5px 0; }
+                                  .cert-subtitle { font-size: 13px; text-transform: uppercase; color: #78350f; letter-spacing: 5px; font-weight: 700; margin-bottom: 30px; }
+                                  .cert-present { font-size: 15px; color: #475569; font-style: italic; margin-bottom: 8px; }
+                                  .cert-name { font-family: 'Great Vibes', cursive; font-size: 58px; color: #0f172a; font-weight: bold; margin: 5px 0 15px 0; }
+                                  .cert-reason { font-size: 13px; color: #475569; max-width: 620px; line-height: 1.6; margin: 0 auto 20px auto; }
+                                  .cert-course { font-family: 'Poppins', sans-serif; font-size: 24px; color: #b45309; font-weight: 700; text-transform: uppercase; margin-bottom: 35px; }
+                                  .cert-meta-row { display: flex; width: 85%; justify-content: space-between; align-items: center; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 15px; }
+                                  .cert-meta-col { display: flex; flex-direction: column; align-items: center; flex: 1; }
+                                  .cert-meta-val { font-size: 13px; font-weight: 700; color: #0f172a; height: 30px; display: flex; align-items: flex-end; }
+                                  .cert-meta-line { width: 80%; height: 1px; background: #cbd5e1; margin: 5px 0; }
+                                  .cert-meta-label { font-size: 10px; text-transform: uppercase; color: #94a3b8; font-weight: 600; }
+                                  .cert-verification-footer { margin-top: 25px; font-size: 9px; color: #94a3b8; font-weight: 500; }
+                                  @media print {
+                                    body { background: none; }
+                                    .certificate-container { box-shadow: none; border: 15px double #d4af37 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                                    @page { size: landscape; margin: 0; }
+                                  }
+                                </style>
+                              </head>
+                              <body>
+                                <div class="certificate-container">
+                                  <div class="cert-border">
+                                    <div class="cert-title">iSCALE LEARNING</div>
+                                    <div class="cert-subtitle">Certificate of Completion</div>
+                                    <div class="cert-present">This is proudly presented to</div>
+                                    <div class="cert-name">${studentName}</div>
+                                    <div class="cert-reason">for successfully finishing all learning modules, capstone assignments, and industry-oriented practical tasks for</div>
+                                    <div class="cert-course">${data.title}</div>
+                                    
+                                    <div class="cert-meta-row">
+                                      <div class="cert-meta-col">
+                                        <div class="cert-meta-val">${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+                                        <div class="cert-meta-line"></div>
+                                        <div class="cert-meta-label">Date of Completion</div>
+                                      </div>
+                                      
+                                      <div class="cert-meta-col" style="margin-top: -30px; margin-bottom: -15px;">
+                                        <svg width="90" height="90" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                          <path d="M40 70 L30 95 L50 88 L70 95 L60 70" fill="#b45309" opacity="0.85" />
+                                          <path d="M50 70 L42 95 L50 90 L58 95 L50 70" fill="#d97706" />
+                                          <path d="M50 10 L54 22 L66 18 L64 30 L75 30 L70 41 L79 47 L70 55 L75 66 L64 66 L66 78 L54 74 L50 86 L46 74 L34 78 L36 66 L25 66 L30 55 L21 47 L30 41 L25 30 L36 30 L34 18 L46 22 Z" fill="url(#goldGrad)" />
+                                          <circle cx="50" cy="48" r="28" fill="url(#goldGradSec)" stroke="#9a7b56" stroke-width="1.5" />
+                                          <circle cx="50" cy="48" r="24" fill="none" stroke="#fff" stroke-width="1" stroke-dasharray="3 2" opacity="0.8" />
+                                          <polygon points="50,38 52,43 57,43 53,46 55,51 50,48 45,51 47,46 43,43 48,43" fill="#78350f" />
+                                          <text x="50" y="60" font-family="'Inter', sans-serif" font-size="6" font-weight="bold" fill="#78350f" text-anchor="middle">iSCALE</text>
+                                          <text x="50" y="67" font-family="'Inter', sans-serif" font-size="5" font-weight="bold" fill="#b45309" text-anchor="middle">OFFICIAL SEAL</text>
+                                          <defs>
+                                            <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                              <stop offset="0%" stop-color="#fef08a" />
+                                              <stop offset="50%" stop-color="#ca8a04" />
+                                              <stop offset="100%" stop-color="#854d0e" />
+                                            </linearGradient>
+                                            <linearGradient id="goldGradSec" x1="0%" y1="100%" x2="100%" y2="0%">
+                                              <stop offset="0%" stop-color="#ca8a04" />
+                                              <stop offset="50%" stop-color="#fef08a" />
+                                              <stop offset="100%" stop-color="#ca8a04" />
+                                            </linearGradient>
+                                          </defs>
+                                        </svg>
+                                      </div>
+                                      
+                                      <div class="cert-meta-col">
+                                        <div class="cert-meta-val">
+                                          <svg width="100" height="32" viewBox="0 0 150 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M10 35 Q30 10 50 35 T90 20 T130 38 M30 30 L120 30" stroke="#1e40af" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9" />
+                                            <path d="M45 20 Q60 5 70 25 T100 20" stroke="#1e40af" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.8" />
+                                          </svg>
+                                        </div>
+                                        <div class="cert-meta-line"></div>
+                                        <div class="cert-meta-label">Director, iSCALE Learning</div>
+                                      </div>
+                                    </div>
+                                    
+                                    <div class="cert-verification-footer">
+                                      Verification ID: <span style="font-weight: 700; color: #475569;">${getVerificationId()}</span> &bull; Verified Online at: <span style="font-weight: 700; color: #475569;">iscale-learning.com/verify</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <script>
+                                  window.onload = function() {
+                                    window.print();
+                                    setTimeout(function() { window.close(); }, 500);
+                                  }
+                                </script>
+                              </body>
+                            </html>
+                          `);
+                          printWindow.document.close();
+                        }}
+                        style={{
+                          background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
+                          color: '#fff',
+                          padding: '12px 24px',
+                          borderRadius: 8,
+                          fontSize: 14,
+                          fontWeight: 700,
+                          border: 'none',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                          boxShadow: '0 4px 14px rgba(217, 119, 6, 0.25)'
+                        }}
+                      >
+                        <Printer size={16} /> Print Official Copy
+                      </button>
+
+                      <button
+                        onClick={() => setCurrentPage(`verify-certificate?id=${getVerificationId()}`)}
+                        style={{
+                          background: 'var(--card-bg)',
+                          color: 'var(--text-secondary)',
+                          padding: '12px 24px',
+                          borderRadius: 8,
+                          fontSize: 14,
+                          fontWeight: 700,
+                          border: '1.5px solid var(--border-color)',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8
+                        }}
+                      >
+                        <ShieldCheck size={16} color="#d97706" /> Verify Online
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* HTML Preview representation of Certificate */}
+                  <div style={{
+                    border: '8px double #d4af37',
+                    background: 'var(--card-bg)',
+                    borderRadius: 16,
+                    padding: '24px 20px',
+                    textAlign: 'center',
+                    position: 'relative',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minHeight: 320,
+                    boxSizing: 'border-box',
+                    width: '100%',
+                    maxWidth: 420,
+                    margin: '0 auto'
+                  }}>
+                    {/* Inner gold frame line */}
+                    <div style={{
+                      border: '1px solid #ca8a04',
+                      padding: '16px 12px',
+                      width: '100%',
+                      height: '100%',
+                      boxSizing: 'border-box',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      borderRadius: 8
+                    }}>
+                      <h4 style={{ fontFamily: 'var(--font-display)', color: '#ca8a04', fontSize: 14, fontWeight: 800, letterSpacing: 1.5, margin: '0 0 2px 0' }}>iSCALE LEARNING</h4>
+                      <span style={{ fontSize: 8, letterSpacing: 2, fontWeight: 700, textTransform: 'uppercase', color: '#78350f', marginBottom: 10 }}>Certificate of Completion</span>
+                      <span style={{ fontSize: 9, fontStyle: 'italic', color: 'var(--text-secondary)' }}>This is proudly presented to</span>
+                      <h2 style={{ fontFamily: "'Great Vibes', cursive", fontSize: 28, color: 'var(--text-primary)', margin: '2px 0 6px 0', fontWeight: 'bold' }}>{studentName}</h2>
+                      <p style={{ fontSize: 8, color: 'var(--text-secondary)', maxWidth: 280, margin: '0 auto 6px auto', lineHeight: 1.3 }}>
+                        for successfully finishing all learning modules and industry-oriented practical tasks for
+                      </p>
+                      <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', marginBottom: 12 }}>{data.title}</div>
+                      
+                      {/* Compact Footer: 3 Columns (Date, Seal, Signature) */}
+                      <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-color)', paddingTop: 8, marginTop: 'auto' }}>
+                        {/* Date */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+                          <span style={{ fontSize: 8, fontWeight: 700, color: 'var(--text-secondary)' }}>
+                            {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </span>
+                          <span style={{ fontSize: 6, color: '#94a3b8', textTransform: 'uppercase', marginTop: 2 }}>Date</span>
+                        </div>
+
+                        {/* Gold Seal SVG */}
+                        <div style={{ flex: 0.8, display: 'flex', justifyContent: 'center', marginTop: -15, marginBottom: -10 }}>
+                          <svg width="45" height="45" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M40 70 L30 95 L50 88 L70 95 L60 70" fill="#b45309" opacity="0.85" />
+                            <path d="M50 70 L42 95 L50 90 L58 95 L50 70" fill="#d97706" />
+                            <path d="M50 10 L54 22 L66 18 L64 30 L75 30 L70 41 L79 47 L70 55 L75 66 L64 66 L66 78 L54 74 L50 86 L46 74 L34 78 L36 66 L25 66 L30 55 L21 47 L30 41 L25 30 L36 30 L34 18 L46 22 Z" fill="url(#previewGoldGrad)" />
+                            <circle cx="50" cy="48" r="28" fill="url(#previewGoldGradSec)" stroke="#9a7b56" stroke-width="1.5" />
+                            <polygon points="50,38 52,43 57,43 53,46 55,51 50,48 45,51 47,46 43,43 48,43" fill="#78350f" />
+                            <defs>
+                              <linearGradient id="previewGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#fef08a" />
+                                <stop offset="50%" stop-color="#ca8a04" />
+                                <stop offset="100%" stop-color="#854d0e" />
+                              </linearGradient>
+                              <linearGradient id="previewGoldGradSec" x1="0%" y1="100%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#ca8a04" />
+                                <stop offset="50%" stop-color="#fef08a" />
+                                <stop offset="100%" stop-color="#ca8a04" />
+                              </linearGradient>
+                            </defs>
+                          </svg>
+                        </div>
+
+                        {/* Signature */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+                          <div style={{ height: 16, display: 'flex', alignItems: 'flex-end' }}>
+                            <svg width="50" height="18" viewBox="0 0 150 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M10 35 Q30 10 50 35 T90 20 T130 38 M30 30 L120 30" stroke="#1e40af" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.9" />
+                              <path d="M45 20 Q60 5 70 25 T100 20" stroke="#1e40af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.8" />
+                            </svg>
+                          </div>
+                          <span style={{ fontSize: 6, color: '#94a3b8', textTransform: 'uppercase', marginTop: 2 }}>Director Signature</span>
+                        </div>
+                      </div>
+
+                      {/* Small Footer ID */}
+                      <span style={{ fontSize: 7, color: '#94a3b8', marginTop: 10 }}>ID: {getVerificationId()}</span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            ) : (
+              /* Locked Screen */
+              <div style={{ display: 'flex', gap: 40, alignItems: 'center', flexWrap: 'wrap', textAlign: 'left' }}>
+                <div style={{ flex: 1, minWidth: 280 }}>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: 16, lineHeight: 1.8, marginBottom: 24 }}>{certText}</p>
+                  
+                  <div style={{
+                    background: 'var(--bg-secondary)',
+                    border: '1px solid var(--border-color)',
+                    padding: 20,
+                    borderRadius: 16,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12
+                  }}>
+                    <Lock size={20} style={{ color: 'var(--red)' }} />
+                    <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-secondary)' }}>
+                      Complete 100% of the lectures in the playlist player above to unlock and claim your verified certificate.
+                    </span>
+                  </div>
+                </div>
+                <div style={{ width: 340, position: 'relative', margin: '0 auto' }}>
+                  <img src={certImg} alt="Certificate" style={{ width: '100%', borderRadius: 8, filter: 'blur(3px) grayscale(100%)', opacity: 0.6, boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }} />
+                  <div style={{
+                    position: 'absolute',
+                    top: 0, left: 0, right: 0, bottom: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'rgba(255,255,255,0.4)',
+                    borderRadius: 8
+                  }}>
+                    <div style={{
+                      width: 48, height: 48, borderRadius: '50%',
+                      background: 'var(--card-bg)', boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: 'var(--text-secondary)'
+                    }}>
+                      <Lock size={20} />
+                    </div>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginTop: 8, background: 'var(--card-bg)', padding: '4px 8px', borderRadius: 4 }}>Locked</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* FAQ moved below Instructor */}
+
+        </div>
+      </section>
+
+      {/* Fees */}
+      {feesData && (
+        <section id="fees" style={{ padding: '60px 0', background: 'var(--card-bg)', borderTop: '1px solid var(--border-color)' }}>
+          <div className="container" style={{ background: 'var(--red)', borderRadius: 24, padding: 48, boxShadow: '0 20px 60px rgba(237,28,36,0.2)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: '#fff' }}>Fees</h2>
+              <button style={{ background: 'var(--card-bg)', color: 'var(--red)', border: 'none', padding: '12px 24px', borderRadius: 8, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Download size={18} /> Download Fee Structure
+              </button>
+            </div>
+
+            <div style={{ background: 'var(--card-bg)', borderRadius: 16, overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
+                <thead>
+                  <tr>
+                    <th style={{ padding: 24, textAlign: 'left', borderBottom: '2px solid var(--border-color)', color: 'var(--text-primary)', fontSize: 18, width: '40%' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 6px)', gap: 2 }}>
+                          <div style={{ width: 6, height: 6, background: '#2dd4bf', borderRadius: '50%' }}></div>
+                          <div style={{ width: 6, height: 6, background: '#2dd4bf', borderRadius: '50%' }}></div>
+                          <div style={{ width: 6, height: 6, background: '#2dd4bf', borderRadius: '50%' }}></div>
+                          <div style={{ width: 6, height: 6, background: '#2dd4bf', borderRadius: '50%' }}></div>
+                        </div>
+                        FEATURES
+                      </div>
+                    </th>
+                    <th style={{ padding: 24, borderBottom: '2px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
+                      <div style={{ color: '#2dd4bf', fontSize: 18, fontWeight: 800 }}>★ BASIC</div>
+                    </th>
+                    <th style={{ padding: 24, borderBottom: '2px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
+                      <div style={{ color: '#d97706', fontSize: 18, fontWeight: 800 }}>👑 PREMIUM</div>
+                    </th>
+                    <th style={{ padding: 24, borderBottom: '2px solid var(--border-color)', borderLeft: '1px solid var(--border-color)', background: 'var(--bg-secondary)', position: 'relative' }}>
+                      <div style={{ position: 'absolute', top: -16, left: '50%', transform: 'translateX(-50%)', background: 'var(--card-bg)', border: '1px solid #8b5cf6', color: '#8b5cf6', padding: '4px 12px', borderRadius: 100, fontSize: 10, fontWeight: 800, whiteSpace: 'nowrap' }}>★ MOST POPULAR</div>
+                      <div style={{ color: '#8b5cf6', fontSize: 18, fontWeight: 800 }}>💎 PRO</div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {feesData.features.map((feat, idx) => (
+                    <tr key={idx}>
+                      <td style={{ padding: '16px 24px', textAlign: 'left', borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)', fontSize: 14, fontWeight: 500 }}>
+                        {feat.name}
+                      </td>
+                      <td style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
+                        {typeof feat.basic === 'boolean' ? (feat.basic ? <CheckCircle color="#2dd4bf" size={20} /> : <XCircle color="#cbd5e1" size={20} />) : <span style={{ color: '#2dd4bf', fontWeight: 600 }}>{feat.basic}</span>}
+                      </td>
+                      <td style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
+                        {typeof feat.premium === 'boolean' ? (feat.premium ? <CheckCircle color="#d97706" size={20} /> : <XCircle color="#cbd5e1" size={20} />) : <span style={{ color: '#d97706', fontWeight: 600 }}>{feat.premium}</span>}
+                      </td>
+                      <td style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)', background: 'var(--bg-secondary)' }}>
+                        {typeof feat.pro === 'boolean' ? (feat.pro ? <CheckCircle color="#8b5cf6" size={20} /> : <XCircle color="#cbd5e1" size={20} />) : <span style={{ color: '#8b5cf6', fontWeight: 600 }}>{feat.pro}</span>}
+                      </td>
+                    </tr>
+                  ))}
+                  <tr>
+                    <td style={{ padding: 24, textAlign: 'left', borderBottom: '1px solid var(--border-color)' }}></td>
+                    <td style={{ padding: 24, borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
+                      <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)' }}>{feesData.basic.price}</div>
+                      <button style={{ background: 'var(--card-bg)', border: '1px solid #2dd4bf', color: '#2dd4bf', padding: '8px 24px', borderRadius: 8, fontWeight: 700, marginTop: 12, cursor: 'pointer' }}>Get Started</button>
+                    </td>
+                    <td style={{ padding: 24, borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
+                      <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)' }}>{feesData.premium.price}</div>
+                      <button style={{ background: '#d97706', border: 'none', color: '#fff', padding: '8px 24px', borderRadius: 8, fontWeight: 700, marginTop: 12, cursor: 'pointer' }}>Go Premium</button>
+                    </td>
+                    <td style={{ padding: 24, borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)', background: 'var(--bg-secondary)' }}>
+                      <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)' }}>{feesData.pro.price}</div>
+                      <button style={{ background: '#8b5cf6', border: 'none', color: '#fff', padding: '8px 24px', borderRadius: 8, fontWeight: 700, marginTop: 12, cursor: 'pointer' }}>Choose Pro</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <div style={{ marginTop: 40, color: '#fff' }}>
+              <h3 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Program Fees- Indian Residents</h3>
+              <p style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>INR 29,999 (Incl. Taxes)*</p>
+              <p style={{ fontSize: 14, opacity: 0.9 }}>No Cost EMI options available.</p>
+              <div style={{ marginTop: 16 }}>
+                <button style={{ background: 'var(--card-bg)', color: 'var(--red)', border: 'none', padding: '12px 32px', borderRadius: 8, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, float: 'right', marginTop: -40 }}>
+                  <CreditCard size={18} /> Pay Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Tools Section moved into Course Content left column */}
+
+      {/* Instructor */}
+      {instructorsData && (
+        <section id="instructor" style={{ padding: '60px 0' }}>
+          <div className="container" style={{ background: 'var(--card-bg)', borderRadius: 24, padding: 48, boxShadow: 'var(--card-shadow)' }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 40 }}>Instructor</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 24 }}>
+              {instructorsData.map((inst, idx) => (
+                <div key={idx} style={{ border: '1px solid var(--border-color)', borderRadius: 16, padding: 32, textAlign: 'center', boxShadow: '0 4px 15px rgba(0,0,0,0.02)', background: 'var(--card-bg)' }}>
+                  <div style={{ width: 140, height: 140, margin: '0 auto 16px auto', backgroundColor: '#f3e8ff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 10 }}>
+                    <img src={inst.img} alt={inst.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  </div>
+                  <h3 style={{ fontSize: 20, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 4 }}>{inst.name}</h3>
+                  <p style={{ color: 'var(--red)', fontSize: 14, fontWeight: 600, marginBottom: 16 }}>{inst.role}</p>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40, background: 'var(--bg-secondary)', borderRadius: '50%', color: '#0077b5' }}>
+                    <i className="fab fa-linkedin-in"></i>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* FAQ's (Moved down after Instructor) */}
+      <section id="faq" style={{ padding: '60px 0', background: 'var(--bg-secondary)' }}>
+        <div className="container" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 32 }}>FAQ's</h2>
+          <div>
+            {faqs.slice(0, faqShowMore ? faqs.length : 3).map((faq, idx) => (
+              <Accordion key={idx} title={faq.q} items={[faq.a]} />
+            ))}
+          </div>
+          {faqs.length > 3 && (
+            <button onClick={() => setFaqShowMore(!faqShowMore)} style={{ color: 'var(--red)', fontWeight: 800, background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, marginTop: 16 }}>
+              {faqShowMore ? 'Show Less' : 'Show More'}
+            </button>
+          )}
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      {reviewsData && (
+        <section id="review" style={{ padding: '60px 0', background: 'var(--bg-primary)' }}>
+          <div className="container" style={{ background: 'var(--card-bg)', borderRadius: 24, padding: 48, boxShadow: 'var(--card-shadow)' }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 40 }}>Testimonials</h2>
+            <div style={{ display: 'flex', gap: 24, overflowX: 'auto', paddingBottom: 24, scrollbarWidth: 'none' }}>
+              {reviewsData.map((rev, idx) => (
+                <div key={idx} style={{ flexShrink: 0, width: 260, padding: 24, background: 'var(--card-bg)', borderRadius: 24, border: '1px solid var(--border-color)', textAlign: 'center', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
+                  <img src={rev.img} alt={rev.name} style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', margin: '0 auto 20px auto', display: 'block', border: '4px solid #f8fafc' }} />
+                  <h4 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{rev.name}</h4>
+                  <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 20 }}>Placed at</p>
+                  <img src={rev.companyImg} alt="Company Logo" style={{ height: 40, width: 'auto', objectFit: 'contain', margin: '0 auto', display: 'block' }} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Related Courses */}
+      <section style={{ padding: '60px 0' }}>
+        <div className="container">
+          <div style={{ color: 'var(--red)', fontSize: 12, fontWeight: 800, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 8 }}>Top Course</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)' }}>More Course By <span style={{ color: 'var(--red)' }}>{data.category || 'Data Science Courses'}</span></h2>
+            <button style={{ border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: '10px 24px', borderRadius: 100, fontWeight: 600, color: 'var(--text-secondary)', cursor: 'pointer' }}>View All Course</button>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 32 }}>
+            {[1, 2, 3].map((_, i) => (
+              <div key={i} style={{ background: 'var(--card-bg)', borderRadius: 16, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', border: '1px solid var(--border-color)' }}>
+                <img src="https://www.theiscale.com/myadmin/uploads/courses/Data_science_Course_paid_compressed.png" alt="Course" style={{ width: '100%', height: 200, objectFit: 'cover' }} />
+                <div style={{ padding: 24 }}>
+                  <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 12 }}>AI Engineer Advance Program</h3>
+                  <div style={{ display: 'flex', gap: 16, color: 'var(--text-secondary)', fontSize: 12, marginBottom: 24 }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Eye size={14} /> 230</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Calendar size={14} /> 365 Days</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ fontWeight: 800, fontSize: 20, color: 'var(--text-primary)' }}>₹33,999</span>
+                      <span style={{ textDecoration: 'line-through', color: '#94a3b8', fontSize: 14 }}>₹34,999</span>
+                    </div>
+                    <button style={{ color: 'var(--text-primary)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      Learn More <ArrowRight size={16} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+    </div>
+  );
+};
+
+export default CourseDetailsPage;
+
+
+
+ 

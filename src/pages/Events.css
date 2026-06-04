@@ -1,15 +1,16 @@
 .events-page-container {
-  background-color: #fafbfc;
+  background: var(--bg-primary);
   min-height: 100vh;
   padding-bottom: 80px;
 }
 
 /* Banner Section */
 .events-banner {
-  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+  background: var(--gradient-hero);
   padding: 80px 0;
   position: relative;
   overflow: hidden;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .events-banner .container {
@@ -19,19 +20,19 @@
 
 .breadcrumb-nav {
   font-size: 14px;
-  color: #555;
+  color: var(--text-secondary);
   margin-bottom: 15px;
 }
 
 .breadcrumb-nav span {
-  color: #888;
+  color: var(--text-muted);
   margin: 0 8px;
 }
 
 .page-title {
   font-size: 48px;
   font-weight: 800;
-  color: #111;
+  color: var(--text-primary);
   margin-bottom: 15px;
   font-family: var(--font-display);
 }
@@ -40,11 +41,12 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   padding: 6px 16px;
   border-radius: 50px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   backdrop-filter: blur(5px);
   margin-top: 10px;
 }
@@ -69,28 +71,28 @@
   width: 130px;
   min-width: 130px;
   height: 130px;
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-  border: 1px solid #f0f0f0;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border-color);
 }
 
 .event-day {
   font-size: 42px;
   font-weight: 800;
   line-height: 1;
-  color: #111;
+  color: var(--text-primary);
   font-family: var(--font-display);
 }
 
 .event-month {
   font-size: 16px;
   font-weight: 600;
-  color: #666;
+  color: var(--text-secondary);
   text-transform: uppercase;
   margin-bottom: 8px;
 }
@@ -98,7 +100,7 @@
 .event-status {
   font-size: 11px;
   font-weight: 700;
-  background: #f5f5f5;
+  background: var(--bg-secondary);
   color: var(--red);
   padding: 4px 12px;
   border-radius: 20px;
@@ -108,19 +110,19 @@
 
 .event-card {
   flex: 1;
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  box-shadow: var(--card-shadow);
   overflow: hidden;
   display: flex;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--border-color);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .event-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-  border-color: #eee;
+  border-color: var(--red);
 }
 
 .event-image {
@@ -139,7 +141,7 @@
 .event-meta {
   display: flex;
   gap: 20px;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
   margin-bottom: 15px;
   font-weight: 500;
@@ -154,7 +156,7 @@
 .event-title {
   font-size: 24px;
   font-weight: 700;
-  color: #111;
+  color: var(--text-primary);
   margin-bottom: 24px;
   font-family: var(--font-display);
   line-height: 1.3;
@@ -162,7 +164,7 @@
 
 .event-divider {
   height: 1px;
-  background: #eee;
+  background: var(--border-color);
   width: 100%;
   margin-bottom: 24px;
 }
@@ -175,7 +177,7 @@
 
 .event-enrolled {
   font-size: 15px;
-  color: #555;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
@@ -186,9 +188,9 @@
 }
 
 .event-btn {
-  background: #fff;
-  color: #555;
-  border: 1px solid #ddd;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   padding: 10px 24px;
   border-radius: 50px;
   font-size: 14px;
@@ -200,8 +202,9 @@
 }
 
 .event-card:hover .event-btn {
-  background: #f5f5f5;
-  border-color: #ccc;
+  background: var(--red);
+  color: #fff;
+  border-color: var(--red);
 }
 
 @media (max-width: 991px) {
