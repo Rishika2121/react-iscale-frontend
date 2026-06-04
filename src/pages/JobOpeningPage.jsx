@@ -18,7 +18,7 @@ const JobOpeningPage = ({ setCurrentPage }) => {
   const fetchJobs = async (useFilters = false) => {
     setLoading(true);
     try {
-      let url = 'https://iscale-backend.onrender.com/api/comp-requirement/user-get-all-jobs?page=1';
+      let url = 'https://iscale-backend.onrender.com/api/comp-requirement/user-get-all-jobs?page=1&limit=100';
       
       if (useFilters) {
         if (location) url += `&location=${encodeURIComponent(location)}`;

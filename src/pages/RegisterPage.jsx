@@ -14,7 +14,7 @@ const RegisterPage = ({ setCurrentPage }) => {
     email: '',
     password: '',
     gender: 'male',
-    agreed: false
+    agreed: true
   });
   const [otpSent, setOtpSent] = useState(false);
   const [sendingOtp, setSendingOtp] = useState(false);
@@ -81,9 +81,12 @@ const RegisterPage = ({ setCurrentPage }) => {
             lname: form.lastName,
             email: form.email,
             password: form.password,
-            contact: form.contact,
-            whatsapp: form.contact, // Default whatsapp same as contact for simple flow
-            gender: form.gender
+            contact: Number(form.contact.replace(/\D/g, '')) || 0,
+            whatsapp: Number(form.contact.replace(/\D/g, '')) || 0,
+            gender: form.gender,
+            c_current_state: "000000000000000000000000",
+            c_current_city: "000000000000000000000000",
+            c_user_refer_by: "000000000000000000000000"
           }),
         }
       );
@@ -110,7 +113,7 @@ const RegisterPage = ({ setCurrentPage }) => {
     }
   };
 
-  const isStep2Valid = form.firstName && form.lastName && form.email && form.password;
+  const isStep2Valid = form.firstName && form.lastName && form.email && form.password && form.agreed;
 
   return (
     <div className="bg-dots" style={{ minHeight: '90vh', background: 'var(--gradient-hero)', display: 'flex', alignItems: 'center', padding: '40px 0', color: 'var(--text-primary)' }}>
@@ -193,18 +196,13 @@ const RegisterPage = ({ setCurrentPage }) => {
               <p style={{ color: 'var(--text-secondary)', marginBottom: 28, fontSize: 14 }}>Enter your mobile number to authenticate with a secure OTP.</p>
 
               <div style={{ marginBottom: 24 }}>
-                <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 500 }}>Mobile Number or Email *</label>
+                <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 500 }}>Mobile Number *</label>
                 <div style={{ position: 'relative', display: 'flex', gap: 10 }}>
                   <div style={{ position: 'relative', flex: 1 }}>
-                    {form.contact.includes('@') ? (
-                      <Mail size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                    ) : (
-                      <Phone size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                    )}
+                    <Phone size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                     <input
                       type="text"
-                      placeholder="Enter mobile or email"
-                      disabled={otpSent}
+                      placeholder="Enter mobile number"
                       value={form.contact}
                       onChange={e => setForm({ ...form, contact: e.target.value })}
                       style={{

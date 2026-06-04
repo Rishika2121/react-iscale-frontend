@@ -1,70 +1,45 @@
-import React, { useEffect } from 'react';
-
-const clientsData = [
-  {
-    "name": "PhonePe",
-    "desc": "PhonePe is an Indian digital payments and financial services company headquartered in Bengaluru, Karnataka, India.",
-    "logo": "https://www.theiscale.com/myadmin/uploads/more/phonepay1.png"
-  },
-  {
-    "name": "Good Glamm Group",
-    "desc": "The Good Glamm Group is a content-to-commerce company that produces and sells personal care and cosmetic products, with operations in India, Dubai, Singapore, and the USA.",
-    "logo": "https://www.theiscale.com/myadmin/uploads/more/good_glam1.png"
-  },
-  {
-    "name": "Cultsports",
-    "desc": "At cult.fit, we make group workouts fun, daily food healthy & tasty, mental fitness easy with yoga & meditation, and medical & lifestyle care hassle-free.",
-    "logo": "https://www.theiscale.com/myadmin/uploads/more/cutsports1.png"
-  },
-  {
-    "name": "TATA 1mg",
-    "desc": "Tata 1mg, previously 1mg, is a healthcare platform based in Gurugram, India. It provides services, including e-pharmacy, diagnostics, e-consultation, and health content.",
-    "logo": "https://www.theiscale.com/myadmin/uploads/more/tata1mg1.png"
-  },
-  {
-    "name": "Ultravoilette Automotive",
-    "desc": "We live by design, technology and user experience. We are mavericks from across aerospace, automotive engineering and consumer electronics. Our sole mission in life - to redefine mobility.",
-    "logo": "https://www.theiscale.com/myadmin/uploads/more/ultraviolette.png"
-  },
-  {
-    "name": "Paisa bazar",
-    "desc": "Paisabazaar aims to make personal finance decisions easy, transparent and convenient for India. Through technology and data innovations, along with a lot of hard work, we intend to make complex decisions simple for you.",
-    "logo": "https://www.theiscale.com/myadmin/uploads/more/paisa_bazar1.png"
-  },
-  {
-    "name": "Baxy Mobility",
-    "desc": "BAXY Mobility has been consistently leading India's three wheeler industry. A decade ago, BAXY Pvt Ltd ventured into the domain with a goal to redefine quality and economics of three-wheeled vehicles.",
-    "logo": "https://www.theiscale.com/myadmin/uploads/more/Baxy_Group.png"
-  },
-  {
-    "name": "Magenta Mobility",
-    "desc": "Integrated electric mobility, EV charging, and technology platform Magenta aims to revolutionize and aggregate the urban freight & transportation segment.",
-    "logo": "https://www.theiscale.com/myadmin/uploads/more/megenta1.png"
-  },
-  {
-    "name": "Airblack Technologies Pvt. Ltd.",
-    "desc": "We are entrepreneurs, designers, hackers, artists and engineers on a mission to help people convert their passion to a livelihood.",
-    "logo": "https://www.theiscale.com/myadmin/uploads/more/airblack.png"
-  },
-  {
-    "name": "Omega Seiki Mobility",
-    "desc": "Omega Seiki Mobility represents speed, agility & capable leadership. Founded in 2016, and backed by years of capability in creating precision engineering solutions, Omega Seiki Mobility has become sy",
-    "logo": "https://www.theiscale.com/myadmin/uploads/more/omega_seiki_mobiity.png"
-  },
-  {
-    "name": "Planet Spark",
-    "desc": "PlanetSpark is on a journey to make the traditional and unorganized tuitions obsolete through its virtual classroom.",
-    "logo": "https://www.theiscale.com/myadmin/uploads/more/planetspark2.png"
-  },
-  {
-    "name": "Ola Electric",
-    "desc": "Ola has carved itself a name by being India's largest mobility platform and one of the world's largest ride-hailing companies.",
-    "logo": "https://www.theiscale.com/myadmin/uploads/more/OLA_Electric.png"
-  }
-];
+import React, { useState, useEffect } from 'react';
 
 const ClientsPage = () => {
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  const [clientsData, setClientsData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => { 
+    window.scrollTo(0, 0); 
+    
+    fetch('https://iscale-backend.onrender.com/api/client/public-get-all-client?page=1&limit=10')
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+        return res.json();
+      })
+      .then(result => {
+        // Handle pagination structure (e.g., result.data.docs or result.data)
+        const clientsArray = Array.isArray(result.data?.docs) ? result.data.docs : (Array.isArray(result.data) ? result.data : []);
+        
+        if (result.status && clientsArray.length > 0) {
+          const mappedClients = clientsArray.map(item => {
+            const getImageUrl = (url) => {
+              if (!url || url === 'N/A') return '';
+              const cleaned = url.replace(/\\/g, '/');
+              return cleaned.startsWith('http') ? cleaned : `https://iscale-backend.onrender.com/${cleaned.replace(/^src\//, '')}`;
+            };
+            return {
+              name: item.clientName || item.name || item.c_client_name || 'Partner Client',
+              desc: item.description || item.desc || item.c_client_description || 'A valuable partner of our ecosystem.',
+              logo: getImageUrl(item.logo || item.image || item.c_client_logo) || 'https://www.theiscale.com/myadmin/uploads/more/phonepay1.png'
+            };
+          });
+          setClientsData(mappedClients);
+        } else {
+          throw new Error("Empty or invalid API data");
+        }
+      })
+      .catch(err => {
+        // Silently catch error
+        setClientsData([]);
+      })
+      .finally(() => setLoading(false));
+  }, []);
   return (
     <div className="bg-dots" style={{ minHeight: '100vh', background: 'var(--bg-secondary)', paddingBottom: 80, color: 'var(--text-primary)' }}>
       {/* Header Banner */}

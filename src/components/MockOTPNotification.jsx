@@ -3,12 +3,7 @@ import { MessageSquare, Mail, X } from 'lucide-react';
 
 const MockOTPNotification = ({ isVisible, contact, otp, onClose }) => {
   useEffect(() => {
-    if (isVisible) {
-      const timer = setTimeout(() => {
-        if (onClose) onClose();
-      }, 6000); // Auto dismiss after 6 seconds
-      return () => clearTimeout(timer);
-    }
+    // Keep notification visible until user manually closes it
   }, [isVisible, onClose]);
 
   if (!isVisible) return null;
@@ -64,7 +59,7 @@ const MockOTPNotification = ({ isVisible, contact, otp, onClose }) => {
           </div>
           
           <div style={{ fontSize: 14, color: 'var(--text-primary)', lineHeight: 1.4 }}>
-            Your iScale verification code is <strong style={{ fontSize: 16, letterSpacing: 1 }}>{otp}</strong>. Do not share this code with anyone.
+            Your iScale verification code is <strong style={{ fontSize: 16, letterSpacing: 1, userSelect: 'all', background: 'rgba(0,0,0,0.05)', padding: '2px 6px', borderRadius: 4 }}>{otp}</strong>. Do not share this code with anyone.
           </div>
         </div>
 

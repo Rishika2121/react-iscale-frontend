@@ -652,7 +652,7 @@ const LatestUpdates = ({ setCurrentPage }) => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch('https://iscale-backend.onrender.com/api/comp-requirement/user-get-all-jobs?page=1');
+        const response = await fetch('https://iscale-backend.onrender.com/api/comp-requirement/user-get-all-jobs?page=1&limit=100', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
         const data = await response.json();
         if (data && Array.isArray(data.data)) {
           setJobs(data.data.slice(0, 9));
@@ -746,7 +746,7 @@ const PopularCourses = ({ setCurrentPage }) => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch('https://iscale-backend.onrender.com/api/course/public-all-courses');
+        const response = await fetch('https://iscale-backend.onrender.com/api/course/public-all-courses?page=1&limit=100', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
         const data = await response.json();
         
         if (data && Array.isArray(data.data)) {
@@ -1113,54 +1113,86 @@ const ExpertsSection = ({ setCurrentPage }) => {
   );
 };
 
-/* ── Company Logos Marquee ── */
-const companies = ['BAXY', 'magenta', 'airblack', 'OSM', 'planetspark', 'OLA ELECTRIC', 'Deloitte', 'Accenture', 'Reliance', 'Flipkart'];
+const CompanyMarquee = ({ setCurrentPage }) => {
+  const [companies, setCompanies] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-const CompanyMarquee = ({ setCurrentPage }) => (
-  <section style={{ padding: '60px 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', overflow: 'hidden', color: 'var(--text-primary)' }}>
-    <div className="container">
-      <div style={{ textAlign: 'center', marginBottom: 12 }}>
-        <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '4px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700 }}>TOP COMPANIES</span>
+  useEffect(() => {
+    fetch('https://iscale-backend.onrender.com/api/client/public-get-client-images?page=1&limit=100', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+      .then(res => {
+        if (!res.ok) throw new Error('API failed');
+        return res.json();
+      })
+      .then(result => {
+        const arr = result.data?.docs || result.data || [];
+        if (Array.isArray(arr) && arr.length > 0) {
+          const mapped = arr.map(item => {
+            const getImageUrl = (url) => {
+              if (!url || url === 'N/A') return '';
+              const cleaned = url.replace(/\\/g, '/');
+              return cleaned.startsWith('http') ? cleaned : `https://iscale-backend.onrender.com/${cleaned.replace(/^src\//, '')}`;
+            };
+            return {
+               name: item.name || item.c_client_name || 'Client',
+               logo: getImageUrl(item.logo || item.image || item.c_client_logo)
+            };
+          });
+          setCompanies(mapped);
+        } else {
+          setCompanies([]);
+        }
+      })
+      .catch(() => setCompanies([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  return (
+    <section style={{ padding: '60px 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', overflow: 'hidden', color: 'var(--text-primary)' }}>
+      <div className="container">
+        <div style={{ textAlign: 'center', marginBottom: 12 }}>
+          <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '4px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700 }}>TOP COMPANIES</span>
+        </div>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 36, fontWeight: 800, textAlign: 'center', marginBottom: 40, color: 'var(--text-primary)' }}>
+          For <span style={{ color: 'var(--red)' }}>Placement</span> Opportunities
+        </h2>
       </div>
-      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 36, fontWeight: 800, textAlign: 'center', marginBottom: 40, color: 'var(--text-primary)' }}>
-        For <span style={{ color: 'var(--red)' }}>Placement</span> Opportunities
-      </h2>
-    </div>
-    <div style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
-      <div style={{ display: 'inline-flex', gap: 40, animation: 'marquee 20s linear infinite' }}>
-        {[...companies, ...companies].map((c, i) => (
-          <div key={i} style={{
-            padding: '12px 28px', background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 12,
-            boxShadow: 'var(--card-shadow)', display: 'inline-flex', alignItems: 'center',
-            fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--text-primary)',
-            whiteSpace: 'nowrap', minWidth: 140, justifyContent: 'center'
-          }}>
-            {c}
+      
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '20px 0' }}>Loading partners...</div>
+      ) : companies.length > 0 ? (
+        <div style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
+          <div style={{ display: 'inline-flex', gap: 40, animation: 'marquee 20s linear infinite' }}>
+            {[...companies, ...companies, ...companies].map((c, i) => (
+              <div key={i} style={{
+                padding: '12px 28px', background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 12,
+                boxShadow: 'var(--card-shadow)', display: 'inline-flex', alignItems: 'center',
+                fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--text-primary)',
+                whiteSpace: 'nowrap', minWidth: 140, justifyContent: 'center', minHeight: 60
+              }}>
+                {c.logo ? <img src={c.logo} alt={c.name} style={{ maxHeight: 30, maxWidth: 100, objectFit: 'contain' }} /> : c.name}
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
+      ) : (
+        <div style={{ textAlign: 'center', padding: '20px 0', color: 'var(--text-secondary)' }}>
+          (No client images available from API yet)
+        </div>
+      )}
+
+      <div style={{ textAlign: 'center', marginTop: 32 }}>
+        <button 
+          onClick={() => setCurrentPage('placement')}
+          style={{ padding: '12px 32px', background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', border: '1px solid var(--border-color)', borderRadius: 8, fontWeight: 700, fontSize: 15, cursor: 'pointer', transition: 'all 0.3s', boxShadow: 'var(--card-shadow)' }}
+          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.background = 'rgba(237, 28, 36, 0.15)'; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.background = 'rgba(237, 28, 36, 0.08)'; }}
+        >View All Our Clients</button>
       </div>
-    </div>
-    <div style={{ textAlign: 'center', marginTop: 32 }}>
-      <button 
-        onClick={() => setCurrentPage('placement')}
-        style={{ padding: '12px 32px', background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', border: '1px solid var(--border-color)', borderRadius: 8, fontWeight: 700, fontSize: 15, cursor: 'pointer', transition: 'all 0.3s', boxShadow: 'var(--card-shadow)' }}
-        onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.background = 'rgba(237, 28, 36, 0.15)'; }}
-        onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.background = 'rgba(237, 28, 36, 0.08)'; }}
-      >View More</button>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 /* ── Interactive Success Stories (Rebuilt from Screenshot) ── */
-const rebuiltSuccessStories = [
-  { id: 1, type: 'featured', name: 'Manas Jyoti Borah', company: 'The GoodGlamm GROUP', feedback: "A big thank you to 'The iSCALE' for a successful placement. Educator's and Placement team support's a lot!", ytLink: 'https://www.youtube.com/embed/g-mq68g01q4', img: 'https://www.theiscale.com/myadmin/uploads/more/manas.png' },
-  { id: 2, type: 'grid', name: 'ADITYA', company: 'Network Tech', role: 'Data Analyst', ytLink: 'https://www.youtube.com/shorts/RUNeRI_RJTk', img: 'https://www.theiscale.com/myadmin/uploads/more/Aditya_student_.jpeg' },
-  { id: 3, type: 'grid', name: 'AMIT', company: 'Top MNC', role: 'Data Analyst', ytLink: 'https://www.youtube.com/shorts/9K24kWRTXUM', img: 'https://www.theiscale.com/myadmin/uploads/more/Amit.jpeg' },
-  { id: 4, type: 'grid', name: 'SHUBHAM', company: 'Tech', role: 'Software Engineer', ytLink: 'https://www.youtube.com/shorts/gQsslKsEr-Q', img: 'https://www.theiscale.com/myadmin/uploads/more/shubham1.png' },
-  { id: 5, type: 'grid', name: 'AMAN', company: 'Accenture', role: 'Analyst', ytLink: 'https://www.youtube.com/shorts/Y1TduDsF844', img: 'https://www.theiscale.com/myadmin/uploads/more/aman.png' },
-  { id: 6, type: 'grid', name: 'SURYAKANT', company: 'fiserv', role: 'Developer', ytLink: 'https://www.youtube.com/shorts/7VRhjPYJjZI', img: 'https://www.theiscale.com/myadmin/uploads/more/suryakant.png' },
-];
-
 const SuccessStoryGridCard = ({ item }) => {
   return (
     <a 
@@ -1204,8 +1236,49 @@ const SuccessStoryGridCard = ({ item }) => {
 };
 
 export const SuccessStories = ({ setCurrentPage }) => {
-  const featured = rebuiltSuccessStories[0];
-  const gridItems = rebuiltSuccessStories.slice(1);
+  const [stories, setStories] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('https://iscale-backend.onrender.com/api/success-story/public-all-ss?page=1&limit=100&search=shreya', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+      .then(res => res.json())
+      .then(result => {
+        const arr = result.data?.docs || result.data || [];
+        if (Array.isArray(arr) && arr.length > 0) {
+          const mapped = arr.map((item, idx) => {
+            let videoUrl = item.videoUrl || item.url || item.c_ss_video_url || item.c_ss_link || '';
+            if (videoUrl.includes('watch?v=')) videoUrl = videoUrl.replace('watch?v=', 'embed/');
+            if (videoUrl.includes('youtu.be/')) videoUrl = videoUrl.replace('youtu.be/', 'youtube.com/embed/');
+            if (videoUrl.includes('/shorts/')) videoUrl = videoUrl.replace('/shorts/', '/embed/');
+
+            const getImageUrl = (url) => {
+              if (!url || url === 'N/A') return 'https://ui-avatars.com/api/?name=User&background=random';
+              const cleaned = url.replace(/\\/g, '/');
+              return cleaned.startsWith('http') ? cleaned : `https://iscale-backend.onrender.com/${cleaned.replace(/^src\//, '')}`;
+            };
+
+            return {
+              id: item._id || idx,
+              type: idx === 0 ? 'featured' : 'grid',
+              name: item.name || item.studentName || item.c_ss_name || item.c_ss_student_name || 'Student',
+              company: item.company || item.companyName || item.c_ss_company || 'Partner Company',
+              role: item.role || item.c_ss_role || 'Placed Student',
+              feedback: item.feedback || item.c_ss_feedback || 'Grateful for the support from the placement team!',
+              ytLink: videoUrl,
+              img: getImageUrl(item.image || item.c_ss_image)
+            };
+          });
+          setStories(mapped);
+        }
+      })
+      .catch(() => setStories([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading || stories.length === 0) return null; // Hide if no data
+
+  const featured = stories[0];
+  const gridItems = stories.slice(1);
 
   return (
     <section style={{ padding: '50px 0', background: 'var(--gradient-pink)' }}>
@@ -1431,58 +1504,77 @@ const AlliedColleges = ({ setCurrentPage }) => {
 };
 
 /* ── Latest News & Updates ── */
-const newsData = [
-  { 
-    img: 'https://images.unsplash.com/photo-1593642532744-d377abf07dc6?auto=format&fit=crop&w=800&q=80',
-    title: 'The iScale received recognition from Indian Startup News', 
-    desc: 'Entrackr | The Karo Startup | Read Article', 
-    link: '/news-details' 
-  },
-  { 
-    img: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
-    title: 'The iScale was recognized by 14th President of India Shri Ram Nath Kovind.', 
-    desc: 'Our founders Miss. Swati & Mr. Nishant Dhote', 
-    link: '/news-details' 
-  },
-  { 
-    img: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=800&q=80',
-    title: 'In India Financial Gap Problem is bigger which gives birth to the Skill Gap Problem.', 
-    desc: 'Josh Talks Speaker | Founder The iScale', 
-    link: '/news-details' 
-  },
-];
+const NewsUpdates = ({ setCurrentPage }) => {
+  const [newsList, setNewsList] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-const NewsUpdates = ({ setCurrentPage }) => (
+  useEffect(() => {
+    fetch('https://iscale-backend.onrender.com/api/news&updates/public-all-news&updates?page=1&limit=100', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+      .then(res => res.json())
+      .then(result => {
+        const arr = result.data?.docs || result.data || [];
+        if (Array.isArray(arr) && arr.length > 0) {
+          const mapped = arr.map(item => {
+            const getImageUrl = (url) => {
+              if (!url || url === 'N/A') return 'https://images.unsplash.com/photo-1593642532744-d377abf07dc6?auto=format&fit=crop&w=800&q=80';
+              const cleaned = url.replace(/\\/g, '/');
+              return cleaned.startsWith('http') ? cleaned : `https://iscale-backend.onrender.com/${cleaned.replace(/^src\//, '')}`;
+            };
+            return {
+              title: item.title || item.m_news_title || 'News Update',
+              desc: item.desc || item.description || item.m_news_desc || 'Read more about this latest update.',
+              link: item.link || item.url || item.m_news_link || '/news-details',
+              img: getImageUrl(item.image || item.img || item.m_news_image)
+            };
+          });
+          setNewsList(mapped);
+        } else {
+          setNewsList([]);
+        }
+      })
+      .catch(() => setNewsList([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  return (
   <section style={{ padding: '60px 0', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
     <div className="container" style={{ maxWidth: 1100, margin: '0 auto' }}>
       <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 800, textAlign: 'center', marginBottom: 40, color: 'var(--text-primary)' }}>
         Latest <span style={{ color: 'var(--red)' }}>News & Updates</span>
       </h2>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, justifyContent: 'center' }}>
-        {newsData.map((news, idx) => (
-          <div key={idx} className="premium-card hover-glow" style={{ 
-            background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 8, overflow: 'hidden',
-            boxShadow: 'var(--card-shadow)', display: 'flex', flexDirection: 'column'
-          }}>
-            <div style={{ width: '100%', height: 300, overflow: 'hidden' }}>
-              <img src={news.img} alt={news.title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
-            </div>
-            
-            <div style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12, lineHeight: 1.4 }}>{news.title}</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 20, flex: 1 }}>{news.desc}</p>
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '20px 0' }}>Loading news...</div>
+      ) : newsList.length > 0 ? (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, justifyContent: 'center' }}>
+          {newsList.map((news, idx) => (
+            <div key={idx} className="premium-card hover-glow" style={{ 
+              background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 8, overflow: 'hidden',
+              boxShadow: 'var(--card-shadow)', display: 'flex', flexDirection: 'column'
+            }}>
+              <div style={{ width: '100%', height: 300, overflow: 'hidden' }}>
+                <img src={news.img} alt={news.title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
+              </div>
               
-              <a href={news.link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text-secondary)', fontWeight: 600, fontSize: 13, textDecoration: 'none', transition: 'color 0.2s' }}
-                 onMouseEnter={e => e.currentTarget.style.color = 'var(--red)'}
-                 onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}
-              >
-                Learn More <ArrowRight size={14} />
-              </a>
+              <div style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12, lineHeight: 1.4 }}>{news.title}</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 20, flex: 1 }}>{news.desc}</p>
+                
+                <a href={news.link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text-secondary)', fontWeight: 600, fontSize: 13, textDecoration: 'none', transition: 'color 0.2s' }}
+                   onMouseEnter={e => e.currentTarget.style.color = 'var(--red)'}
+                   onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}
+                >
+                  Learn More <ArrowRight size={14} />
+                </a>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div style={{ textAlign: 'center', padding: '20px 0', color: 'var(--text-secondary)' }}>
+          No news available yet.
+        </div>
+      )}
       
       <div style={{ textAlign: 'center', marginTop: 20 }}>
         <button 
@@ -1500,7 +1592,8 @@ const NewsUpdates = ({ setCurrentPage }) => (
       </div>
     </div>
   </section>
-);
+  );
+};
 
 /* ── We've been in the news! ── */
 const mediaMentions = [
@@ -1602,19 +1695,37 @@ const TalkToTeam = ({ setCurrentPage }) => (
   </section>
 );
 
-/* ── Allied Colleges Section ── */
-const alliedCollegesData = [
-  { name: 'Mandsaur University', img: MandsaurImg },
-  { name: 'Silver Oak University', img: 'https://www.theiscale.com/myadmin/uploads/more/Silver_Oak_University.png' },
-  { name: 'Lokmanya Tilak College of Engineering', img: 'https://www.theiscale.com/myadmin/uploads/more/Lokmanya_Tilak_College_of_Engineering_,_Navi_Mumbai_logo.png' },
-  { name: 'Rajkiya Engineering College', img: 'https://www.theiscale.com/myadmin/uploads/more/Rajkiya_Engineering_College_Ambedkar_Nagar.png' },
-  { name: 'MGM Group of Institutions', img: 'https://www.theiscale.com/myadmin/uploads/more/MGMs_College_of_Engineering_and_Technology_logo.png' },
-  { name: 'D J Sanghvi College', img: DJSanghviImg },
-  { name: 'HRIT Group', img: HRITImg },
-  { name: 'Medi-Caps', img: MediCapsImg },
-];
+const AlliedCollegesSection = ({ setCurrentPage }) => {
+  const [colleges, setColleges] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-const AlliedCollegesSection = ({ setCurrentPage }) => (
+  useEffect(() => {
+    fetch('https://iscale-backend.onrender.com/api/allied/public-all-allied?page=1&limit=100', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+      .then(res => res.json())
+      .then(result => {
+        const arr = result.data?.docs || result.data || [];
+        if (Array.isArray(arr) && arr.length > 0) {
+          const mapped = arr.map(item => {
+            const getImageUrl = (url) => {
+              if (!url || url === 'N/A') return '';
+              const cleaned = url.replace(/\\/g, '/');
+              return cleaned.startsWith('http') ? cleaned : `https://iscale-backend.onrender.com/${cleaned.replace(/^src\//, '')}`;
+            };
+            return {
+              name: item.m_allied_title || item.name || 'Allied College',
+              img: getImageUrl(item.m_allied_logo || item.image || item.logo)
+            };
+          });
+          setColleges(mapped);
+        } else {
+          setColleges([]);
+        }
+      })
+      .catch(() => setColleges([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  return (
   <section className="reveal" style={{ padding: '50px 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
     <div className="container">
       <div style={{ textAlign: 'center', marginBottom: 12 }}>
@@ -1622,8 +1733,11 @@ const AlliedCollegesSection = ({ setCurrentPage }) => (
       </div>
       <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 800, textAlign: 'center', marginBottom: 24, color: 'var(--text-primary)' }}>Allied Colleges</h2>
 
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '20px 0' }}>Loading allied colleges...</div>
+      ) : colleges.length > 0 ? (
       <AutoSlider 
-        items={alliedCollegesData} 
+        items={colleges} 
         speed={40} 
         direction="left"
         gap={24}
@@ -1644,6 +1758,11 @@ const AlliedCollegesSection = ({ setCurrentPage }) => (
           </div>
         )}
       />
+      ) : (
+        <div style={{ textAlign: 'center', padding: '20px 0', color: 'var(--text-secondary)' }}>
+          No allied colleges available yet.
+        </div>
+      )}
       
       <div style={{ textAlign: 'center', marginTop: 48 }}>
         <button 
@@ -1657,7 +1776,8 @@ const AlliedCollegesSection = ({ setCurrentPage }) => (
       </div>
     </div>
   </section>
-);
+  );
+};
 
 /* Portfolio section removed from HomePage, kept on CourseDetailsPage */
 

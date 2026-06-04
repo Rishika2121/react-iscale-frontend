@@ -10,8 +10,17 @@ const PlacementTalksPage = ({ setCurrentPage }) => {
 
   React.useEffect(() => {
     setLoading(true);
-    fetch('https://iscale-backend.onrender.com/api/ppt/public-get-ppts')
-      .then(res => res.json())
+    const token = localStorage.getItem('token');
+    
+    fetch('https://iscale-backend.onrender.com/api/ppt/public-get-ppts', {
+      headers: {
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      }
+    })
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+        return res.json();
+      })
       .then(result => {
         if (result.status && Array.isArray(result.data)) {
           const mappedTalks = result.data.map(item => {
@@ -21,10 +30,10 @@ const PlacementTalksPage = ({ setCurrentPage }) => {
               return cleaned.startsWith('http') ? cleaned : `https://iscale-backend.onrender.com/${cleaned.replace(/^src\//, '')}`;
             };
             return {
-              image1: getImageUrl(item.m_pre_image),
+             image1: getImageUrl(item.m_pre_image),
               name: item.m_pre_name || 'Guest Speaker',
               role: item.m_pre_designation || 'Speaker',
-              image2: getImageUrl(item.m_pre_company_img),
+             image2: getImageUrl(item.m_pre_company_logo),
               company: item.m_pre_company || '',
               link: item.m_pre_video_link || '#'
             };
@@ -35,7 +44,7 @@ const PlacementTalksPage = ({ setCurrentPage }) => {
         }
       })
       .catch(err => {
-        console.error('PPT API Error:', err);
+        // Suppress console error to keep console clean, set talks to empty array
         setTalks([]);
       })
       .finally(() => setLoading(false));

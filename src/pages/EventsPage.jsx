@@ -138,7 +138,7 @@ const EventsPage = ({ setCurrentPage }) => {
             <div style={{ textAlign: 'center', padding: 40, width: '100%' }}>No events found.</div>
           ) : (
             events.map((evt, index) => (
-              <div key={index} className="event-row reveal" style={{ transitionDelay: `${(index % 5) * 50}ms` }}>
+              <div key={index} className="event-row animate-fadeUp" style={{ opacity: 0, animationDelay: `${(index % 5) * 50}ms` }}>
                 <div className="event-date-card">
                   <span className="event-day">{evt.day}</span>
                   <span className="event-month">{evt.month}</span>
