@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowRight, ChevronLeft, ChevronRight, Star, Play, CheckCircle, Users, BookOpen, Award, TrendingUp, Sparkles, Gift, Layers, Brain, BarChart2, Check, Phone, Clock, Globe, Video } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight, Star, Play, CheckCircle, Users, BookOpen, Award, TrendingUp, Sparkles, Gift, Layers, Brain, BarChart2, Check, Phone, Clock, Globe, Video, Eye, Calendar, Zap } from 'lucide-react';
 import useReveal from '../hooks/useReveal';
 import DataAnalyticsImg from '../assets/Data_Analytics_paid_compressed.png';
 import MandsaurImg from '../assets/Mandsaur_University_logo.png';
@@ -376,19 +376,22 @@ const Hero = ({ setCurrentPage }) => {
       <div className="container mobile-col" style={{ position: 'relative', zIndex: 1, display: 'flex', gap: 60, alignItems: 'center' }}>
         {/* Left content */}
         <div style={{ flex: 1, animation: 'fadeUp 0.7s ease forwards', width: '100%' }}>
-          <div className="glass-card" style={{
+          <div className="glass-card hover-glow" style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
             borderRadius: 100, padding: '8px 18px',
-            marginBottom: 28, boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-            fontSize: 14, fontWeight: 600, color: 'var(--text-secondary)'
+            marginBottom: 24, border: '1px solid rgba(237, 28, 36, 0.3)',
+            boxShadow: '0 4px 20px rgba(237, 28, 36, 0.15)'
           }}>
-            <Award size={16} color="var(--red)" /> Upskilling millions for tech readiness
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--red)', boxShadow: '0 0 10px var(--red)' }} />
+            <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: 0.5, color: 'var(--text-primary)' }}>
+              <span className="text-gradient">iSCALE Upskilling</span>
+            </span>
           </div>
 
-          <h1 style={{ fontSize: 'clamp(30px, 8vw, 56px)', fontWeight: 800, lineHeight: 1.15, marginBottom: 24, wordBreak: 'break-word', hyphens: 'auto' }}>
-            India's Trusted{' '}
+          <h1 style={{ fontSize: 'clamp(30px, 8vw, 56px)', fontWeight: 800, lineHeight: 1.15, marginBottom: 24, wordBreak: 'break-word', hyphens: 'auto', color: 'var(--text-primary)' }}>
+            <span className="hero-text-gradient">India's Trusted</span>{' '}
             <span className="animated-text-gradient">Upskilling &<br />E-Learning</span>{' '}
-            Platform for<br />Future Readiness.
+            <span className="future-readiness-text">Platform for<br />Future Readiness.</span>
           </h1>
 
           <p style={{ color: 'var(--text-secondary)', fontSize: 16, lineHeight: 1.6, marginBottom: 36, maxWidth: 520 }}>
@@ -530,97 +533,75 @@ const getYtVideoId = (url) => {
   return '';
 };
 
-/* ── Student Testimonials ── */
-const testimonialVideos = [
-  { video: 'abhinandan_short_for_website.mov', ytLink: 'https://www.youtube.com/shorts/HCQZefa6sZ0' },
-  { video: 'isha_short_for_website.mov', ytLink: 'https://www.youtube.com/shorts/g-mq68g01q4' },
-  { video: 'Abhishek_short_for_website.mov', ytLink: 'https://www.youtube.com/shorts/Tsz599KMhFg' },
-  { video: 'aditya_short_for_website.mov', ytLink: 'https://www.youtube.com/shorts/RUNeRI_RJTk' },
-  { video: 'Shiva_Prasad_short_for_website.mov', ytLink: 'https://www.youtube.com/shorts/fyDH1A9PM6E' },
-  { video: 'rohit_short_for_website.mov', ytLink: 'https://www.youtube.com/shorts/ydsy68hZZ9s' },
-  { video: 'Risabh_short_for_website.mov', ytLink: 'https://www.youtube.com/shorts/QhV3XV3H3bI' },
-  { video: 'swapnil_short_for_website.mov', ytLink: 'https://www.youtube.com/shorts/wUl57Dnug10' },
-  { video: 'Amit_short_for_website.mov', ytLink: 'https://www.youtube.com/shorts/9K24kWRTXUM' },
-  { video: 'Satish_Narwade_short_for_Website.mov', ytLink: 'https://www.youtube.com/shorts/ys_HeTrwuVo' },
-  { video: 'mayur_short_for_website.mov', ytLink: 'https://www.youtube.com/shorts/aWNs5K5__r4' },
-  { video: 'Raj_Rajak_short_for_website.mov', ytLink: 'https://www.youtube.com/shorts/pt3vt-V8S6M' },
-  { video: 'Abkash_Short_for_Website.mov', ytLink: 'https://www.youtube.com/shorts/tZh1PFRdp68' },
-  { video: 'gaurav_short_for_website.mov', ytLink: 'https://www.youtube.com/shorts/WA8sdZPhF8Q' },
-  { video: 'mayurash_short_for_website.mov', ytLink: 'https://www.youtube.com/shorts/Np4YMar2ikQ' },
-  { video: 'Laxmi_Nayak_short_for_website.mov', ytLink: 'https://www.youtube.com/shorts/CBajJDIhVPE' },
-  { video: 'Munna_Short_for_website.mov', ytLink: 'https://www.youtube.com/shorts/kYp4oCNLNwU' },
-  { video: 'Rukhsar_Shor_for_Website.mov', ytLink: 'https://www.youtube.com/shorts/e6ISquijgnI' },
-  { video: 'Amit_Short_for_Website.mov', ytLink: 'https://www.youtube.com/shorts/N8bbojrdvwA' },
-  { video: 'Yuvraj_short_for_website.mov', ytLink: 'https://www.youtube.com/shorts/GEsRrHmtt0k' },
-  { video: 'Mahendra_short_for_website.mov', ytLink: 'https://www.youtube.com/shorts/ify7LBNBttU' },
-  { video: 'Yogesh_Short_for_Website.mov', ytLink: 'https://www.youtube.com/shorts/AO9p-55o2UM' },
-  { video: 'Sanjay_Testimonial_Short_for_Website.mov', ytLink: 'https://www.youtube.com/shorts/xmh3TnoOr3o' },
-  { video: 'Shubham_Testimonial_Short_for_Website.mov', ytLink: 'https://www.youtube.com/shorts/gQsslKsEr-Q' },
-  { video: 'Krunal_Short_for_Website.mov', ytLink: 'https://www.youtube.com/shorts/Y1TduDsF844' },
-  { video: 'Kartik_short_for_Website-1.mov', ytLink: 'https://www.youtube.com/shorts/F95x1cB6aaA' },
-  { video: 'Micheal_Shorrt_for_Website.mov', ytLink: 'https://www.youtube.com/watch?v=mneeIHg0L6M' },
-  { video: 'Student_Shorts_9.mov', ytLink: 'https://www.youtube.com/watch?v=vu2TvJXMXCY' },
-  { video: 'Student_Shorts_6.mov', ytLink: 'https://www.youtube.com/watch?v=pVz7InS29Qw' },
-  { video: 'Student_Shorts_11.mov', ytLink: 'https://www.youtube.com/watch?v=kXDIOvTXLQE' },
-  { video: 'Student_Shorts_5.mov', ytLink: 'https://www.youtube.com/watch?v=6Bwd5RRLJps' },
-  { video: 'Student_Shorts_7.mov', ytLink: 'https://www.youtube.com/watch?v=d-mpauGxxBg' },
-  // { video: 'Student_Shorts_3.mov', ytLink: 'https://www.youtube.com/shorts/T1EXdCBLUok' },
-  { video: 'Student_Shorts_8.mov', ytLink: 'https://www.youtube.com/watch?v=ROgY3-4RDfQ' },
-  { video: 'Student_Shorts_4.mov', ytLink: 'https://www.youtube.com/watch?v=8-kAhYnd7xk' },
-  { video: 'Student_Shorts_1-1.mov', ytLink: 'https://www.youtube.com/shorts/_fDE0Z-Go9A' },
-  { video: 'Student_Shorts_10.mov', ytLink: 'https://www.youtube.com/watch?v=fTJtzMPAMhI' },
-  { video: 'Student_Shorts_2.mov', ytLink: 'https://www.youtube.com/shorts/17OxKf3TDLE' }
-];
-
 const TestimonialVideoCard = ({ item }) => {
-  const videoId = getYtVideoId(item.ytLink);
- const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
- 
- 
- return (
-    <a 
-      href={item.ytLink}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{ 
-        width: 220, 
-        height: 380, 
-        borderRadius: 16, 
-        overflow: 'hidden', 
-        boxShadow: '0 8px 24px rgba(0,0,0,0.15)', 
-        background: '#000',
-        flexShrink: 0, 
-        position: 'relative', 
-        border: '3px solid var(--border-color)',
-        cursor: 'pointer',
-        display: 'block',
-        transition: 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
-      }}
-      onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
-      onMouseLeave={e => e.currentTarget.style.transform = 'none'}
-    >
-      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-        <img 
-          src={thumbnailUrl} 
-          alt="Student Testimonial Preview" 
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          loading="lazy"
-        />
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.35)' }} />
-        
-        <div style={{
-          position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-          background: 'var(--red)', color: '#fff', width: 48, height: 48, borderRadius: '50%',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(237, 28, 36, 0.4)'
-        }}>
-          <Play size={18} fill="#fff" style={{ marginLeft: 2 }} />
+  const cardStyle = {
+    width: 220, height: 380, borderRadius: 16, overflow: 'hidden', 
+    boxShadow: '0 8px 24px rgba(0,0,0,0.15)', background: '#000',
+    flexShrink: 0, position: 'relative', border: '3px solid var(--border-color)',
+    cursor: 'pointer', display: 'block', transition: 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+  };
+  
+  const playBtnStyle = {
+    position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+    background: 'var(--red)', color: '#fff', width: 48, height: 48, borderRadius: '50%',
+    display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(237, 28, 36, 0.4)'
+  };
+
+  if (item.m_st_url) {
+    const videoId = getYtVideoId(item.m_st_url);
+    const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : '';
+    return (
+      <a href={item.m_st_url} target="_blank" rel="noopener noreferrer" style={cardStyle} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform = 'none'}>
+        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+          <img src={thumbnailUrl} alt="Student Testimonial Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.35)' }} />
+          <div style={playBtnStyle}><Play size={18} fill="#fff" style={{ marginLeft: 2 }} /></div>
         </div>
-      </div>
-    </a>
-  );
+      </a>
+    );
+  }
+
+  if (item.m_st_video) {
+    const videoSrc = `https://iscale-backend.onrender.com/${item.m_st_video.replace(/\\/g, '/').replace('src/', '')}`;
+    return (
+      <a href={videoSrc} target="_blank" rel="noopener noreferrer" style={cardStyle} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform = 'none'}>
+        <div style={{ position: 'relative', width: '100%', height: '100%', background: '#000' }}>
+          <video src={videoSrc} style={{ width: '100%', height: '100%', objectFit: 'cover' }}></video>
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.35)' }} />
+          <div style={playBtnStyle}><Play size={18} fill="#fff" style={{ marginLeft: 2 }} /></div>
+        </div>
+      </a>
+    );
+  }
+
+  return null;
 };
 
-const TestimonialsSection = () => {
+const TestimonialsSection = ({ setCurrentPage }) => {
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('https://iscale-backend.onrender.com/api/stdtestimonials/user-get-stdtestimonials')
+      .then(res => res.json())
+      .then(result => {
+        const arr = result.data?.docs || result.data || result || [];
+        if (Array.isArray(arr) && arr.length > 0) {
+          let validItems = arr.filter(item => item.m_st_url || item.m_st_video);
+          if (validItems.length > 0) {
+            let repeated = [...validItems];
+            // Ensure there are enough items to fill the screen for the infinite slider
+            while (repeated.length < 12) {
+              repeated = [...repeated, ...validItems];
+            }
+            setVideos(repeated);
+          }
+        }
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <section className="reveal" style={{ padding: '50px 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', overflow: 'hidden', color: 'var(--text-primary)' }}>
       <div className="container" style={{ position: 'relative' }}>
@@ -629,14 +610,36 @@ const TestimonialsSection = () => {
         </div>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 800, textAlign: 'center', marginBottom: 24, color: 'var(--text-primary)' }}>Students Testimonials</h2>
 
-        <AutoSlider 
-          items={testimonialVideos} 
-          speed={40} 
-          gap={16}
-          renderItem={(item, index) => (
-            <TestimonialVideoCard key={index} item={item} />
-          )}
-        />
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-secondary)' }}>Loading Testimonials...</div>
+        ) : videos.length > 0 ? (
+          <AutoSlider 
+            items={videos} 
+            speed={120} 
+            gap={16}
+            renderItem={(item, index) => (
+              <TestimonialVideoCard key={index} item={item} />
+            )}
+          />
+        ) : (
+          <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-secondary)' }}>No testimonials available right now. Check back later!</div>
+        )}
+
+        <div style={{ textAlign: 'center', marginTop: 40 }}>
+          <button 
+            onClick={() => setCurrentPage('student-testimonials')}
+            className="hover-glow"
+            style={{
+              padding: '14px 36px', background: 'rgba(237, 28, 36, 0.06)', color: 'var(--red)', 
+              borderRadius: 10, fontWeight: 700, fontSize: 15, border: '1px solid var(--border-color)', 
+              cursor: 'pointer', transition: 'all 0.3s', boxShadow: 'var(--card-shadow)'
+            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.background = 'rgba(237, 28, 36, 0.15)'; e.currentTarget.style.boxShadow = '0 0 20px rgba(237, 28, 36, 0.4)'; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.background = 'rgba(237, 28, 36, 0.06)'; e.currentTarget.style.boxShadow = 'var(--card-shadow)'; }}
+          >
+            View All Testimonials
+          </button>
+        </div>
 
       </div>
     </section>
@@ -652,7 +655,7 @@ const LatestUpdates = ({ setCurrentPage }) => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch('https://iscale-backend.onrender.com/api/comp-requirement/user-get-all-jobs?page=1&limit=100', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+        const response = await fetch('https://iscale-backend.onrender.com/api/comp-requirement/user-get-all-jobs?page=1&limit=100');
         const data = await response.json();
         if (data && Array.isArray(data.data)) {
           setJobs(data.data.slice(0, 9));
@@ -678,14 +681,14 @@ const LatestUpdates = ({ setCurrentPage }) => {
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
           <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700 }}>EXPLORE OPPORTUNITIES</span>
         </div>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 800, textAlign: 'center', marginBottom: 24, color: 'var(--text-primary)' }}>Latest Updates</h2>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 800, textAlign: 'center', marginBottom: 24, color: 'var(--text-primary)' }}>Latest <span className="animated-text-gradient">Updates</span></h2>
 
         {loading ? (
           <div style={{ textAlign: 'center', padding: '40px 0' }}>Loading...</div>
         ) : jobs.length > 0 ? (
           <AutoSlider 
             items={jobs} 
-            speed={35} 
+            speed={60} 
             direction="right"
             renderItem={(job, i) => {
               const isRed = i % 2 === 0;
@@ -694,15 +697,25 @@ const LatestUpdates = ({ setCurrentPage }) => {
                   onClick={() => setCurrentPage(`job-details/${job._id}`)}
                   className="premium-card hover-glow"
                   style={{
-                    width: 340, maxWidth: '90vw', height: 220, borderRadius: 12, padding: '32px 24px', 
-                    background: isRed ? 'linear-gradient(135deg, #b91c1c, #7f1d1d)' : 'var(--card-bg)',
-                    color: isRed ? '#fff' : 'var(--text-primary)',
+                    width: 340, maxWidth: '90vw', minHeight: 240, height: 'auto', borderRadius: 12, padding: '32px 24px', 
+                    background: isRed ? 'linear-gradient(135deg, #b91c1c, #7f1d1d)' : '#0f0f0f',
+                    color: '#ffffff',
                     boxShadow: 'var(--card-shadow)',
                     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                     position: 'relative', flexShrink: 0, border: '1px solid var(--border-color)', cursor: 'pointer'
                   }}>
                   {job.company_logo ? (
-                    <img src={job.company_logo} alt={job.company_name} style={{ width: 64, height: 64, borderRadius: 12, objectFit: 'contain', marginBottom: 16, background: 'var(--bg-primary)' }} />
+                    <img 
+                      src={job.company_logo.startsWith('http') ? job.company_logo : `https://iscale-backend.onrender.com/${job.company_logo.replace(/\\/g, '/').replace(/^src\//, '')}`} 
+                      alt={job.company_name} 
+                      style={{ width: 64, height: 64, borderRadius: 12, objectFit: 'contain', marginBottom: 16, background: 'var(--bg-primary)' }} 
+                      onError={(e) => {
+                        if (!e.target.dataset.error) {
+                          e.target.dataset.error = true;
+                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(job.company_name || 'Company')}&background=random`;
+                        }
+                      }}
+                    />
                   ) : (
                     <div style={{ 
                       width: 64, height: 64, background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 12, 
@@ -710,11 +723,18 @@ const LatestUpdates = ({ setCurrentPage }) => {
                       fontWeight: 800, color: 'var(--text-primary)', fontSize: 24,
                       boxShadow: 'var(--card-shadow)'
                     }}>
-                      {job.company_name ? job.company_name.charAt(0) : 'J'}
+                      {job.company_name ? job.company_name.charAt(0).toUpperCase() : 'J'}
                     </div>
                   )}
-                  <h4 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8, textAlign: 'center', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{job.job_title}</h4>
-                  <p style={{ fontSize: 13, opacity: 0.9, textAlign: 'center', background: isRed ? 'rgba(0,0,0,0.2)' : 'var(--bg-secondary)', padding: '4px 12px', borderRadius: 100, border: isRed ? 'none' : '1px solid var(--border-color)' }}>₹{job.salary?.min} - ₹{job.salary?.max}</p>
+                  <h4 style={{ 
+                    fontSize: 18, fontWeight: 800, marginBottom: 4, textAlign: 'center', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+                    ...(isRed ? {} : { background: 'linear-gradient(90deg, #ff4d4d, #f9cb28)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' })
+                  }}>{job.job_title}</h4>
+                  <div style={{ fontSize: 13, opacity: 0.8, marginBottom: 12, textAlign: 'center' }}>{job.company_name}</div>
+                  <p style={{ 
+                    fontSize: 13, textAlign: 'center', padding: '4px 14px', borderRadius: 100,
+                    ...(isRed ? { opacity: 0.9, background: 'rgba(0,0,0,0.2)', border: 'none' } : { background: 'rgba(237, 28, 36, 0.1)', color: 'var(--red)', border: '1px solid rgba(237, 28, 36, 0.2)', fontWeight: 700 })
+                  }}>₹{job.salary?.min} - ₹{job.salary?.max}</p>
                   {isRed && <div style={{ position: 'absolute', top: 16, right: 24, fontSize: 40, color: 'rgba(255,255,255,0.2)', fontFamily: 'serif', lineHeight: 1 }}>"</div>}
                 </div>
               );
@@ -748,8 +768,8 @@ const PopularCourses = ({ setCurrentPage }) => {
       try {
         const response = await fetch('https://iscale-backend.onrender.com/api/course/public-all-courses?page=1&limit=100');
         const data = await response.json();
-        
-        if (data && Array.isArray(data.data)) {
+        const arr = data.data?.docs || data.data || [];
+        if (Array.isArray(arr) && arr.length > 0) {
           const defaultColors = [
             'linear-gradient(135deg, #1e3a8a 0%, #0d1b3e 100%)',
             'linear-gradient(135deg, #065f46 0%, #022c22 100%)',
@@ -757,7 +777,7 @@ const PopularCourses = ({ setCurrentPage }) => {
             'linear-gradient(135deg, #881337 0%, #4c0519 100%)'
           ];
 
-          const mapped = data.data.slice(0, 4).map((c, i) => {
+          const mapped = arr.slice(0, 4).map((c, i) => {
             const price = c.offer_price !== 'N/A' && c.offer_price ? parseInt(c.offer_price) : (c.course_type === 'Free' ? 0 : null);
             const originalPrice = c.price !== 'N/A' && c.price ? parseInt(c.price) : null;
             let imgUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(c.title)}&background=random`;
@@ -775,19 +795,12 @@ const PopularCourses = ({ setCurrentPage }) => {
               id: c._id,
               tag: c.course_type === 'Paid' ? 'PREMIUM' : 'FREE',
               title: c.title,
-              subtitle: c.subtitle || '',
-              price: price > 0 ? `₹${price.toLocaleString()}` : (c.course_type === 'Free' ? 'FREE' : ''),
-              original: (originalPrice > price) ? `₹${originalPrice.toLocaleString()}` : '',
-              discount: discountStr,
-              duration: c.duration || '',
-              language: c.language || '',
-              lectures: c.lectures || '',
-              rating: c.rating || 0,
-              students: c.students || 0,
-              features: c.features || [],
-              skills: c.skills || [],
-              img: imgUrl,
-              color: defaultColors[i % defaultColors.length]
+              price: price > 0 ? `₹ ${price.toLocaleString()}` : (c.course_type === 'Free' ? 'FREE' : ''),
+              original: (originalPrice > price) ? `₹ ${originalPrice.toLocaleString()}` : '',
+              duration: c.duration || '365 Days',
+              views: c.views || 0,
+              category: c.category || 'Course',
+              img: imgUrl
             };
           });
           setCoursesData(mapped);
@@ -819,15 +832,15 @@ const PopularCourses = ({ setCurrentPage }) => {
       ) : (
         <>
           <div className="courses-grid">
-        {coursesData.map((course, i) => (
-          <div 
+            {coursesData.map((course, i) => (
+              <div 
             key={i} 
             onClick={() => setCurrentPage(`course-details/${course.id}`)}
-            className="premium-card hover-glow glow-border" 
+            className="hover-glow" 
             style={{ 
               borderRadius: 16, 
               overflow: 'hidden', 
-              background: 'var(--card-bg)', 
+              background: '#fff', 
               border: '1px solid var(--border-color)', 
               boxShadow: 'var(--card-shadow)', 
               cursor: 'pointer',
@@ -835,182 +848,41 @@ const PopularCourses = ({ setCurrentPage }) => {
               flexDirection: 'column',
               justifyContent: 'space-between',
               height: '100%',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease'
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              color: '#333'
             }}
           >
-            {/* Header / Thumbnail Area */}
-            <div>
-              <div className="premium-card-img-wrap" style={{ background: course.color, height: 145, position: 'relative', overflow: 'hidden' }}>
-                {/* Course Tag */}
-                <span style={{
-                  position: 'absolute', top: 12, left: 12,
-                  background: course.tag.includes('LIVE') ? '#ef4444' : 'var(--red)',
-                  color: '#fff', padding: '3px 8px',
-                  borderRadius: 100, fontSize: 9, fontWeight: 800,
-                  letterSpacing: 0.5, boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
-                  zIndex: 2
-                }}>
-                  {course.tag}
-                </span>
-
-                {/* Duration Badge */}
-                <span style={{
-                  position: 'absolute', top: 12, right: 12,
-                  background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)',
-                  color: '#fff', padding: '3px 8px',
-                  borderRadius: 6, fontSize: 9, fontWeight: 700,
-                  display: 'flex', alignItems: 'center', gap: 4,
-                  zIndex: 2
-                }}>
-                  <Clock size={11} /> {course.duration}
-                </span>
-
-                {/* Main banner image with clean graphic overlay */}
-                <img src={course.img} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, zIndex: 0 }} />
-                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(to top, rgba(0,0,0,0.4), transparent)', zIndex: 1 }} />
+            <div style={{ padding: '16px 16px 0 16px' }}>
+              <div style={{ borderRadius: 8, overflow: 'hidden', height: 160, marginBottom: 16 }}>
+                <img src={course.img} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
-
-              {/* Metadata Details section */}
-              <div style={{ padding: '16px 16px 0 16px' }}>
-                <div style={{ display: 'flex', gap: 12, marginBottom: 8, fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)' }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <Globe size={12} color="var(--red)" /> {course.language}
-                  </span>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <BookOpen size={12} color="var(--red)" /> {course.lectures}
-                  </span>
-                </div>
-
-                <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 16, marginBottom: 6, lineHeight: 1.3, color: 'var(--text-primary)' }}>
-                  {course.title}
-                </h4>
-                {course.subtitle && (
-                  <p style={{ color: 'var(--text-secondary)', fontSize: 12, marginBottom: 12, lineHeight: 1.4, height: 34, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-                    {course.subtitle}
-                  </p>
-                )}
-
-                {/* Rating Bar */}
-                {course.rating > 0 && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12, fontSize: 11, fontWeight: 700 }}>
-                    <div style={{ display: 'flex', gap: 2 }}>
-                      {[1, 2, 3, 4, 5].map(s => <Star key={s} size={11} fill="#FFD700" color="#FFD700" />)}
-                    </div>
-                    <span style={{ color: 'var(--text-primary)' }}>{course.rating}</span>
-                    {course.students > 0 && <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>({course.students})</span>}
-                  </div>
-                )}
-
-                {/* Checklist Features */}
-                {course.features && course.features.length > 0 && (
-                  <div style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: '1fr 1fr', 
-                    gap: '8px 10px', 
-                    marginBottom: 16, 
-                    padding: '10px 12px', 
-                    background: 'var(--bg-primary)', 
-                    borderRadius: 12, 
-                    border: '1px solid var(--border-color)' 
-                  }}>
-                    {course.features.map((feat, idx) => (
-                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)' }}>
-                        <CheckCircle size={12} color="#22c55e" style={{ flexShrink: 0 }} />
-                        <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={feat}>
-                          {feat}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Tech Skills Covered pills */}
-                {course.skills && course.skills.length > 0 && (
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 4 }}>
-                    {course.skills.map((skill, idx) => (
-                      <span 
-                        key={idx} 
-                        style={{ 
-                          fontSize: 9, 
-                          fontWeight: 700, 
-                          color: 'var(--red)', 
-                          background: 'rgba(237, 28, 36, 0.04)', 
-                          padding: '3px 8px', 
-                          borderRadius: 6, 
-                          border: '1px solid rgba(237, 28, 36, 0.08)' 
-                        }}
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Bottom pricing and action button */}
-            <div style={{ padding: '0 16px 16px 16px' }}>
-              <div style={{ height: 1, background: 'var(--border-color)', margin: '12px 0' }} />
               
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <div>
-                  <span style={{ color: 'var(--text-muted)', fontSize: 10, fontWeight: 600, display: 'block', textTransform: 'uppercase' }}>Pricing starts at</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 1 }}>
-                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 19, color: 'var(--red)' }}>{course.price}</span>
-                    <span style={{ color: 'var(--text-muted)', fontSize: 12, textDecoration: 'line-through' }}>{course.original}</span>
-                  </div>
-                </div>
-                {/* Discount Percentage Badge */}
-                <span style={{
-                  background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e',
-                  fontSize: 10, fontWeight: 800, padding: '3px 8px',
-                  borderRadius: 100, border: '1px solid rgba(34, 197, 94, 0.15)'
-                }}>
-                  {course.discount}
+              <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 12, lineHeight: 1.3, color: '#0f172a' }}>
+                {course.title}
+              </h4>
+
+              <div style={{ display: 'flex', gap: 16, marginBottom: 12, fontSize: 13, color: '#64748b', fontWeight: 500 }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Eye size={14} color="#94a3b8" /> {course.views}
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Calendar size={14} color="#94a3b8" /> {course.duration}
                 </span>
               </div>
 
-              {/* Action Buttons */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <button
-                  className="btn-shine"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setCurrentPage(`course-details/${course.id}`);
-                  }}
-                  style={{
-                    width: '100%', padding: '10px',
-                    background: 'var(--red)', color: '#fff',
-                    borderRadius: 8, fontWeight: 700, fontSize: 13,
-                    border: 'none', cursor: 'pointer', transition: 'all 0.2s',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                    boxShadow: '0 4px 12px rgba(237, 28, 36, 0.12)'
-                  }}
-                >
-                  Enroll Now <ArrowRight size={14} />
-                </button>
-                <div 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setCurrentPage(`course-details/${course.id}`);
-                  }}
-                  style={{
-                    textAlign: 'center', 
-                    fontSize: 12, 
-                    fontWeight: 700, 
-                    color: 'var(--text-secondary)', 
-                    padding: '4px 0', 
-                    cursor: 'pointer',
-                    transition: 'color 0.2s'
-                  }}
-                  onMouseEnter={e => e.target.style.color = 'var(--red)'}
-                  onMouseLeave={e => e.target.style.color = 'var(--text-secondary)'}
-                >
-                  Explore Detailed Curriculum
-                </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#64748b', fontWeight: 500, marginBottom: 16 }}>
+                <Zap size={14} color="#94a3b8" /> Category : {course.category}
               </div>
             </div>
 
+            <div style={{ padding: '0 16px 16px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20, color: '#64748b' }}>
+                {course.price}
+              </span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 4 }}>
+                Learn More <ArrowRight size={14} />
+              </span>
+            </div>
           </div>
         ))}
       </div>
@@ -1032,22 +904,50 @@ const PopularCourses = ({ setCurrentPage }) => {
 };
 
 /* ── Industry Experts ── */
-const experts = [
-  { name: 'Prasad Menon', role: 'CHRO', company: 'Amagi, Flipkart', logo: 'https://www.theiscale.com/myadmin/uploads/more/amagi1.png', img: 'https://www.theiscale.com/myadmin/uploads/more/prasad_menon.png', ytLink: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
-  { name: 'Mr Jaibir Siwach', role: 'CEO & Founder', company: 'Kabira Mobility', logo: 'https://www.theiscale.com/myadmin/uploads/more/kabira.png', img: 'https://www.theiscale.com/myadmin/uploads/more/Jaibir_Siwach_small1.png', ytLink: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
-  { name: 'Harjeet Khanduja', role: 'Vice President', company: 'Reliance Jio', logo: 'https://www.theiscale.com/myadmin/uploads/more/reliance_jio.png', img: 'https://www.theiscale.com/myadmin/uploads/more/sardar_ji.png', ytLink: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
-  { name: 'Mr Rahil Gupta', role: 'Co-founder and CTO', company: 'Hop Electric Vehicle', logo: 'https://www.theiscale.com/myadmin/uploads/more/hop_logo.png', img: 'https://www.theiscale.com/myadmin/uploads/more/Rahil_Hop_small1.png', ytLink: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
-  { name: 'Mr. Dhiraj Shetty', role: 'Sr. G.M. - HR & Operations', company: 'Ultraviolette Automotive', logo: 'https://www.theiscale.com/myadmin/uploads/more/Uktravoillette_logo.png', img: 'https://www.theiscale.com/myadmin/uploads/more/Dhirajshetty_ultravoillette.png', ytLink: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
-];
-
 const ExpertsSection = ({ setCurrentPage }) => {
-  const [videoOpen, setVideoOpen] = useState(false);
-  const [activeVideo, setActiveVideo] = useState('');
+  const [expertsList, setExpertsList] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleOpenVideo = (link) => {
-    // Open directly in a new tab to avoid iframe blocking and autoplay issues on the page
-    window.open(link, '_blank');
-  };
+  useEffect(() => {
+    fetch('https://iscale-backend.onrender.com/api/ppt/public-get-ppts')
+      .then(res => res.json())
+      .then(result => {
+        const arr = result.data?.docs || result.data || [];
+        if (Array.isArray(arr) && arr.length > 0) {
+          const mapped = arr.map(item => {
+            const getImageUrl = (url) => {
+              if (!url || url === 'N/A') return '';
+              const cleaned = String(url).replace(/\\/g, '/');
+              return cleaned.startsWith('http') ? cleaned : `https://iscale-backend.onrender.com/${cleaned.replace(/^src\//, '')}`;
+            };
+            return {
+              name: item.m_pre_name || item.name || 'Expert',
+              role: item.m_pre_designation || item.role || '',
+              company: item.m_pre_company || item.company || '',
+              logo: getImageUrl(item.m_pre_company_img || item.m_pre_company_logo || item.image2),
+              img: getImageUrl(item.m_pre_image || item.image1),
+              ytLink: item.m_pre_video_link || item.videoUrl || item.url || item.link || '#'
+            };
+          });
+          
+          let repeated = [...mapped];
+          // Ensure there are enough items for the infinite AutoSlider
+          while (repeated.length > 0 && repeated.length < 12) {
+            repeated = [...repeated, ...mapped];
+          }
+          
+          setExpertsList(repeated);
+        }
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return <div style={{ textAlign: 'center', padding: '50px 0' }}>Loading experts...</div>;
+  }
+
+  if (expertsList.length === 0) return null;
 
   return (
     <section style={{ padding: '50px 0', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
@@ -1055,44 +955,42 @@ const ExpertsSection = ({ setCurrentPage }) => {
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
           <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '4px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700 }}>LEADERS TALK</span>
         </div>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 800, textAlign: 'center', marginBottom: 8, color: 'var(--text-primary)' }}>Talk With Industry Experts</h2>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 800, textAlign: 'center', marginBottom: 8, color: 'var(--text-primary)' }}>Talk With <span className="animated-text-gradient">Industry Experts</span></h2>
         <p style={{ color: 'var(--text-secondary)', textAlign: 'center', marginBottom: 24, maxWidth: 600, margin: '0 auto 48px' }}>
           Dive into industry-centric learning, shaped by direct input from CEOs and CHROs. Elevate your skills with insights that set you apart.
         </p>
 
         <AutoSlider 
-          items={experts} 
-          speed={50} 
+          items={expertsList} 
+          speed={120} 
           gap={24}
           renderItem={(expert, i) => (
-            <div key={i} className="premium-card hover-glow" style={{
-              width: 240, maxWidth: '85vw', border: '1px solid var(--border-color)', borderRadius: 16, padding: 20,
-              textAlign: 'center', background: 'var(--card-bg)', cursor: 'pointer', flexShrink: 0, color: 'var(--text-primary)'
+            <div key={i} className="premium-card hover-glow" onClick={() => expert.ytLink && expert.ytLink !== '#' && window.open(expert.ytLink, '_blank')} style={{
+              width: 260, maxWidth: '85vw', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 24, padding: '32px 20px',
+              textAlign: 'center', background: 'var(--card-bg)', cursor: 'pointer', flexShrink: 0, color: 'var(--text-primary)',
+              boxShadow: 'var(--card-shadow)', position: 'relative', overflow: 'hidden'
             }}>
+              {/* Vibrant Instagram-style Gradient Ring */}
               <div style={{
-                width: 80, height: 80, borderRadius: '50%',
-                background: `hsl(${i * 60}, 20%, var(--bg-hsl-lightness, 85%))`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                overflow: 'hidden', margin: '0 auto 12px'
+                width: 96, height: 96, borderRadius: '50%',
+                background: `linear-gradient(135deg, hsl(${i * 45}, 90%, 65%), hsl(${(i * 45) + 60}, 90%, 55%))`,
+                padding: 4, margin: '0 auto 20px',
+                boxShadow: `0 10px 24px hsla(${i * 45}, 90%, 60%, 0.3)`
               }}>
-                <img src={expert.img} alt={expert.name} style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'top center' }} />
+                {/* Inner white/dark ring */}
+                <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'var(--bg-primary)', padding: 3 }}>
+                  <div style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden', background: '#f8f9fa' }}>
+                    <img src={expert.img} alt={expert.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
+                  </div>
+                </div>
               </div>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, marginBottom: 4, color: 'var(--text-primary)' }}>{expert.name}</div>
-              <div style={{ color: 'var(--text-secondary)', fontSize: 12, marginBottom: 12 }}>{expert.role}</div>
-              <div style={{ color: 'var(--text-secondary)', fontSize: 11, marginBottom: 16, padding: '8px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 8 }}>{expert.company}</div>
-              <button 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCurrentPage('placement-talks');
-                }}
-                style={{
-                  width: '100%', padding: '8px', background: 'var(--red)',
-                  color: '#fff', borderRadius: 8, fontWeight: 600, fontSize: 12,
-                  border: 'none', cursor: 'pointer', transition: 'background 0.3s'
-                }}
-                onMouseEnter={e => e.target.style.background = 'var(--red-dark)'}
-                onMouseLeave={e => e.target.style.background = 'var(--red)'}
-              >Know More</button>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 16, marginBottom: 6, color: 'var(--text-primary)' }}>{expert.name}</div>
+              <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 16, height: 34, overflow: 'hidden', opacity: 0.9 }}>{expert.role}</div>
+              {expert.logo && (
+                <div style={{ height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 12px' }}>
+                  <img src={expert.logo} alt={expert.company} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
+                </div>
+              )}
             </div>
           )}
         />
@@ -1118,7 +1016,7 @@ const CompanyMarquee = ({ setCurrentPage }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('https://iscale-backend.onrender.com/api/client/public-get-client-images?page=1&limit=100')
+    fetch('https://iscale-backend.onrender.com/api/client/public-get-all-client?page=1&limit=100')
       .then(res => res.json())
       .then(result => {
         const arr = result.data?.docs || result.data || [];
@@ -1130,11 +1028,12 @@ const CompanyMarquee = ({ setCurrentPage }) => {
               return cleaned.startsWith('http') ? cleaned : `https://iscale-backend.onrender.com/${cleaned.replace(/^src\//, '')}`;
             };
             return {
-               name: item.name || item.c_client_name || 'Client',
-               logo: getImageUrl(item.logo || item.image || item.c_client_logo)
+               name: item.m_client_name || item.clientName || item.name || item.c_client_name || 'Partner Client',
+               desc: item.m_client_description || item.description || item.desc || item.c_client_description || '',
+               logo: getImageUrl(item.m_client_logo || item.logo || item.image || item.c_client_logo) || 'https://www.theiscale.com/myadmin/uploads/more/phonepay1.png'
             };
           });
-          setCompanies(mapped);
+          let repeated = [...mapped]; while (repeated.length > 0 && repeated.length < 20) { repeated = [...repeated, ...mapped]; } setCompanies(repeated);
         } else {
           setCompanies([]);
         }
@@ -1147,26 +1046,29 @@ const CompanyMarquee = ({ setCurrentPage }) => {
     <section style={{ padding: '60px 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', overflow: 'hidden', color: 'var(--text-primary)' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
-          <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '4px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700 }}>TOP COMPANIES</span>
+          <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '4px 16px', borderRadius: 100, fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1 }}>TOP RECRUITERS</span>
         </div>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 36, fontWeight: 800, textAlign: 'center', marginBottom: 40, color: 'var(--text-primary)' }}>
-          For <span style={{ color: 'var(--red)' }}>Placement</span> Opportunities
+          For <span className="animated-text-gradient">Placement</span> Opportunities
         </h2>
       </div>
       
       {loading ? (
         <div style={{ textAlign: 'center', padding: '20px 0' }}>Loading partners...</div>
       ) : companies.length > 0 ? (
-        <div style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
-          <div style={{ display: 'inline-flex', gap: 40, animation: 'marquee 20s linear infinite' }}>
+        <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', position: 'relative' }}>
+          <div style={{ display: 'inline-flex', gap: 32, animation: 'marquee 50s linear infinite', padding: '10px 0' }}>
             {[...companies, ...companies, ...companies].map((c, i) => (
-              <div key={i} style={{
-                padding: '12px 28px', background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 12,
-                boxShadow: 'var(--card-shadow)', display: 'inline-flex', alignItems: 'center',
-                fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--text-primary)',
-                whiteSpace: 'nowrap', minWidth: 140, justifyContent: 'center', minHeight: 60
+              <div key={i} className="hover-glow" style={{
+                padding: '16px 32px', background: 'var(--card-bg)', 
+                border: '1px solid rgba(255,255,255,0.05)', borderRadius: 16,
+                boxShadow: `0 8px 24px hsla(${i * 30}, 80%, 50%, 0.1)`, 
+                borderTop: `2px solid hsl(${i * 30}, 80%, 50%)`,
+                display: 'inline-flex', alignItems: 'center',
+                fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 15, color: 'var(--text-primary)',
+                whiteSpace: 'nowrap', minWidth: 160, justifyContent: 'center', minHeight: 70, cursor: 'default'
               }}>
-                {c.logo ? <img src={c.logo} alt={c.name} style={{ maxHeight: 30, maxWidth: 100, objectFit: 'contain' }} /> : c.name}
+                {c.logo ? <img src={c.logo} alt={c.name} style={{ maxHeight: 36, maxWidth: 120, objectFit: 'contain' }} /> : c.name}
               </div>
             ))}
           </div>
@@ -1237,7 +1139,7 @@ export const SuccessStories = ({ setCurrentPage }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('https://iscale-backend.onrender.com/api/success-story/public-all-ss?page=1&limit=100&search=shreya')
+    fetch('https://iscale-backend.onrender.com/api/success-story/public-all-ss?page=1&limit=100')
       .then(res => res.json())
       .then(result => {
         const arr = result.data?.docs || result.data || [];
@@ -1357,7 +1259,7 @@ export const SuccessStories = ({ setCurrentPage }) => {
           <div style={{ marginTop: 20 }}>
             <AutoSlider 
               items={gridItems} 
-              speed={20}
+              speed={40}
               gap={24}
               renderItem={(item, idx) => (
                 <SuccessStoryGridCard key={idx} item={item} />
@@ -1424,81 +1326,6 @@ const LearnersCommunity = () => (
     </div>
   </section>
 );
-
-/* ── Our Allied Colleges ── */
-const alliedColleges = [
-  { name: 'Silver Oak University', logo: 'SOU', img: 'https://www.theiscale.com/myadmin/uploads/more/Silver_Oak_University.png' },
-  { name: 'Lokmanya Tilak College of Engineering', logo: 'LTCE', img: 'https://www.theiscale.com/myadmin/uploads/more/Lokmanya_Tilak_College_of_Engineering_,_Navi_Mumbai_logo.png' },
-  { name: 'Rajkiya Engineering College', logo: 'REC', img: 'https://www.theiscale.com/myadmin/uploads/more/Rajkiya_Engineering_College_Ambedkar_Nagar.png' },
-  { name: "MGM's College of Engineering", logo: 'MGM', img: 'https://www.theiscale.com/myadmin/uploads/more/MGMs_College_of_Engineering_and_Technology_logo.png' },
-];
-
-const AlliedColleges = ({ setCurrentPage }) => {
-  return (
-    <section style={{ padding: '50px 0', background: 'var(--bg-primary)' }}>
-      <div className="container">
-        <div style={{ textAlign: 'center', marginBottom: 16 }}>
-          <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '6px 20px', borderRadius: 100, fontSize: 13, fontWeight: 700, textTransform: 'uppercase' }}>
-            ACADEMIC SYNERGY
-          </span>
-        </div>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 900, textAlign: 'center', marginBottom: 24, color: 'var(--text-primary)' }}>
-          Our Allied Colleges
-        </h2>
-
-        <div style={{ position: 'relative', marginTop: 20, padding: '0 40px' }}>
-          {/* Custom Slider Track for Allied Colleges */}
-          <div style={{ display: 'flex', gap: 24, overflowX: 'auto', paddingBottom: 20, scrollBehavior: 'smooth' }} className="hide-scrollbar">
-            {[
-              { name: 'MGM\'s College of Engineering and Technology', img: 'https://www.theiscale.com/myadmin/uploads/more/MGMs_College_of_Engineering_and_Technology_logo.png' },
-              { name: 'D J Sanghvi College of Engineering, Mumbai', img: 'https://www.theiscale.com/myadmin/uploads/more/dj_sanghvi_logo.png', isRed: true },
-              { name: 'HRIT Group of Institutions', img: 'https://www.theiscale.com/myadmin/uploads/more/HRIT_logo.png' },
-              { name: 'Silver Oak University', img: 'https://www.theiscale.com/myadmin/uploads/more/Silver_Oak_University.png', isRed: true }
-            ].map((college, idx) => (
-              <div key={idx} className="premium-card hover-glow" style={{ 
-                width: 360, height: 180, borderRadius: 16, 
-                background: college.isRed ? 'linear-gradient(135deg, #a91111, #8b0000)' : 'var(--card-bg)', 
-                padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', 
-                position: 'relative', flexShrink: 0, 
-                boxShadow: college.isRed ? '0 15px 30px rgba(139,0,0,0.2)' : 'var(--card-shadow)', 
-                border: college.isRed ? 'none' : '1px solid var(--border-color)',
-                cursor: 'pointer'
-              }}>
-                {college.isRed && <div style={{ position: 'absolute', top: 20, left: 20, fontSize: 60, color: 'rgba(255,255,255,0.2)', fontFamily: 'serif', lineHeight: 1 }}>“</div>}
-                {college.isRed && <div style={{ position: 'absolute', top: 20, right: 20, fontSize: 60, color: 'rgba(255,255,255,0.2)', fontFamily: 'serif', lineHeight: 1 }}>”</div>}
-                
-                <div style={{ background: college.isRed ? '#000' : 'transparent', padding: college.isRed ? 8 : 0, borderRadius: 8, marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 80, height: 80, filter: 'brightness(var(--theme-logo-brightness, 1))' }}>
-                  <img src={college.img} alt={college.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                </div>
-                <div style={{ fontWeight: 800, fontSize: 16, textAlign: 'center', color: college.isRed ? '#fff' : 'var(--text-primary)', zIndex: 1, position: 'relative' }}>
-                  {college.name}
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <button style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', boxShadow: 'var(--card-shadow)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}>
-            <ChevronLeft size={20} color="var(--text-primary)" />
-          </button>
-          <button style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', boxShadow: 'var(--card-shadow)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}>
-            <ChevronRight size={20} color="var(--text-primary)" />
-          </button>
-        </div>
-
-        <div style={{ textAlign: 'center', marginTop: 20 }}>
-          <button 
-            onClick={() => setCurrentPage('allied-colleges')}
-            style={{ padding: '12px 32px', background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', border: '1px solid var(--border-color)', borderRadius: 8, fontWeight: 700, fontSize: 15, cursor: 'pointer', transition: 'all 0.3s', boxShadow: 'var(--card-shadow)' }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.background = 'rgba(237, 28, 36, 0.15)'; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.background = 'rgba(237, 28, 36, 0.08)'; }}
-          >
-            View All Allied College
-          </button>
-        </div>
-      </div>
-    </section>
-  );
-};
 
 /* ── Latest News & Updates ── */
 const NewsUpdates = ({ setCurrentPage }) => {
@@ -1635,7 +1462,7 @@ const InTheNews = () => {
 
         <AutoSlider 
           items={mentions} 
-          speed={40} 
+          speed={80} 
           gap={24}
           renderItem={(mention, i) => (
             <div key={i} className="premium-card hover-glow" style={{
@@ -1724,7 +1551,7 @@ const AlliedCollegesSection = ({ setCurrentPage }) => {
             };
             return {
               name: item.m_allied_title || item.name || 'Allied College',
-              img: getImageUrl(item.m_allied_logo || item.image || item.logo)
+              img: getImageUrl(item.m_allied_image || item.m_allied_logo || item.image || item.logo)
             };
           });
           setColleges(mapped);
@@ -1737,35 +1564,42 @@ const AlliedCollegesSection = ({ setCurrentPage }) => {
   }, []);
 
   return (
-  <section className="reveal" style={{ padding: '50px 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
+  <section className="reveal" style={{ padding: '60px 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
     <div className="container">
       <div style={{ textAlign: 'center', marginBottom: 12 }}>
-        <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700 }}>ACADEMIC PARTNERS</span>
+        <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 800, letterSpacing: 1 }}>ACADEMIC PARTNERS</span>
       </div>
-      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 800, textAlign: 'center', marginBottom: 24, color: 'var(--text-primary)' }}>Allied Colleges</h2>
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 900, textAlign: 'center', marginBottom: 40, color: 'var(--text-primary)' }}>
+        Our <span className="animated-text-gradient">Allied Colleges</span>
+      </h2>
 
       {loading ? (
         <div style={{ textAlign: 'center', padding: '20px 0' }}>Loading allied colleges...</div>
       ) : colleges.length > 0 ? (
       <AutoSlider 
         items={colleges} 
-        speed={40} 
+        speed={80} 
         direction="left"
-        gap={24}
+        gap={32}
         renderItem={(college, i) => (
           <div key={i} className="premium-card hover-glow"
             style={{
-              width: 260, height: 260, borderRadius: 16, padding: '24px', 
-              background: 'var(--card-bg)',
-              boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)',
+              width: 280, height: 280, borderRadius: 24, padding: '24px', 
+              background: `linear-gradient(135deg, hsla(${i * 45}, 80%, 20%, 0.8), hsla(${i * 45 + 30}, 80%, 10%, 0.9))`,
+              boxShadow: `0 12px 32px hsla(${i * 45}, 80%, 50%, 0.15)`, 
+              border: `1px solid hsla(${i * 45}, 80%, 50%, 0.3)`,
+              borderTop: `2px solid hsl(${i * 45}, 80%, 50%)`,
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              position: 'relative', flexShrink: 0, cursor: 'pointer'
+              position: 'relative', flexShrink: 0, cursor: 'pointer', overflow: 'hidden'
             }}
           >
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', marginBottom: 16, filter: 'brightness(var(--theme-logo-brightness, 1))' }}>
-              <img src={college.img} alt={college.name} style={{ maxWidth: '80%', maxHeight: '100px', objectFit: 'contain' }} />
+            {/* Glowing orb background effect inside card */}
+            <div style={{ position: 'absolute', top: '-50%', left: '-50%', width: '200%', height: '200%', background: `radial-gradient(circle, hsla(${i * 45}, 80%, 50%, 0.1) 0%, transparent 50%)`, pointerEvents: 'none' }} />
+            
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', marginBottom: 16, background: 'rgba(255, 255, 255, 0.05)', borderRadius: '50%', padding: 20, boxShadow: 'inset 0 0 20px rgba(255,255,255,0.02)' }}>
+              <img src={college.img} alt={college.name} style={{ maxWidth: '100%', maxHeight: '110px', objectFit: 'contain', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.5))' }} />
             </div>
-            <h4 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', textAlign: 'center', margin: 0 }}>{college.name}</h4>
+            <h4 style={{ fontSize: 16, fontWeight: 800, color: '#fff', textAlign: 'center', margin: 0, zIndex: 1, textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{college.name}</h4>
           </div>
         )}
       />
@@ -1887,88 +1721,6 @@ const EnrolledCoursesSection = ({ enrolledCourses, userName, setCurrentPage }) =
   );
 };
 
-// Left Bottom Dynamic Course Enroll Popup
-const DynamicEnrollPopup = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [currentNotification, setCurrentNotification] = useState(null);
-
-  const notifications = [
-    { name: "Rahul S.", course: "Data Science with Generative AI", time: "2 mins ago", img: "https://www.theiscale.com/myadmin/uploads/courses/Data_science_Course_paid_compressed.png" },
-    { name: "Priya M.", course: "AI Cohort Course Batch 01", time: "5 mins ago", img: "https://www.theiscale.com/myadmin/uploads/courses/The_Complete_AI_Guide_(7).jpg" },
-    { name: "Amit K.", course: "Master Of Data Analytics Program", time: "12 mins ago", img: DataAnalyticsImg },
-    { name: "Sneha R.", course: "AI Engineer Advance Program", time: "Just now", img: "https://www.theiscale.com/myadmin/uploads/courses/Your_paragraph_text_(10).jpg" },
-    { name: "Vikram P.", course: "Data Science with Generative AI", time: "18 mins ago", img: "https://www.theiscale.com/myadmin/uploads/courses/Data_science_Course_paid_compressed.png" }
-  ];
-
-  useEffect(() => {
-    let index = 0;
-    
-    // Initial delay before showing first popup
-    const initialDelay = setTimeout(() => {
-      setCurrentNotification(notifications[index]);
-      setIsVisible(true);
-      
-      // Hide after 5 seconds
-      setTimeout(() => setIsVisible(false), 5000);
-    }, 3000);
-
-    // Then cycle every 15 seconds
-    const interval = setInterval(() => {
-      index = (index + 1) % notifications.length;
-      setCurrentNotification(notifications[index]);
-      setIsVisible(true);
-      
-      // Hide after 5 seconds
-      setTimeout(() => setIsVisible(false), 5000);
-    }, 15000);
-
-    return () => {
-      clearTimeout(initialDelay);
-      clearInterval(interval);
-    };
-  }, []);
-
-  if (!currentNotification) return null;
-
-  return (
-    <div style={{
-      position: 'fixed',
-      bottom: 24,
-      left: 24,
-      background: 'var(--card-bg)',
-      borderRadius: 12,
-      padding: '16px',
-      boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
-      border: '1px solid var(--border-color)',
-      display: 'flex',
-      alignItems: 'center',
-      gap: 16,
-      zIndex: 9999,
-      transform: isVisible ? 'translateX(0) scale(1)' : 'translateX(-120%) scale(0.9)',
-      opacity: isVisible ? 1 : 0,
-      transition: 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-      maxWidth: 340,
-      pointerEvents: 'none' // So it doesn't block clicks underneath
-    }}>
-      <div style={{ position: 'absolute', top: -6, right: -6, background: '#22c55e', color: '#fff', fontSize: 10, fontWeight: 800, padding: '2px 8px', borderRadius: 100, boxShadow: '0 2px 8px rgba(34, 197, 94, 0.3)' }}>
-        NEW ENROLLMENT
-      </div>
-      <img src={currentNotification.img} alt="Course" style={{ width: 48, height: 48, borderRadius: 8, objectFit: 'cover' }} />
-      <div>
-        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
-          {currentNotification.name} <span style={{ fontWeight: 500, color: 'var(--text-secondary)' }}>enrolled in</span>
-        </div>
-        <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--red)', lineHeight: 1.2, marginBottom: 4 }}>
-          {currentNotification.course}
-        </div>
-        <div style={{ fontSize: 11, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
-          <CheckCircle size={12} color="#22c55e" /> Verified • {currentNotification.time}
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const HomePage = ({ setCurrentPage }) => {
   useReveal();
   const [enrolledCourses, setEnrolledCourses] = useState([]);
@@ -1993,19 +1745,8 @@ const HomePage = ({ setCurrentPage }) => {
       if (stored) {
         setEnrolledCourses(JSON.parse(stored));
       } else {
-        // Pre-populate with default course if none exists
-        const defaultList = [
-          { 
-            id: 'ai-engineer-advance-program', 
-            title: 'AI Engineer Advance Program', 
-            category: 'AI Courses', 
-            progress: 10, 
-            bgGradient: 'linear-gradient(135deg, #e0f2fe, #bae6fd)',
-            img: 'https://www.theiscale.com/myadmin/uploads/courses/Your_paragraph_text_(10).jpg'
-          }
-        ];
-        localStorage.setItem('enrolled_courses', JSON.stringify(defaultList));
-        setEnrolledCourses(defaultList);
+        // Do not pre-populate with any dummy data, wait for actual API/backend enrollments.
+        // setEnrolledCourses([]);
       }
     }
   }, [isLoggedIn]);
@@ -2020,7 +1761,7 @@ const HomePage = ({ setCurrentPage }) => {
 
       <AboutSection setCurrentPage={setCurrentPage} />
       <PopularCourses setCurrentPage={setCurrentPage} />
-      <TestimonialsSection />
+      <TestimonialsSection setCurrentPage={setCurrentPage} />
       <LatestUpdates setCurrentPage={setCurrentPage} />
       <ExpertsSection setCurrentPage={setCurrentPage} />
       <CompanyMarquee setCurrentPage={setCurrentPage} />
@@ -2030,10 +1771,13 @@ const HomePage = ({ setCurrentPage }) => {
       <NewsUpdates setCurrentPage={setCurrentPage} />
       <InTheNews setCurrentPage={setCurrentPage} />
       <TalkToTeam setCurrentPage={setCurrentPage} />
-      <DynamicEnrollPopup />
     </div>
   );
 };
 
 export default HomePage;
+
+
+
+
 

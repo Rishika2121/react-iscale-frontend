@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-const useReveal = () => {
+const useReveal = (dependencies = []) => {
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -12,7 +12,7 @@ const useReveal = () => {
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     return () => observer.disconnect();
-  }, []);
+  }, dependencies);
 };
 
 export default useReveal;

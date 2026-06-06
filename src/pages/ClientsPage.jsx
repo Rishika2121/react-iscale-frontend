@@ -24,9 +24,9 @@ const ClientsPage = () => {
               return cleaned.startsWith('http') ? cleaned : `https://iscale-backend.onrender.com/${cleaned.replace(/^src\//, '')}`;
             };
             return {
-              name: item.clientName || item.name || item.c_client_name || 'Partner Client',
-              desc: item.description || item.desc || item.c_client_description || 'A valuable partner of our ecosystem.',
-              logo: getImageUrl(item.logo || item.image || item.c_client_logo) || 'https://www.theiscale.com/myadmin/uploads/more/phonepay1.png'
+              name: item.m_client_name || item.clientName || item.name || item.c_client_name || 'Partner Client',
+              desc: item.m_client_description || item.description || item.desc || item.c_client_description || 'A valuable partner of our ecosystem.',
+              logo: getImageUrl(item.m_client_logo || item.logo || item.image || item.c_client_logo) || 'https://www.theiscale.com/myadmin/uploads/more/phonepay1.png'
             };
           });
           setClientsData(mappedClients);
@@ -63,8 +63,28 @@ const ClientsPage = () => {
         </div>
       </div>
 
-      <div className="container" style={{ maxWidth: 1200, margin: '0 auto', padding: '60px 24px 0' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24 }}>
+        <div className="container" style={{ maxWidth: 1200, margin: '-40px auto 40px', position: 'relative', zIndex: 10, padding: '0 24px' }}>
+          <div style={{ background: 'var(--card-bg)', borderRadius: 16, padding: '20px 30px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 10px 40px rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.05)', gap: 20, flexWrap: 'wrap' }}>
+            <div style={{ flex: 1, minWidth: 280, display: 'flex', alignItems: 'center', background: 'var(--bg-secondary)', borderRadius: 12, padding: '14px 24px', border: '1px solid var(--border-color)' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 12 }}>
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" placeholder="Search for top companies, partners, or keywords..." style={{ border: 'none', background: 'transparent', color: 'var(--text-primary)', outline: 'none', width: '100%', fontSize: 16 }} />
+            </div>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button className="hover-glow" style={{ padding: '14px 28px', background: 'linear-gradient(135deg, var(--red) 0%, #a91111 100%)', color: '#fff', border: 'none', borderRadius: 12, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, fontSize: 15, boxShadow: '0 4px 15px rgba(237, 28, 36, 0.3)' }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                </svg>
+                Advanced Filter
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="container" style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 60px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24 }}>
           {clientsData.map((client, i) => (
             <div key={i} className="premium-card hover-glow" style={{
               background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 12, padding: '32px 24px', 
@@ -86,3 +106,4 @@ const ClientsPage = () => {
 };
 
 export default ClientsPage;
+

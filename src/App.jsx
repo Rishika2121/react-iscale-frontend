@@ -64,6 +64,10 @@ const AppContent = () => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   const privatePages = ['dashboard', 'my-profile', 'enrolled-courses', 'enrolled-events', 'settings', 'test-series-result'];
   
   const token = localStorage.getItem('token');

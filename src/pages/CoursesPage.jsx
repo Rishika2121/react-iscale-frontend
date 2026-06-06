@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Star, Search, Filter, RotateCcw, Clock, Globe, BookOpen, CheckCircle } from 'lucide-react';
+import { ArrowRight, Star, Search, Filter, RotateCcw, Clock, Globe, BookOpen, CheckCircle, Eye, Calendar, Zap } from 'lucide-react';
 
 const defaultColors = [
   'linear-gradient(135deg, #1e3a8a 0%, #0d1b3e 100%)', // Deep Blue
@@ -20,11 +20,12 @@ const CoursesPage = ({ setCurrentPage }) => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch('https://iscale-backend.onrender.com/api/course/public-all-courses');
+        const response = await fetch('https://iscale-backend.onrender.com/api/course/public-all-courses?page=1&limit=100');
         const data = await response.json();
         
-        if (data && Array.isArray(data.data)) {
-          const mappedCourses = data.data.map((course, index) => {
+        const arr = data.data?.docs || data.data || [];
+        if (Array.isArray(arr) && arr.length > 0) {
+          const mappedCourses = arr.map((course, index) => {
             let imgUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(course.title)}&background=random`;
             if (course.banner && course.banner !== 'N/A') {
               const cleanedPath = course.banner.replace(/\\/g, '/');
@@ -41,26 +42,14 @@ const CoursesPage = ({ setCurrentPage }) => {
             return {
               id: course._id,
               slug: course.slug || course._id,
-              category: (course.category !== 'N/A' && course.category) ? course.category :
-                        (course.title.toLowerCase().includes('data science') ? 'Data Science Courses' :
-                        (course.title.toLowerCase().includes('data analytics') || course.title.toLowerCase().includes('data analyst') ? 'Data Analyst Courses' :
-                        (course.title.toLowerCase().includes('cohort') ? 'Cohort Courses' :
-                        (course.course_type === 'Free' || course.title.toLowerCase().includes('free') ? 'Free Category' : 'Foundation Courses')))),
+              category: (course.category !== 'N/A' && course.category) ? course.category : 'Course',
               tag: course.course_type === 'Paid' ? 'PREMIUM' : 'FREE',
               title: course.title,
-              subtitle: course.subtitle || '',
-              price: offerPriceNum > 0 ? `₹${offerPriceNum.toLocaleString()}` : (course.course_type === 'Free' ? 'FREE' : ''),
-              original: (priceNum > offerPriceNum) ? `₹${priceNum.toLocaleString()}` : '',
-              discount: discountStr,
-              rating: course.rating || 0,
-              students: course.students || 0,
-              img: imgUrl,
-              color: defaultColors[index % defaultColors.length],
-              duration: course.duration || '',
-              language: course.language || '',
-              lectures: course.lectures || '',
-              features: course.features || [],
-              skills: course.skills || []
+              price: offerPriceNum > 0 ? `₹ ${offerPriceNum.toLocaleString()}` : (course.course_type === 'Free' ? 'FREE' : ''),
+              original: (priceNum > offerPriceNum) ? `₹ ${priceNum.toLocaleString()}` : '',
+              duration: course.duration || '365 Days',
+              views: course.views || 0,
+              img: imgUrl
             };
           });
           
@@ -80,7 +69,7 @@ const CoursesPage = ({ setCurrentPage }) => {
 
   const filtered = allCourses.filter(c => {
     const matchCat = activeCategory === 'All' || c.category === activeCategory;
-    const matchSearch = c.title.toLowerCase().includes(search.toLowerCase()) || c.subtitle.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = (c.title || '').toLowerCase().includes(search.toLowerCase()) || (c.subtitle || '').toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
   });
 
@@ -97,7 +86,7 @@ const CoursesPage = ({ setCurrentPage }) => {
         .public-courses-hero {
           background: var(--gradient-hero);
           color: var(--text-primary);
-          padding: 60px 0;
+          padding: 10px 0 30px 0;
           position: relative;
           border-bottom: 1px solid var(--border-color);
           text-align: center;
@@ -260,7 +249,7 @@ const CoursesPage = ({ setCurrentPage }) => {
       <div className="public-courses-hero">
         <div className="container">
           <h1 style={{ fontSize: 44, fontWeight: 900 }}>
-            Explore Our <span className="text-gradient">Courses</span>
+            <span className="animated-text-gradient">Explore</span> <span className="text-gradient">Courses</span>
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: 16, marginTop: 8 }}>
             Upskill under leading domain experts with curated practical curriculum.
@@ -311,157 +300,53 @@ const CoursesPage = ({ setCurrentPage }) => {
             {filtered.map((course, idx) => (
               <div 
                 key={idx} 
-                className="public-card"
+                className="public-card hover-glow"
                 onClick={() => setCurrentPage(`course-details/${course.id}`)}
                 style={{
+                  borderRadius: 16, 
+                  overflow: 'hidden', 
+                  background: '#fff', 
+                  border: '1px solid var(--border-color)', 
+                  boxShadow: 'var(--card-shadow)', 
+                  cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
                   height: '100%',
-                  borderRadius: 20
+                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                  color: '#333'
                 }}
               >
-                <div>
-                  {/* Thumbnail */}
-                  <div className="public-card-thumb" style={{ background: course.color, height: 145, position: 'relative', overflow: 'hidden' }}>
-                    <span className="public-card-tag">
-                      {course.tag}
+                <div style={{ padding: '16px 16px 0 16px' }}>
+                  <div style={{ borderRadius: 8, overflow: 'hidden', height: 160, marginBottom: 16 }}>
+                    <img src={course.img} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                  
+                  <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 12, lineHeight: 1.3, color: '#0f172a' }}>
+                    {course.title}
+                  </h4>
+
+                  <div style={{ display: 'flex', gap: 16, marginBottom: 12, fontSize: 13, color: '#64748b', fontWeight: 500 }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <Eye size={14} color="#94a3b8" /> {course.views}
                     </span>
-                    <span className="public-card-duration" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <Clock size={11} /> {course.duration}
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <Calendar size={14} color="#94a3b8" /> {course.duration}
                     </span>
-                    <img src={course.img} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0 }} />
-                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(to top, rgba(0,0,0,0.4), transparent)', zIndex: 1 }} />
                   </div>
 
-                  {/* Body Details */}
-                  <div className="public-card-info" style={{ padding: '16px 16px 0 16px' }}>
-                    <div style={{ display: 'flex', gap: 12, marginBottom: 8, fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', minHeight: '16px' }}>
-                      {course.language && (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                          <Globe size={12} color="var(--red)" /> {course.language}
-                        </span>
-                      )}
-                      {course.lectures && (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                          <BookOpen size={12} color="var(--red)" /> {course.lectures}
-                        </span>
-                      )}
-                    </div>
-
-                    <div style={{ fontSize: 11, color: 'var(--red)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>{course.category}</div>
-                    <h3 className="public-card-title" style={{ fontSize: '16px', fontWeight: 800, marginBottom: 6, color: 'var(--text-primary)' }}>{course.title}</h3>
-                    {course.subtitle && (
-                      <p className="public-card-subtitle" style={{ fontSize: '12px', lineHeight: '1.4', height: '34px', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', marginBottom: 12, color: 'var(--text-secondary)' }}>{course.subtitle}</p>
-                    )}
-
-                    {course.rating > 0 && (
-                      <div className="public-card-rating" style={{ marginBottom: 12, fontSize: 11 }}>
-                        <div style={{ display: 'flex', gap: 2 }}>
-                          {[1, 2, 3, 4, 5].map(s => <Star key={s} size={11} fill="#FFD700" color="#FFD700" />)}
-                        </div>
-                        <span style={{ fontWeight: 700, color: 'var(--text-primary)', marginLeft: 4 }}>{course.rating}</span>
-                        {course.students > 0 && (
-                          <span style={{ color: 'var(--text-muted)', marginLeft: 2 }}>({course.students.toLocaleString()})</span>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Features checklist in 2x2 Grid */}
-                    {course.features && course.features.length > 0 && (
-                      <div style={{ 
-                        display: 'grid', 
-                        gridTemplateColumns: '1fr 1fr', 
-                        gap: '8px 10px', 
-                        marginBottom: 16, 
-                        padding: '10px 12px', 
-                        background: 'var(--bg-primary)', 
-                        borderRadius: 12, 
-                        border: '1px solid var(--border-color)' 
-                      }}>
-                        {course.features.slice(0, 4).map((feat, fidx) => (
-                          <div key={fidx} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)' }}>
-                            <CheckCircle size={12} color="#22c55e" style={{ flexShrink: 0 }} />
-                            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={feat}>
-                              {feat}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Skills pills */}
-                    {course.skills && course.skills.length > 0 && (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 4 }}>
-                        {course.skills.map((skill, sidx) => (
-                          <span 
-                            key={sidx} 
-                            style={{ 
-                              fontSize: 9, 
-                              fontWeight: 700, 
-                              color: 'var(--red)', 
-                              background: 'rgba(237, 28, 36, 0.04)', 
-                              padding: '3px 8px', 
-                              borderRadius: 6, 
-                              border: '1px solid rgba(237, 28, 36, 0.08)' 
-                            }}
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#64748b', fontWeight: 500, marginBottom: 16 }}>
+                    <Zap size={14} color="#94a3b8" /> Category : {course.category}
                   </div>
                 </div>
 
-                {/* Footer Section */}
-                <div style={{ padding: '0 16px 16px 16px' }}>
-                  <div style={{ height: 1, background: 'var(--border-color)', margin: '12px 0' }} />
-                  
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                    <div>
-                      <span style={{ color: 'var(--text-muted)', fontSize: 10, fontWeight: 600, display: 'block', textTransform: 'uppercase' }}>Course Fee</span>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 1 }}>
-                        <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 18, color: 'var(--red)' }}>{course.price}</span>
-                        {course.original && (
-                          <span style={{ color: 'var(--text-muted)', fontSize: 12, textDecoration: 'line-through' }}>{course.original}</span>
-                        )}
-                      </div>
-                    </div>
-                    {course.discount && (
-                      <span style={{
-                        background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e',
-                        fontSize: 10, fontWeight: 800, padding: '3px 8px',
-                        borderRadius: 100, border: '1px solid rgba(34, 197, 94, 0.15)'
-                      }}>
-                        {course.discount}
-                      </span>
-                    )}
-                  </div>
-
-                  <button
-                    className="public-enroll-btn"
-                    onClick={(e) => { e.stopPropagation(); setCurrentPage(`course-details/${course.id}`); }}
-                    style={{
-                      width: '100%',
-                      padding: '10px 16px',
-                      background: 'var(--red)',
-                      color: '#fff',
-                      borderRadius: 8,
-                      fontWeight: 700,
-                      fontSize: 13,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: 6,
-                      border: 'none',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                      boxShadow: '0 4px 12px rgba(237, 28, 36, 0.12)'
-                    }}
-                  >
-                    Enroll Now <ArrowRight size={14} />
-                  </button>
+                <div style={{ padding: '0 16px 16px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20, color: '#64748b' }}>
+                    {course.price}
+                  </span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    Learn More <ArrowRight size={14} />
+                  </span>
                 </div>
               </div>
             ))}
