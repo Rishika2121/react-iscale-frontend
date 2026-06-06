@@ -564,7 +564,7 @@ const testimonialVideos = [
   { video: 'Student_Shorts_11.mov', ytLink: 'https://www.youtube.com/watch?v=kXDIOvTXLQE' },
   { video: 'Student_Shorts_5.mov', ytLink: 'https://www.youtube.com/watch?v=6Bwd5RRLJps' },
   { video: 'Student_Shorts_7.mov', ytLink: 'https://www.youtube.com/watch?v=d-mpauGxxBg' },
-  { video: 'Student_Shorts_3.mov', ytLink: 'https://www.youtube.com/shorts/T1EXdCBLUok' },
+  // { video: 'Student_Shorts_3.mov', ytLink: 'https://www.youtube.com/shorts/T1EXdCBLUok' },
   { video: 'Student_Shorts_8.mov', ytLink: 'https://www.youtube.com/watch?v=ROgY3-4RDfQ' },
   { video: 'Student_Shorts_4.mov', ytLink: 'https://www.youtube.com/watch?v=8-kAhYnd7xk' },
   { video: 'Student_Shorts_1-1.mov', ytLink: 'https://www.youtube.com/shorts/_fDE0Z-Go9A' },
@@ -746,7 +746,7 @@ const PopularCourses = ({ setCurrentPage }) => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch('https://iscale-backend.onrender.com/api/course/public-all-courses?page=1&limit=100', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+        const response = await fetch('https://iscale-backend.onrender.com/api/course/public-all-courses?page=1&limit=100');
         const data = await response.json();
         
         if (data && Array.isArray(data.data)) {
@@ -1118,11 +1118,8 @@ const CompanyMarquee = ({ setCurrentPage }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('https://iscale-backend.onrender.com/api/client/public-get-client-images?page=1&limit=100', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
-      .then(res => {
-        if (!res.ok) throw new Error('API failed');
-        return res.json();
-      })
+    fetch('https://iscale-backend.onrender.com/api/client/public-get-client-images?page=1&limit=100')
+      .then(res => res.json())
       .then(result => {
         const arr = result.data?.docs || result.data || [];
         if (Array.isArray(arr) && arr.length > 0) {
@@ -1240,7 +1237,7 @@ export const SuccessStories = ({ setCurrentPage }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('https://iscale-backend.onrender.com/api/success-story/public-all-ss?page=1&limit=100&search=shreya', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+    fetch('https://iscale-backend.onrender.com/api/success-story/public-all-ss?page=1&limit=100&search=shreya')
       .then(res => res.json())
       .then(result => {
         const arr = result.data?.docs || result.data || [];
@@ -1509,7 +1506,7 @@ const NewsUpdates = ({ setCurrentPage }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('https://iscale-backend.onrender.com/api/news&updates/public-all-news&updates?page=1&limit=100', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+    fetch('https://iscale-backend.onrender.com/api/news&updates/public-all-news&updates?page=1&limit=100')
       .then(res => res.json())
       .then(result => {
         const arr = result.data?.docs || result.data || [];
@@ -1522,9 +1519,9 @@ const NewsUpdates = ({ setCurrentPage }) => {
             };
             return {
               title: item.title || item.m_news_title || 'News Update',
-              desc: item.desc || item.description || item.m_news_desc || 'Read more about this latest update.',
-              link: item.link || item.url || item.m_news_link || '/news-details',
-              img: getImageUrl(item.image || item.img || item.m_news_image)
+              desc: item.desc || item.m_news_intro || item.m_news_description || item.description || 'Read more about this latest update.',
+              link: item.link || item.url || item.m_news_link || `/news-details/${item._id}`,
+              img: getImageUrl(item.image || item.img || item.m_news_image || item.m_news_images)
             };
           });
           setNewsList(mapped);
@@ -1547,7 +1544,7 @@ const NewsUpdates = ({ setCurrentPage }) => {
         <div style={{ textAlign: 'center', padding: '20px 0' }}>Loading news...</div>
       ) : newsList.length > 0 ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, justifyContent: 'center' }}>
-          {newsList.map((news, idx) => (
+          {newsList.slice(0, 3).map((news, idx) => (
             <div key={idx} className="premium-card hover-glow" style={{ 
               background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 8, overflow: 'hidden',
               boxShadow: 'var(--card-shadow)', display: 'flex', flexDirection: 'column'
@@ -1595,21 +1592,35 @@ const NewsUpdates = ({ setCurrentPage }) => {
   );
 };
 
-/* ── We've been in the news! ── */
-const mediaMentions = [
-  { img: 'https://www.theiscale.com/myadmin/uploads/stdnews/test_31.png', title: 'Join our 1,00,000+ subscribers and access 1000+ free educational videos to boost your learning!', link: 'https://www.youtube.com/@theiScale/videos' },
-  { img: 'https://www.theiscale.com/myadmin/uploads/stdnews/Josh_Talk.png', title: 'Meet Nishant Dhote, the visionary founder behind "The iScale," India\'s leading affordable upskilling tech platform.', link: 'https://www.youtube.com/watch?v=kjT9txv6ULc' },
-  { img: 'https://www.theiscale.com/myadmin/uploads/stdnews/Haribhoomi1.png', title: 'AI-Driven Platform Personalizes Learning Experience for 1,00,000 Million Students Across Diverse Subjects and Levels', link: 'https://ibb.co/87hNQYM' },
-  { img: 'https://www.theiscale.com/myadmin/uploads/stdnews/Entrackr1.png', title: 'Startup Offers Courses Bridging the Skill Gap in the EV and IT Sector Through Innovative Training Programs', link: 'https://entrackr.com/2023/02/industries-helping-hands-offers-courses-bridging-the-skill-gap-in-the-ev-and-it-sector/' },
-  { img: 'https://www.theiscale.com/myadmin/uploads/stdnews/Patrika1.png', title: 'Startup Unveils Breakthrough AI Technology for Real-Time Feedback in Remote Learnin', link: 'https://ibb.co/jJ5cgVc' },
-  { img: 'https://www.theiscale.com/myadmin/uploads/stdnews/Hitvada.png', title: 'The iScale Startup Recognized By India\'s 14th President for it\'s Innovation Upskilling Impact', link: 'https://ibb.co/tP2T16D' },
-  { img: 'https://www.theiscale.com/myadmin/uploads/stdnews/Dainik_Bhaskar1.png', title: 'AI Driven Education Platform Receives Top Honors for Innovation in Learning Technology.', link: 'https://ibb.co/PM6Qkgs' },
-  { img: 'https://www.theiscale.com/myadmin/uploads/stdnews/karo_Startup12.png', title: 'The iScale, Community-Driven Tech Startup, Empowering Over 100,000+ Learners Through Upskilling', link: 'https://thekarostartup.com/iscale-story/' },
-  { img: 'https://www.theiscale.com/myadmin/uploads/stdnews/Navbharat.png', title: 'AI Startup Revolutionizes Classroom Learning with New Adaptive Tutoring System', link: 'https://ibb.co/TMtGCDK' },
-  { img: 'https://www.theiscale.com/myadmin/uploads/stdnews/Hindustan_Times.png', title: 'Sustainable Development Through Upskilling: India\'s Engineering Renaissance Begins', link: 'https://www.hindustantimes.com/' },
-];
-
 const InTheNews = () => {
+  const [mentions, setMentions] = useState([]);
+
+  useEffect(() => {
+    fetch('https://iscale-backend.onrender.com/api/news/public-all-news?page=1&limit=100')
+      .then(res => res.json())
+      .then(result => {
+        const arr = result.data?.docs || result.data || [];
+        if (Array.isArray(arr) && arr.length > 0) {
+          const mapped = arr.map(item => {
+            const getImageUrl = (url) => {
+              if (!url || url === 'N/A') return '';
+              const cleaned = url.replace(/\\/g, '/');
+              return cleaned.startsWith('http') ? cleaned : `https://iscale-backend.onrender.com/${cleaned.replace(/^src\//, '')}`;
+            };
+            return {
+              title: item.m_snews_des || item.m_snews_title || 'The iScale in the news',
+              link: item.m_snews_url || '#',
+              img: getImageUrl(item.m_snews_image || item.image)
+            };
+          });
+          setMentions(mapped);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  if (mentions.length === 0) return null;
+
   return (
     <section style={{ padding: '50px 0', background: 'var(--gradient-hero)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
       <div className="container">
@@ -1623,7 +1634,7 @@ const InTheNews = () => {
         </h2>
 
         <AutoSlider 
-          items={mediaMentions} 
+          items={mentions} 
           speed={40} 
           gap={24}
           renderItem={(mention, i) => (
@@ -1700,7 +1711,7 @@ const AlliedCollegesSection = ({ setCurrentPage }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('https://iscale-backend.onrender.com/api/allied/public-all-allied?page=1&limit=100', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+    fetch('https://iscale-backend.onrender.com/api/allied/public-all-allied?page=1&limit=100')
       .then(res => res.json())
       .then(result => {
         const arr = result.data?.docs || result.data || [];

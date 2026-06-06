@@ -8,32 +8,55 @@ const EnrolledCourses = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCourses = () => {
+    const fetchCourses = async () => {
       try {
-        const stored = localStorage.getItem('enrolled_courses');
+        let stored = localStorage.getItem('enrolled_courses');
+        let enrolledList = [];
         if (stored) {
-          setCourses(JSON.parse(stored));
+          enrolledList = JSON.parse(stored);
         } else {
           // Pre-populate with default course if none exists
-          const defaultList = [
+          enrolledList = [
             { 
               id: 'ai-engineer-advance-program', 
               title: 'AI Engineer Advance Program', 
               category: 'AI Courses', 
-              progress: 10, 
+              progress: 0, 
               bgGradient: 'linear-gradient(135deg, #e0f2fe, #bae6fd)',
               img: 'https://www.theiscale.com/myadmin/uploads/courses/Your_paragraph_text_(10).jpg'
             }
           ];
-          localStorage.setItem('enrolled_courses', JSON.stringify(defaultList));
-          setCourses(defaultList);
+          localStorage.setItem('enrolled_courses', JSON.stringify(enrolledList));
         }
+
+        // Fetch true progress from the server
+        const token = localStorage.getItem('token');
+        if (token && enrolledList.length > 0) {
+          enrolledList = await Promise.all(enrolledList.map(async (c) => {
+            try {
+              const progRes = await fetch(`https://iscale-backend.onrender.com/api/lecture-progress/course/${c.id}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+              });
+              if (progRes.ok) {
+                const progData = await progRes.json();
+                if (progData.status && progData.data) {
+                  c.progress = progData.data.progress || 0;
+                }
+              }
+            } catch(e) {}
+            return c;
+          }));
+          localStorage.setItem('enrolled_courses', JSON.stringify(enrolledList));
+        }
+        
+        setCourses(enrolledList);
       } catch (e) {
         console.error(e);
       } finally {
         setLoading(false);
       }
     };
+
     fetchCourses();
   }, []);
 

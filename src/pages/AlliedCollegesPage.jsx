@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const AlliedCollegesPage = () => {
   const [colleges, setColleges] = useState([]);
@@ -6,7 +6,7 @@ const AlliedCollegesPage = () => {
 
   useEffect(() => { 
     window.scrollTo(0, 0); 
-    fetch('https://iscale-backend.onrender.com/api/allied/public-all-allied?page=1&limit=100', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+    fetch('https://iscale-backend.onrender.com/api/allied/public-all-allied?page=1&limit=100')
       .then(res => res.json())
       .then(result => {
         const arr = result.data?.docs || result.data || [];

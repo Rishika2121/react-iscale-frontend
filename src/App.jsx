@@ -124,7 +124,7 @@ const AppContent = () => {
             <Route path="/placement" element={<ClientsPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/news" element={<NewsPage />} />
-            <Route path="/news-details" element={<NewsDetailsPage />} />
+            <Route path="/news-details/:id" element={<NewsDetailsPage />} />
             <Route path="/expert-details" element={<ExpertDetailsPage />} />
             <Route path="/student-testimonials" element={<StudentTestimonialPage setCurrentPage={handleNavigate} />} />
             <Route path="/faq" element={<FaqPage />} />

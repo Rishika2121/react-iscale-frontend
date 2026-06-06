@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const styles = `
 .save-toast {
@@ -419,19 +419,128 @@ const MyProfile = () => {
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({ ...userData });
   const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Password Update State
+  const [passData, setPassData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [passMsg, setPassMsg] = useState('');
+  const [passStatus, setPassStatus] = useState(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+        const res = await fetch('https://iscale-backend.onrender.com/api/myprofile', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (res.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          window.location.href = '/login';
+          return;
+        }
+
+        const result = await res.json();
+        if (result.status && result.data) {
+          setFormData(result.data);
+          // Also merge into global userData if needed for sidebar
+          Object.assign(userData, result.data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch profile:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   const handleChange = (key, val) => {
-    setFormData((prev) => ({
-      ...prev,
-      [key]: val,
-    }));
+    setFormData((prev) => ({ ...prev, [key]: val }));
   };
 
-  const handleSave = () => {
-    setEditing(false);
-    setSaved(true);
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      
+      // Construct the backend payload according to the update-profile structure
+      const payload = {
+        ...formData,
+        c_first_name: formData.firstName,
+        c_last_name: formData.lastName,
+        c_email: formData.email,
+        c_contact: formData.mobileNumber,
+        c_alt_contact: formData.altMobileNumber,
+        c_whatsapp: formData.whatsappNumber,
+        c_gender: formData.gender,
+        c_dob: formData.dob,
+        c_bio: formData.biography,
+        m_occupation: formData.occupation || formData.skillOccupation,
+        c_guardian: formData.parentName,
+        c_current_address1: formData.address,
+        c_current_state: formData.state,
+        c_current_city: formData.city,
+        c_current_pincode: formData.pincode
+      };
 
-    setTimeout(() => setSaved(false), 2500);
+      const res = await fetch('https://iscale-backend.onrender.com/api/update-profile/', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+      
+      const result = await res.json();
+      if (result.status) {
+        setEditing(false);
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2500);
+      } else {
+        alert(result.message || 'Failed to update profile');
+      }
+    } catch (err) {
+      console.error('Update profile error:', err);
+      alert('An error occurred while updating profile.');
+    }
+  };
+
+  const handlePasswordSave = async () => {
+    if(!passData.currentPassword || !passData.newPassword || !passData.confirmPassword) {
+      setPassMsg('Please fill all password fields');
+      setPassStatus('error');
+      return;
+    }
+    if(passData.newPassword !== passData.confirmPassword) {
+      setPassMsg('New passwords do not match');
+      setPassStatus('error');
+      return;
+    }
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('https://iscale-backend.onrender.com/api/update-profile/change-password', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(passData)
+      });
+      const result = await res.json();
+      setPassStatus(result.status ? 'success' : 'error');
+      setPassMsg(result.message || (result.status ? 'Password updated successfully' : 'Failed to update password'));
+      if(result.status) {
+        setPassData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      }
+      setTimeout(() => setPassMsg(''), 3000);
+    } catch(err) {
+      setPassStatus('error');
+      setPassMsg('Error updating password');
+      setTimeout(() => setPassMsg(''), 3000);
+    }
   };
 
   return (
@@ -451,9 +560,10 @@ const MyProfile = () => {
         )}
 
         <div className="profile-layout">
-          <div className="profile-card">
-            <div className="profile-card-header">
-              <h2>Personal Information</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+            <div className="profile-card">
+              <div className="profile-card-header">
+                <h2>Personal Information</h2>
 
               <button
                 className={
@@ -565,6 +675,58 @@ const MyProfile = () => {
                 </button>
               </div>
             )}
+            </div>
+
+            {/* Password Update Section */}
+            <div className="profile-card">
+              <div className="profile-card-header">
+                <h2>Security & Password</h2>
+              </div>
+              <div className="profile-fields" style={{ gap: '16px', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label className="field-label">Current Password</label>
+                  <input 
+                    type="password" 
+                    className="field-input" 
+                    placeholder="Enter current password"
+                    value={passData.currentPassword}
+                    onChange={(e) => setPassData({...passData, currentPassword: e.target.value})}
+                  />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label className="field-label">New Password</label>
+                    <input 
+                      type="password" 
+                      className="field-input" 
+                      placeholder="Enter new password"
+                      value={passData.newPassword}
+                      onChange={(e) => setPassData({...passData, newPassword: e.target.value})}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label className="field-label">Confirm New Password</label>
+                    <input 
+                      type="password" 
+                      className="field-input" 
+                      placeholder="Confirm new password"
+                      value={passData.confirmPassword}
+                      onChange={(e) => setPassData({...passData, confirmPassword: e.target.value})}
+                    />
+                  </div>
+                </div>
+                {passMsg && (
+                  <div style={{ color: passStatus === 'success' ? '#10b981' : '#ef4444', fontSize: '14px', fontWeight: '600', marginTop: '8px' }}>
+                    {passMsg}
+                  </div>
+                )}
+                <div style={{ marginTop: '16px' }}>
+                  <button className="btn-primary" onClick={handlePasswordSave} style={{ padding: '10px 20px', width: 'auto' }}>
+                    Update Password
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="profile-sidebar-card">

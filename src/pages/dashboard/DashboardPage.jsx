@@ -267,28 +267,60 @@ const DashboardPage = ({ setCurrentPage }) => {
     else if (hrs < 17) setGreeting('Good Afternoon');
     else setGreeting('Good Evening');
 
-    const loadData = () => {
+    const fetchDashboardData = async () => {
       try {
-        const storedUser = localStorage.getItem('user');
-        const storedEnrolled = localStorage.getItem('enrolled_courses');
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        const response = await fetch('https://iscale-backend.onrender.com/api/dashboard', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
         
-        let name = 'Ridhi Mishra';
-        if (storedUser) {
-          const u = JSON.parse(storedUser);
-          if (u && u.name) name = u.name;
+        if (response.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          window.location.href = '/login';
+          return;
         }
 
+        const data = await response.json();
+
+        if (data.status && data.data) {
+          const dashboardStats = data.data;
+          
+          // Fallback to local storage if API doesn't provide name
+          let name = dashboardStats.name;
+          if (!name || name === 'NA') {
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+              const u = JSON.parse(storedUser);
+              if (u && u.name) name = u.name;
+            }
+          }
+          setUser(prev => ({ ...prev, name: name || 'Student' }));
+          setFreeCount(dashboardStats.freeCourses || 0);
+          setPremiumCount(dashboardStats.premiumCourses || 0);
+        }
+
+        // Keep local enrolled list for the visual course cards
+        const storedEnrolled = localStorage.getItem('enrolled_courses');
         let enrolledList = [];
-        if (storedEnrolled) {
-          enrolledList = JSON.parse(storedEnrolled);
-        } else {
+        if (storedEnrolled && storedEnrolled !== 'undefined') {
+          try {
+            enrolledList = JSON.parse(storedEnrolled);
+          } catch(e) {}
+        }
+        
+        if (!enrolledList || enrolledList.length === 0) {
           // Prepopulate default course
           enrolledList = [
             { 
               id: 'ai-engineer-advance-program', 
               title: 'AI Engineer Advance Program', 
               category: 'AI Courses', 
-              progress: 10, 
+              progress: 0, 
               bgGradient: 'linear-gradient(135deg, #e0f2fe, #bae6fd)',
               img: 'https://www.theiscale.com/myadmin/uploads/courses/Your_paragraph_text_(10).jpg'
             }
@@ -296,42 +328,50 @@ const DashboardPage = ({ setCurrentPage }) => {
           localStorage.setItem('enrolled_courses', JSON.stringify(enrolledList));
         }
 
+        // Fetch true progress from the server for all enrolled courses
+        enrolledList = await Promise.all(enrolledList.map(async (c) => {
+          try {
+            const progRes = await fetch(`https://iscale-backend.onrender.com/api/lecture-progress/course/${c.id}`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (progRes.ok) {
+              const progData = await progRes.json();
+              if (progData.status && progData.data) {
+                c.progress = progData.data.progress || 0;
+              }
+            }
+          } catch(e) {}
+          return c;
+        }));
+        
+        // Save the synced list back to local storage
+        localStorage.setItem('enrolled_courses', JSON.stringify(enrolledList));
+
         if (enrolledList.length > 0) {
           setActiveCourseId(enrolledList[0].id);
         }
 
-        const totalCourses = enrolledList.length;
-        
-        let pCount = 0;
-        let fCount = 0;
-        enrolledList.forEach(c => {
-          if (c.isFree || c.price === 'Free' || c.title.toLowerCase().includes('free')) {
-            fCount++;
-          } else {
-            pCount++;
-          }
-        });
-        setPremiumCount(pCount);
-        setFreeCount(fCount);
-
-        // Calculate average progress
+        // Calculate average progress for the visual cards
         let totalProg = 0;
         let completedCerts = 0;
         enrolledList.forEach(c => {
           totalProg += (c.progress || 0);
           if (c.progress === 100) completedCerts++;
         });
-
-        setUser({ name, enrolledCount: totalCourses });
-        setAvgProgress(totalCourses > 0 ? Math.round(totalProg / totalCourses) : 0);
+        const avg = enrolledList.length > 0 ? Math.round(totalProg / enrolledList.length) : 0;
+        
+        setAvgProgress(avg);
         setCertCount(completedCerts);
-      } catch (error) {
-        console.error(error);
+        setUser(prev => ({ ...prev, enrolledCount: enrolledList.length }));
+        
+      } catch (err) {
+        console.error('Failed to fetch dashboard data:', err);
       } finally {
         setLoading(false);
       }
     };
-    loadData();
+
+    fetchDashboardData();
   }, []);
 
   if (loading) {

@@ -580,7 +580,7 @@ const TabButton = ({ active, label, onClick }) => (
   </button>
 );
 
-const Accordion = ({ title, items }) => {
+const Accordion = ({ title, items, onPlay, completedLectures }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const displayItems = showMore ? items : items.slice(0, 3);
@@ -600,12 +600,25 @@ const Accordion = ({ title, items }) => {
       </button>
       {isOpen && (
         <div style={{ paddingBottom: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {displayItems.map((item, idx) => (
-            <div key={idx} style={{ padding: '16px 24px', background: 'var(--bg-secondary)', borderRadius: 8, color: 'var(--text-primary)', fontWeight: 600, fontSize: 15, display: 'flex', alignItems: 'center', gap: 12 }}>
-              <FileText size={18} color="var(--red)" />
-              {item}
-            </div>
-          ))}
+          {displayItems.map((item, idx) => {
+            const isCompleted = item.isCompleted || (item.id && completedLectures?.includes(item.id));
+            return (
+              <div key={idx} style={{ padding: '16px 24px', background: 'var(--bg-secondary)', borderRadius: 8, color: 'var(--text-primary)', fontWeight: 600, fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <FileText size={18} color="var(--red)" />
+                  <span style={{ textDecoration: isCompleted ? 'line-through' : 'none', opacity: isCompleted ? 0.6 : 1 }}>{item.title || item}</span>
+                </div>
+                {item.videoUrl && !item.isDummy && (
+                  <button 
+                    onClick={() => onPlay(item)}
+                    style={{ background: 'var(--red)', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
+                  >
+                    <PlayCircle size={14} /> Play
+                  </button>
+                )}
+              </div>
+            );
+          })}
           {items.length > 3 && (
             <button onClick={() => setShowMore(!showMore)} style={{ color: 'var(--red)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignSelf: 'flex-start', marginTop: 8 }}>
               {showMore ? 'Show Less' : 'Show More'}
@@ -629,6 +642,7 @@ const [fetchError, setFetchError] = useState(null);
 
   const [subjects, setSubjects] = useState([]);
   const [subjectsLoading, setSubjectsLoading] = useState(false);
+  const [curriculumData, setCurriculumData] = useState([]);
 
   const [features, setFeatures] = useState([]);
   const [featuresLoading, setFeaturesLoading] = useState(false);
@@ -639,6 +653,15 @@ const [fetchError, setFetchError] = useState(null);
 
   useEffect(() => {
     if (!courseId) return;
+
+    // Check if courseId is a valid MongoDB ObjectId
+    const isValidCourseObjectId = /^[0-9a-fA-F]{24}$/.test(courseId);
+    if (!isValidCourseObjectId) {
+      setLoading(false);
+      setSubjectsLoading(false);
+      setFeaturesLoading(false);
+      return; // Skip API calls for dummy slug IDs from mock data
+    }
 
     // Fetch Course
     setLoading(true);
@@ -653,19 +676,66 @@ const [fetchError, setFetchError] = useState(null);
         setLoading(false);
       });
 
-    // Fetch Subjects
+    // Fetch Subjects and their Topics
     setSubjectsLoading(true);
     fetch(`https://iscale-backend.onrender.com/api/subject/public-get-subjects/${courseId}`)
       .then((res) => res.json())
-      .then((result) => {
+      .then(async (result) => {
         if (result.status && Array.isArray(result.data)) {
           setSubjects(result.data);
+          try {
+            const subjectsWithTopics = await Promise.all(result.data.map(async (subj) => {
+              const subjectId = subj._id || subj.id;
+              let modules = [{ title: 'Lecture Video', isDummy: true }];
+              const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(subjectId);
+              
+              if (subjectId && isValidObjectId) {
+                try {
+                  const token = localStorage.getItem('token');
+                  const enrolled = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
+                  const currentlyEnrolled = enrolled.some(c => c.id === courseId);
+                  
+                  let topicRes;
+                  if (token && currentlyEnrolled) {
+                    topicRes = await fetch(`https://iscale-backend.onrender.com/api/lecture-progress/lectures/${subjectId}`, {
+                      headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                  } else {
+                    topicRes = await fetch(`https://iscale-backend.onrender.com/api/topics/public/${subjectId}?page=1&limit=100`);
+                  }
+
+                  if (topicRes.ok) {
+                    const topicData = await topicRes.json();
+                    const topicsArr = topicData.data?.docs || topicData.data || [];
+                    if (Array.isArray(topicsArr) && topicsArr.length > 0) {
+                      modules = topicsArr.map(t => ({
+                        id: t._id,
+                        title: t.title || t.ml_title || t.m_topic_title || t.name || 'Topic',
+                        videoUrl: t.ml_video_id || null,
+                        isDummy: false,
+                        isCompleted: t.is_completed || false
+                      }));
+                    }
+                  }
+                } catch (e) {}
+              }
+              return {
+                title: subj.m_subject_title || subj.title || 'Untitled Subject',
+                modules: modules
+              };
+            }));
+            setCurriculumData(subjectsWithTopics);
+          } catch(e) {
+            setCurriculumData(result.data.map(s => ({ title: s.m_subject_title || s.title || 'Untitled Subject', modules: [{ title: 'Lecture Video', isDummy: true }] })));
+          }
         } else {
           setSubjects([]);
+          setCurriculumData([]);
         }
       })
       .catch((err) => {
         setSubjects([]);
+        setCurriculumData([]);
       })
       .finally(() => {
         setSubjectsLoading(false);
@@ -867,40 +937,45 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
     });
   };
 
-  const handleEnrollClick = () => {
-    // 1. Mark as enrolled in state
-    setIsEnrolled(true);
-
-    // 2. Add course to localStorage enrolled_courses
+  const handleEnrollClick = async () => {
     try {
-      const enrolled = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
-      if (!enrolled.some(c => c.id === data.id)) {
-        const newCourse = {
-          id: data.id,
-          title: data.title,
-          category: data.category || 'Data Science',
-          progress: currentLectures.length > 0 
-            ? Math.round((completedLectures.length / currentLectures.length) * 100) 
-            : 0,
-          bgGradient: data.id === 'data-science-with-generative-ai-course' 
-            ? 'linear-gradient(135deg, #ffebee, #ffcdd2)'
-            : 'linear-gradient(135deg, #e0f2fe, #bae6fd)',
-          img: data.thumbnail
-        };
-        enrolled.push(newCourse);
-        localStorage.setItem('enrolled_courses', JSON.stringify(enrolled));
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/login';
+        return;
+      }
+
+      const res = await fetch('https://iscale-backend.onrender.com/api/enroll-course/enroll', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ course_id: courseId })
+      });
+      const resData = await res.json();
+
+      if (res.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+        return;
+      }
+
+      if (resData.status) {
+        setIsEnrolled(true);
+        alert(resData.message || `Successfully enrolled in "${data.title}"! All lectures are now unlocked.`);
+      } else {
+        alert(resData.message || 'Failed to enroll. Please try again.');
       }
     } catch (e) {
       console.error(e);
+      alert('Error enrolling. Please try again later.');
     }
-    
-    alert(`Successfully enrolled in "${data.title}"! All lectures are now unlocked.`);
   };
 
   // Optional: fallback arrays if data doesn't exist for the other courses yet
-  const curriculum = subjects && subjects.length > 0 
-    ? subjects.map(s => ({ title: s.m_subject_title || s.title || 'Untitled Subject', modules: ['Lecture Video'] }))
-    : [];
+  // (Curriculum is now fetched dynamically with topics)
   const details = features && features.length > 0
     ? features.map(f => ({
         title: f.m_feature_title || 'Feature',
@@ -946,7 +1021,8 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
     }
   };
 
-  const embedUrl = getEmbedUrl(videoUrl);
+  // In case activeCohortLecture is set, we use its videoUrl, else default preview
+  const embedUrl = getEmbedUrl((activeCohortLecture && activeCohortLecture.videoUrl) ? activeCohortLecture.videoUrl : videoUrl);
   const feesData = data.fees || coursesDatabase['data-science-with-generative-ai-course'].fees;
   const toolsData = toolsList && toolsList.length > 0
     ? toolsList.map(t => ({ name: t.title || t.m_tool_title || t.name || 'Tool', img: getImageUrl(t.image || t.m_tool_image || t.icon) }))
@@ -993,6 +1069,46 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
                 <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>Video unavailable</div>
               )}
             </div>
+            {/* Mark Complete functionality inside the modal if it's a real lecture */}
+            {activeCohortLecture && activeCohortLecture.id && !completedLectures.includes(activeCohortLecture.id) && (
+              <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
+                <button 
+                  onClick={async () => {
+                    try {
+                      const token = localStorage.getItem('token');
+                      const res = await fetch('https://iscale-backend.onrender.com/api/lecture-progress/mark-complete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({ lecture_id: activeCohortLecture.id })
+                      });
+                      const rData = await res.json();
+                      if (rData.status) {
+                        const newCompleted = [...completedLectures, activeCohortLecture.id];
+                        setCompletedLectures(newCompleted);
+                        localStorage.setItem(`completed_lectures_${data.id}`, JSON.stringify(newCompleted));
+                        alert('Lecture marked as completed!');
+                        // Also automatically update enrolled course progress if possible
+                        try {
+                          const enrolled = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
+                          const cIndex = enrolled.findIndex(c => c.id === data.id);
+                          if(cIndex > -1) {
+                            enrolled[cIndex].progress = rData.data.progress || 100;
+                            localStorage.setItem('enrolled_courses', JSON.stringify(enrolled));
+                          }
+                        } catch(e){}
+                      } else {
+                        alert(rData.message || 'Error marking lecture complete');
+                      }
+                    } catch(err) {
+                      alert('Failed to connect to server');
+                    }
+                  }}
+                  style={{ background: '#22c55e', color: '#fff', border: 'none', padding: '12px 24px', borderRadius: 8, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}
+                >
+                  <Check size={18} /> Mark as Complete
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -1176,12 +1292,21 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
           <div id="coursecontent" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 32 }}>Course Curriculum</h2>
             <div>
-              {curriculum && curriculum.length > 0 ? (
+              {curriculumData && curriculumData.length > 0 ? (
                 <>
-                  {curriculum.slice(0, curriculumShowMore ? curriculum.length : 5).map((curr, idx) => (
-                    <Accordion key={idx} title={curr.title} items={curr.modules || ['Lecture Video']} />
+                  {curriculumData.slice(0, curriculumShowMore ? curriculumData.length : 5).map((curr, idx) => (
+                    <Accordion 
+                      key={idx} 
+                      title={curr.title} 
+                      items={curr.modules || [{ title: 'Lecture Video', isDummy: true }]} 
+                      completedLectures={completedLectures}
+                      onPlay={(lecture) => {
+                        setActiveCohortLecture(lecture);
+                        setVideoOpen(true);
+                      }}
+                    />
                   ))}
-                  {curriculum.length > 5 && (
+                  {curriculumData.length > 5 && (
                     <button onClick={() => setCurriculumShowMore(!curriculumShowMore)} style={{ color: 'var(--red)', fontWeight: 800, background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, marginTop: 16 }}>
                       {curriculumShowMore ? 'Show Less' : 'Show More'}
                     </button>

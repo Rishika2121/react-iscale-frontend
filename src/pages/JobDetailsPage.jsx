@@ -11,6 +11,8 @@ const JobDetailsPage = ({ setCurrentPage }) => {
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [applyLoading, setApplyLoading] = useState(false);
+  const [applyMessage, setApplyMessage] = useState(null);
 
   useEffect(() => {
     const fetchJobDetails = async () => {
@@ -33,6 +35,39 @@ const JobDetailsPage = ({ setCurrentPage }) => {
 
     fetchJobDetails();
   }, [id]);
+
+  const handleApply = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/login';
+        return;
+      }
+      setApplyLoading(true);
+      setApplyMessage(null);
+      
+      const res = await fetch(`https://iscale-backend.onrender.com/api/comp-requirement/user-apply-job/${id}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await res.json();
+      
+      if (res.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+        return;
+      }
+      
+      setApplyMessage({ type: data.status ? 'success' : 'error', text: data.message || 'Applied successfully' });
+    } catch (err) {
+      setApplyMessage({ type: 'error', text: 'Error applying for job' });
+    } finally {
+      setApplyLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -119,22 +154,27 @@ const JobDetailsPage = ({ setCurrentPage }) => {
               {typeof job.job_description === 'string' ? job.job_description : (job.job_description ? JSON.stringify(job.job_description) : 'No detailed description provided for this job.')}
             </div>
             
-            <div style={{ marginTop: '40px' }}>
-              <a 
-                href={job.application_link} 
-                target="_blank" 
-                rel="noreferrer"
-                style={{ 
-                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', 
-                  padding: '14px 32px', background: 'var(--red)', color: '#fff', 
-                  borderRadius: '10px', fontWeight: '700', fontSize: '16px', 
-                  textDecoration: 'none', transition: 'all 0.3s',
-                  boxShadow: '0 4px 15px rgba(192,0,12,0.3)'
-                }}
-              >
-                Apply for this Job
-              </a>
-            </div>
+            <div style={{ marginTop: '40px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <button 
+                  onClick={handleApply}
+                  disabled={applyLoading || (applyMessage && applyMessage.type === 'success')}
+                  style={{ 
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', 
+                    padding: '14px 32px', background: (applyMessage && applyMessage.type === 'success') ? '#10b981' : 'var(--red)', color: '#fff', 
+                    border: 'none', cursor: (applyLoading || (applyMessage && applyMessage.type === 'success')) ? 'not-allowed' : 'pointer',
+                    borderRadius: '10px', fontWeight: '700', fontSize: '16px', 
+                    textDecoration: 'none', transition: 'all 0.3s',
+                    boxShadow: (applyMessage && applyMessage.type === 'success') ? '0 4px 15px rgba(16,185,129,0.3)' : '0 4px 15px rgba(192,0,12,0.3)'
+                  }}
+                >
+                  {applyLoading ? 'Applying...' : (applyMessage && applyMessage.type === 'success') ? 'Applied Successfully ✓' : 'Apply for this Job'}
+                </button>
+                {applyMessage && (
+                  <div style={{ color: applyMessage.type === 'success' ? '#10b981' : '#ef4444', fontSize: '14px', fontWeight: '600' }}>
+                    {applyMessage.text}
+                  </div>
+                )}
+              </div>
           </div>
           
           {/* Right Column: Company Info */}

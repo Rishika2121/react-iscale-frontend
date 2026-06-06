@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const NewsPage = () => {
   const [newsItems, setNewsItems] = useState([]);
@@ -6,7 +6,7 @@ const NewsPage = () => {
 
   useEffect(() => { 
     window.scrollTo(0, 0); 
-    fetch('https://iscale-backend.onrender.com/api/news&updates/public-all-news&updates?page=1&limit=100', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+    fetch('https://iscale-backend.onrender.com/api/news&updates/public-all-news&updates?page=1&limit=100')
       .then(res => res.json())
       .then(result => {
         const arr = result.data?.docs || result.data || [];
@@ -28,9 +28,9 @@ const NewsPage = () => {
               id: item._id || idx,
               title: item.title || item.m_news_title || 'News Update',
               date: dateStr,
-              desc: item.desc || item.description || item.m_news_desc || 'Read more about this latest update.',
-              link: item.link || item.url || item.m_news_link || '/news-details',
-              img: getImageUrl(item.image || item.img || item.m_news_image)
+              desc: item.desc || item.m_news_intro || item.m_news_description || item.description || 'Read more about this latest update.',
+              link: item.link || item.url || item.m_news_link || `/news-details/${item._id || idx}`,
+              img: getImageUrl(item.image || item.img || item.m_news_image || item.m_news_images)
             };
           });
           setNewsItems(mapped);
