@@ -519,3 +519,98 @@ body {
   text-shadow: 0 0 15px rgba(255,255,255,0.6), 0 0 30px rgba(167,139,250,0.5);
 }
 
+/* News Card Interactive Styles */
+.news-card-interactive {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+.news-card-interactive::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(237, 28, 36, 0.08) 0%, rgba(99, 102, 241, 0.05) 50%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+}
+.news-card-interactive:hover {
+  transform: translateY(-8px) scale(1.01);
+  border-color: var(--red-light) !important;
+  box-shadow: 0 20px 40px -10px rgba(237, 28, 36, 0.12), 0 0 30px rgba(237, 28, 36, 0.22) !important;
+}
+[data-theme='dark'] .news-card-interactive:hover {
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4), 0 0 30px rgba(237, 28, 36, 0.25) !important;
+}
+.news-card-interactive:hover::after {
+  opacity: 1;
+}
+
+.news-card-image-wrap {
+  overflow: hidden;
+  position: relative;
+}
+.news-card-image-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(237, 28, 36, 0.25), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+.news-card-interactive:hover .news-card-image-wrap::after {
+  opacity: 1;
+}
+.news-card-image {
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.news-card-interactive:hover .news-card-image {
+  transform: scale(1.08);
+}
+
+.news-tag-badge {
+  background: linear-gradient(135deg, rgba(237, 28, 36, 0.08) 0%, rgba(255, 77, 84, 0.08) 100%);
+  color: var(--red);
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  display: inline-block;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(237, 28, 36, 0.15);
+}
+.news-card-interactive:hover .news-tag-badge {
+  background: linear-gradient(135deg, var(--red) 0%, var(--red-light) 100%);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 4px 10px rgba(237, 28, 36, 0.2);
+}
+
+/* Colorful Glow Border Styles */
+.colorful-glow-border {
+  position: relative;
+}
+.colorful-glow-border::before {
+  content: '';
+  position: absolute;
+  top: -1.5px; left: -1.5px; right: -1.5px; bottom: -1.5px;
+  background: linear-gradient(135deg, #ed1c24, #ff007f, #7f00ff, #3b82f6);
+  z-index: -1;
+  border-radius: inherit;
+  opacity: 0.45;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.colorful-glow-border:hover::before {
+  opacity: 1;
+  top: -3px; left: -3px; right: -3px; bottom: -3px;
+}
+
+

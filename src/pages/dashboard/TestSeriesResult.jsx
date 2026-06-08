@@ -5,15 +5,32 @@ const TestSeriesResult = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // API Simulation
-    setTimeout(() => {
-      setResults([
-        { id: 'tr-1', testName: 'Aptitude & Logical Reasoning - Test 1', score: '42/50', accuracy: '84%', rank: '12/480', date: '12-05-2026', status: 'Passed' },
-        { id: 'tr-2', testName: 'JavaScript Concepts & DOM Test', score: '22/30', accuracy: '73.3%', rank: '45/310', date: '18-05-2026', status: 'Passed' },
-        { id: 'tr-3', testName: 'CSS Grid & Responsive Design Quiz', score: '18/20', accuracy: '90%', rank: '8/290', date: '21-05-2026', status: 'Passed' }
-      ]);
-      setLoading(false);
-    }, 500);
+    const fetchResults = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        const response = await fetch('https://iscale-backend.onrender.com/api/dashboard', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+        
+        if (data.status && data.data && Array.isArray(data.data.testResults)) {
+          setResults(data.data.testResults);
+        } else {
+          setResults([]);
+        }
+      } catch (err) {
+        console.error('Failed to fetch test results:', err);
+        setResults([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchResults();
   }, []);
 
   if (loading) return <div style={{ padding: '40px 32px' }}>Loading Test Results...</div>;
@@ -67,20 +84,28 @@ const TestSeriesResult = () => {
               </tr>
             </thead>
             <tbody>
-              {results.map((result, idx) => (
-                <tr key={result.id} className="table-row" style={{ borderBottom: idx < results.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
-                  <td style={{ padding: '24px 24px', fontSize: 15, fontWeight: 700, color: '#0f172a' }}>{result.testName}</td>
-                  <td style={{ padding: '24px 24px', fontSize: 14, color: '#64748b', fontWeight: 500 }}>{result.date}</td>
-                  <td style={{ padding: '24px 24px', fontSize: 16, fontWeight: 800, color: '#ED1C24' }}>{result.score}</td>
-                  <td style={{ padding: '24px 24px', fontSize: 14, color: '#475569', fontWeight: 600 }}>{result.accuracy}</td>
-                  <td style={{ padding: '24px 24px', fontSize: 15, fontWeight: 800, color: '#0f172a' }}>{result.rank}</td>
-                  <td style={{ padding: '24px 24px' }}>
-                    <span style={{ background: '#ecfdf5', color: '#10b981', fontSize: 13, fontWeight: 700, padding: '6px 12px', borderRadius: 9999 }}>
-                      {result.status}
-                    </span>
+              {results.length === 0 ? (
+                <tr>
+                  <td colSpan={6} style={{ padding: '48px 24px', textAlign: 'center', color: '#64748b', fontSize: 15, fontWeight: 600 }}>
+                    No test series results found on your profile.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                results.map((result, idx) => (
+                  <tr key={result.id} className="table-row" style={{ borderBottom: idx < results.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
+                    <td style={{ padding: '24px 24px', fontSize: 15, fontWeight: 700, color: '#0f172a' }}>{result.testName}</td>
+                    <td style={{ padding: '24px 24px', fontSize: 14, color: '#64748b', fontWeight: 500 }}>{result.date}</td>
+                    <td style={{ padding: '24px 24px', fontSize: 16, fontWeight: 800, color: '#ED1C24' }}>{result.score}</td>
+                    <td style={{ padding: '24px 24px', fontSize: 14, color: '#475569', fontWeight: 600 }}>{result.accuracy}</td>
+                    <td style={{ padding: '24px 24px', fontSize: 15, fontWeight: 800, color: '#0f172a' }}>{result.rank}</td>
+                    <td style={{ padding: '24px 24px' }}>
+                      <span style={{ background: '#ecfdf5', color: '#10b981', fontSize: 13, fontWeight: 700, padding: '6px 12px', borderRadius: 9999 }}>
+                        {result.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

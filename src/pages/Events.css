@@ -7,7 +7,7 @@
 /* Banner Section */
 .events-banner {
   background: var(--gradient-hero);
-  padding: 80px 0;
+  padding: 35px 0;
   position: relative;
   overflow: hidden;
   border-bottom: 1px solid var(--border-color);
@@ -41,14 +41,14 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: rgba(237, 28, 36, 0.08);
+  border: 1px solid rgba(237, 28, 36, 0.2);
   padding: 6px 16px;
   border-radius: 50px;
-  font-weight: 600;
-  color: var(--text-primary);
-  backdrop-filter: blur(5px);
+  font-weight: 700;
+  color: var(--red);
   margin-top: 10px;
+  box-shadow: 0 4px 15px rgba(237, 28, 36, 0.05);
 }
 
 /* Event List */
@@ -71,7 +71,7 @@
   width: 130px;
   min-width: 130px;
   height: 130px;
-  background: var(--card-bg);
+  background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg-secondary) 100%);
   border-radius: 24px;
   display: flex;
   flex-direction: column;
@@ -79,13 +79,16 @@
   justify-content: center;
   box-shadow: var(--card-shadow);
   border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
 }
 
 .event-day {
-  font-size: 42px;
-  font-weight: 800;
+  font-size: 44px;
+  font-weight: 900;
   line-height: 1;
-  color: var(--text-primary);
+  background: linear-gradient(135deg, var(--red) 0%, #ff6b72 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   font-family: var(--font-display);
 }
 
@@ -120,8 +123,8 @@
 }
 
 .event-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(237, 28, 36, 0.08), 0 0 0 1px var(--red);
   border-color: var(--red);
 }
 

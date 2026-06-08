@@ -588,21 +588,15 @@ const CourseCard = ({ course, setCurrentPage }) => (
       <h3 className="course-title-premium">{course.title}</h3>
 
       <div className="course-meta-row-premium" style={{ minHeight: '16px' }}>
-        {course.views > 0 && (
-          <span className="course-meta-item-premium">
-            <Eye size={14} style={{ color: 'var(--red)' }} /> {course.views.toLocaleString()} Views
-          </span>
-        )}
-        {course.chapters > 0 && (
-          <span className="course-meta-item-premium">
-            <BookOpen size={14} style={{ color: 'var(--red)' }} /> {course.chapters} Chapters
-          </span>
-        )}
-        {course.days > 0 && (
-          <span className="course-meta-item-premium">
-            <Calendar size={14} style={{ color: 'var(--red)' }} /> {course.days} Days
-          </span>
-        )}
+        <span className="course-meta-item-premium">
+          <Eye size={14} style={{ color: 'var(--red)' }} /> {course.views.toLocaleString()} Views
+        </span>
+        <span className="course-meta-item-premium">
+          <BookOpen size={14} style={{ color: 'var(--red)' }} /> {course.chapters} Chapters
+        </span>
+        <span className="course-meta-item-premium">
+          <Calendar size={14} style={{ color: 'var(--red)' }} /> {course.days} Days
+        </span>
       </div>
 
       <div className="course-category-badge">
@@ -656,8 +650,9 @@ const ExploreCourses = ({ setCurrentPage }) => {
         
         if (data && Array.isArray(data.data)) {
           const mapped = data.data.map((c) => {
-            const price = c.offer_price !== 'N/A' && c.offer_price ? parseInt(c.offer_price) : (c.course_type === 'Free' ? 0 : null);
-            const originalPrice = c.price !== 'N/A' && c.price ? parseInt(c.price) : null;
+            const price = (c.offer_price !== 'N/A' && c.offer_price) ? parseInt(c.offer_price) : 
+                          ((c.price !== 'N/A' && c.price) ? parseInt(c.price) : (c.course_type === 'Free' ? 0 : 0));
+            const originalPrice = null;
             let imgUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(c.title)}&background=random`;
             if (c.banner && c.banner !== 'N/A') {
               const cleanedPath = c.banner.replace(/\\/g, '/');
@@ -667,16 +662,17 @@ const ExploreCourses = ({ setCurrentPage }) => {
             return {
               id: c._id,
               title: c.title,
-              views: 0,
-              chapters: 0,
-              days: 0,
+              views: c.views || 0,
+              chapters: c.total_subjects || 0,
+              lectures: c.total_lectures || 0,
+              days: c.duration && c.duration !== 'N/A' ? (typeof c.duration === 'number' || !isNaN(c.duration) ? parseInt(c.duration) : 365) : 365,
               category: (c.category !== 'N/A' && c.category) ? c.category :
                         (c.title.toLowerCase().includes('data science') ? 'Data Science Courses' :
                         (c.title.toLowerCase().includes('data analytics') || c.title.toLowerCase().includes('data analyst') ? 'Data Analyst Courses' :
                         (c.title.toLowerCase().includes('cohort') ? 'Cohort Courses' :
                         (c.course_type === 'Free' || c.title.toLowerCase().includes('free') ? 'Free Category' : 'Foundation Courses')))),
               price: price || 0,
-              originalPrice: (originalPrice > price) ? originalPrice : null,
+              originalPrice: originalPrice,
               thumbnail: imgUrl
             };
           });

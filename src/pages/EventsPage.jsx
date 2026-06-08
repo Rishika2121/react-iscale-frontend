@@ -15,9 +15,9 @@ const EventsPage = ({ setCurrentPage }) => {
   
   // For pagination if needed, hardcoded to 1 for now as per instructions
   const page = 1;
-  const limit = 10;
+  const limit = 100;
   // The user requested status=inactive, but it can be changed to active if needed. We'll use active or whatever API returns.
-  const status = 'inactive';
+  const [status, setStatus] = useState('active');
 
   useEffect(() => {
     // Fetch Categories
@@ -92,12 +92,12 @@ const EventsPage = ({ setCurrentPage }) => {
         <div className="container">
           <div className="breadcrumb-nav reveal">
             <span style={{ cursor: 'pointer', margin: 0, color: '#555' }} onClick={() => setCurrentPage('home')}>Home</span>
-            <span>?</span>
-            <span>All Event</span>
+            <span style={{ margin: '0 8px', color: 'var(--text-muted)' }}>›</span>
+            <span>All Events</span>
           </div>
-          <h1 className="page-title reveal" style={{ transitionDelay: '100ms' }}>All Event</h1>
+          <h1 className="page-title reveal" style={{ transitionDelay: '100ms' }}>All Events</h1>
           <div className="events-count-badge reveal" style={{ transitionDelay: '200ms' }}>
-            dYZ% {events.length} Events
+            {events.length} {events.length === 1 ? 'Event' : 'Events'}
           </div>
         </div>
       </section>
@@ -125,6 +125,18 @@ const EventsPage = ({ setCurrentPage }) => {
             {categories.map(cat => (
               <option key={cat._id} value={cat._id}>{cat.m_ec_title}</option>
             ))}
+          </select>
+        </div>
+        <div style={{ position: 'relative', flex: '1 1 200px' }}>
+          <Filter size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+          <select 
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            style={{ width: '100%', padding: '12px 12px 12px 44px', borderRadius: 12, border: '1px solid var(--border-color)', outline: 'none', appearance: 'none', background: '#fff' }}
+          >
+            <option value="active">Upcoming Events</option>
+            <option value="inactive">Past Events</option>
+            <option value="">All Events</option>
           </select>
         </div>
       </section>

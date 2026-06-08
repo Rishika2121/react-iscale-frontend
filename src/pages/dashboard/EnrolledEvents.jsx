@@ -1,20 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, Calendar, Clock, User } from 'lucide-react';
+
+const colors = [
+  { bg: 'linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%)', border: '#fecdd3', badgeBg: '#f43f5e', badgeText: '#fff', accent: '#e11d48' }, // Light Pink
+  { bg: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)', border: '#bbf7d0', badgeBg: '#10b981', badgeText: '#fff', accent: '#16a34a' }, // Light Green (Mint)
+  { bg: 'linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)', border: '#e9d5ff', badgeBg: '#a855f7', badgeText: '#fff', accent: '#8b5cf6' }, // Lavender
+  { bg: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', border: '#bae6fd', badgeBg: '#0284c7', badgeText: '#fff', accent: '#0369a1' }, // Light Blue (Sky)
+  { bg: 'linear-gradient(135deg, #f5f3ff 0%, #edd8ff 100%)', border: '#ddd6fe', badgeBg: '#8b5cf6', badgeText: '#fff', accent: '#6d28d9' }, // Lilac
+  { bg: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)', border: '#fed7aa', badgeBg: '#f97316', badgeText: '#fff', accent: '#ea580c' }, // Light Peach (Orange)
+  { bg: 'linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%)', border: '#99f6e4', badgeBg: '#0d9488', badgeText: '#fff', accent: '#0f766e' }, // Light Teal
+  { bg: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', border: '#fde68a', badgeBg: '#d97706', badgeText: '#fff', accent: '#b45309' }  // Light Yellow
+];
 
 const EnrolledEvents = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // API Simulation
-    setTimeout(() => {
-      setEvents([
-        { id: 'ev-1', title: 'AI & ChatGPT Career Path Guidance', type: 'Webinar', date: 'May 28, 2026', time: '6:00 PM - 7:30 PM', instructor: 'Dr. Alok Mishra', status: 'Registered' },
-        { id: 'ev-2', title: 'Placement Preparation Strategy', type: 'Workshop', date: 'June 02, 2026', time: '4:00 PM - 6:00 PM', instructor: 'Ridhi Mishra & Team', status: 'Join Live' },
-        { id: 'ev-3', title: 'Full Stack Developer Roadmap 2026', type: 'Webinar', date: 'June 10, 2026', time: '5:00 PM - 6:30 PM', instructor: 'Amit K. Sharma', status: 'Register' }
-      ]);
-      setLoading(false);
-    }, 500);
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch('https://iscale-backend.onrender.com/api/event/public-get-events?status=active&limit=100');
+        const data = await response.json();
+        
+        if (data.status && Array.isArray(data.data)) {
+          const mapped = data.data.map(evt => {
+            let d = new Date();
+            if (evt.m_event_date_start) {
+              d = new Date(evt.m_event_date_start);
+            }
+            const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            
+            return {
+              id: evt._id,
+              title: evt.m_event_title || 'Event',
+              type: evt.m_event_type || 'Webinar',
+              date: dateStr,
+              time: evt.m_event_time_start || '10:00 AM',
+              instructor: evt.m_event_speaker || 'iScale Experts',
+              status: evt.m_event_status === 'active' ? 'Registered' : 'Register'
+            };
+          });
+          setEvents(mapped);
+        } else {
+          setEvents([]);
+        }
+      } catch (err) {
+        console.error('Failed to fetch events:', err);
+        setEvents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
   }, []);
 
   if (loading) return <div style={{ padding: '40px 32px' }}>Loading Events...</div>;
@@ -32,39 +70,32 @@ const EnrolledEvents = () => {
           100% { transform: scale(1); opacity: 1; }
         }
         .event-card {
-          background: #ffffff;
-          border: 1px solid #f1f5f9;
           border-radius: 20px;
-          padding: 24px;
+          padding: 28px;
           display: flex;
           justify-content: space-between;
           align-items: center;
           flex-wrap: wrap;
           gap: 20px;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .event-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 10px 35px rgba(0,0,0,0.06);
-          border-color: #e2e8f0;
+          transform: translateY(-5px);
+          box-shadow: 0 16px 35px rgba(0, 0, 0, 0.05) !important;
         }
         .event-btn {
           padding: 12px 28px;
-          background: linear-gradient(135deg, #0f172a, #1e293b);
           color: #fff;
           border: none;
           border-radius: 12px;
           font-weight: 700;
           cursor: pointer;
           transition: all 0.3s ease;
-          box-shadow: 0 4px 15px rgba(15, 23, 42, 0.2);
           width: 100%;
         }
         .event-btn:hover {
-          background: linear-gradient(135deg, #1e293b, #334155);
           transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(15, 23, 42, 0.3);
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
         }
         .live-btn {
           padding: 12px 28px;
@@ -107,45 +138,70 @@ const EnrolledEvents = () => {
         <p style={{ color: '#64748b', fontSize: '1rem', fontWeight: 500 }}>Join upcoming live sessions, workshops, and exclusive talks.</p>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-        {events.map(event => (
-          <div key={event.id} className="event-card">
-            <div>
-              <span style={{ background: '#eff6ff', color: '#2563eb', fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                {event.type}
-              </span>
-              <h3 style={{ fontSize: 19, fontWeight: 800, color: '#0f172a', margin: '12px 0 6px' }}>{event.title}</h3>
-              <p style={{ color: '#64748b', fontSize: 13, marginBottom: 12, fontWeight: 500 }}>Instructor: <strong style={{ color: '#1e293b' }}>{event.instructor}</strong></p>
-              <div style={{ display: 'flex', gap: 20, fontSize: 13, color: '#475569', fontWeight: 600 }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>📅 {event.date}</span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>⏱ {event.time}</span>
-              </div>
-            </div>
-            <div className="event-card-actions">
-              {event.status === 'Join Live' ? (
-                <button 
-                  onClick={() => alert('Redirecting to live class Zoom/Meet link...')}
-                  className="live-btn"
-                >
-                  <span style={{ width: 8, height: 8, background: '#fff', borderRadius: '50%', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
-                  Join Live Now
-                </button>
-              ) : event.status === 'Registered' ? (
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#10b981', fontSize: 14, fontWeight: 700, padding: '10px 16px', background: '#ecfdf5', borderRadius: 12 }}>
-                  <CheckCircle size={18} /> Registered
-                </span>
-              ) : (
-                <button 
-                  onClick={() => {
-                    alert(`Registered successfully for ${event.title}!`);
-                    // Change state to registered
-                  }}
-                  className="event-btn"
-                >Register Event</button>
-              )}
-            </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        {events.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '60px 20px', background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 20 }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>No enrolled events found on your account.</p>
           </div>
-        ))}
+        ) : (
+          events.map((event, idx) => {
+            const theme = colors[idx % colors.length];
+            return (
+              <div 
+                key={event.id} 
+                className="event-card"
+                style={{
+                  background: theme.bg,
+                  borderColor: theme.border,
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                  boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.02), 0 8px 16px -6px rgba(0, 0, 0, 0.02)'
+                }}
+              >
+                <div>
+                  <span style={{ background: theme.badgeBg, color: theme.badgeText, fontSize: 10, fontWeight: 800, padding: '5px 12px', borderRadius: 8, textTransform: 'uppercase', letterSpacing: 1 }}>
+                    {event.type}
+                  </span>
+                  <h3 style={{ fontSize: 20, fontWeight: 900, color: '#0f172a', margin: '14px 0 8px', fontFamily: 'var(--font-display)', letterSpacing: '-0.3px' }}>{event.title}</h3>
+                  <p style={{ color: '#475569', fontSize: 13, marginBottom: 16, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <User size={14} style={{ color: theme.accent }} /> Instructor: <strong style={{ color: '#0f172a' }}>{event.instructor}</strong>
+                  </p>
+                  <div style={{ display: 'flex', gap: 24, fontSize: 13, color: '#475569', fontWeight: 600, flexWrap: 'wrap' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <Calendar size={14} style={{ color: theme.accent }} /> {event.date}
+                    </span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <Clock size={14} style={{ color: theme.accent }} /> {event.time}
+                    </span>
+                  </div>
+                </div>
+                <div className="event-card-actions">
+                  {event.status === 'Join Live' ? (
+                    <button 
+                      onClick={() => alert('Redirecting to live class Zoom/Meet link...')}
+                      className="live-btn"
+                    >
+                      <span style={{ width: 8, height: 8, background: '#fff', borderRadius: '50%', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
+                      Join Live Now
+                    </button>
+                  ) : event.status === 'Registered' ? (
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#10b981', fontSize: 14, fontWeight: 800, padding: '10px 20px', background: '#ecfdf5', borderRadius: 12, border: '1px solid #a7f3d0' }}>
+                      <CheckCircle size={18} /> Registered
+                    </span>
+                  ) : (
+                    <button 
+                      onClick={() => {
+                        alert(`Registered successfully for ${event.title}!`);
+                      }}
+                      className="event-btn"
+                      style={{ background: theme.accent, boxShadow: `0 4px 14px ${theme.badgeBg}22` }}
+                    >Register Event</button>
+                  )}
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );

@@ -45,10 +45,12 @@ const CoursesPage = ({ setCurrentPage }) => {
               category: (course.category !== 'N/A' && course.category) ? course.category : 'Course',
               tag: course.course_type === 'Paid' ? 'PREMIUM' : 'FREE',
               title: course.title,
-              price: offerPriceNum > 0 ? `₹ ${offerPriceNum.toLocaleString()}` : (course.course_type === 'Free' ? 'FREE' : ''),
-              original: (priceNum > offerPriceNum) ? `₹ ${priceNum.toLocaleString()}` : '',
-              duration: course.duration || '365 Days',
+              price: offerPriceNum > 0 ? `₹ ${offerPriceNum.toLocaleString()}` : (priceNum > 0 ? `₹ ${priceNum.toLocaleString()}` : (course.course_type === 'Free' ? 'FREE' : '')),
+              original: '',
+              duration: course.duration && course.duration !== 'N/A' ? (typeof course.duration === 'number' || !isNaN(course.duration) ? `${course.duration} Days` : course.duration) : '365 Days',
               views: course.views || 0,
+              chapters: course.total_subjects || 0,
+              lectures: course.total_lectures || 0,
               img: imgUrl
             };
           });
@@ -328,11 +330,15 @@ const CoursesPage = ({ setCurrentPage }) => {
 
                   <div style={{ display: 'flex', gap: 16, marginBottom: 12, fontSize: 13, color: '#64748b', fontWeight: 500 }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <Eye size={14} color="#94a3b8" /> {course.views}
+                      <Eye size={14} color="#94a3b8" /> {course.views} Views
                     </span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <Calendar size={14} color="#94a3b8" /> {course.duration}
+                      <BookOpen size={14} color="#94a3b8" /> {course.chapters} Chapters
                     </span>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#64748b', fontWeight: 500, marginBottom: 12 }}>
+                    <Calendar size={14} color="#94a3b8" /> {course.duration}
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#64748b', fontWeight: 500, marginBottom: 16 }}>

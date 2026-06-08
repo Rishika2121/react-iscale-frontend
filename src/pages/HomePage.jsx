@@ -1101,19 +1101,39 @@ const SuccessStoryGridCard = ({ item }) => {
       className="premium-card hover-glow" 
       style={{ 
         width: 380, maxWidth: '90vw', height: 420, 
-        background: 'var(--bg-primary)', borderRadius: 24, 
-        padding: 0, boxShadow: '0 10px 30px rgba(0,0,0,0.08)', 
+        background: 'var(--card-bg)', borderRadius: 24, 
+        padding: 0, boxShadow: 'var(--card-shadow)', 
         display: 'flex', flexDirection: 'column', alignItems: 'center', 
         textAlign: 'center', overflow: 'hidden', flexShrink: 0, 
         border: '1px solid var(--border-color)',
         cursor: item.ytLink ? 'pointer' : 'default',
         textDecoration: 'none',
-        color: 'inherit'
+        color: 'inherit',
+        position: 'relative'
       }}
     >
-      <div className="premium-card-img-wrap" style={{ width: '100%', height: '70%', background: '#f1f5f9', overflow: 'hidden', position: 'relative' }}>
-        <img src={item.img} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'top center' }} />
-        <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '40%', background: 'linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0))' }} />
+      {item.package && item.package !== 'N/A' && (
+        <div style={{ 
+          position: 'absolute', top: 16, right: 16, 
+          background: 'linear-gradient(135deg, #10b981, #059669)', 
+          color: '#fff', fontSize: 12, fontWeight: 800, 
+          padding: '6px 14px', borderRadius: 100, 
+          boxShadow: '0 4px 10px rgba(16, 185, 129, 0.3)',
+          zIndex: 4
+        }}>
+          {item.package}
+        </div>
+      )}
+
+      <div className="premium-card-img-wrap" style={{ width: '100%', height: '70%', background: 'var(--bg-secondary)', overflow: 'hidden', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {item.img ? (
+          <>
+            <img src={item.img} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'top center' }} />
+            <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '40%', background: 'linear-gradient(to top, var(--card-bg), transparent)' }} />
+          </>
+        ) : (
+          <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #1e293b, #0f172a)' }} />
+        )}
         
         {item.ytLink && (
           <div style={{
@@ -1128,7 +1148,7 @@ const SuccessStoryGridCard = ({ item }) => {
       <div style={{ padding: '16px 20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <div style={{ fontWeight: 900, fontSize: 24, color: 'var(--text-primary)', marginBottom: 4 }}>{item.name}</div>
         <div style={{ fontSize: 18, color: 'var(--red)', fontWeight: 700, marginBottom: 8 }}>{item.company}</div>
-        {item.role && <div style={{ fontSize: 14, color: 'var(--text-secondary)', background: '#f8fafc', padding: '6px 12px', borderRadius: 100, display: 'inline-block' }}>{item.role}</div>}
+        {item.role && <div style={{ fontSize: 14, color: 'var(--text-secondary)', background: 'var(--bg-secondary)', padding: '6px 14px', borderRadius: 100, display: 'inline-block', border: '1px solid var(--border-color)', fontWeight: 500 }}>{item.role}</div>}
       </div>
     </a>
   );
@@ -1143,34 +1163,57 @@ export const SuccessStories = ({ setCurrentPage }) => {
       .then(res => res.json())
       .then(result => {
         const arr = result.data?.docs || result.data || [];
+        
+        const getEmbedUrl = (url) => {
+          if (!url) return '';
+          let videoId = '';
+          if (url.includes('youtube.com/embed/')) return url;
+          if (url.includes('watch?v=')) {
+            const parts = url.split('watch?v=')[1];
+            if (parts) videoId = parts.split('&')[0];
+          } else if (url.includes('youtu.be/')) {
+            const parts = url.split('youtu.be/')[1];
+            if (parts) videoId = parts.split('?')[0];
+          } else if (url.includes('/shorts/')) {
+            const parts = url.split('/shorts/')[1];
+            if (parts) videoId = parts.split('?')[0];
+          }
+          return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+        };
+
+        const getImageUrl = (url, name) => {
+          if (!url || url === 'N/A') {
+            return null;
+          }
+          const cleaned = String(url).replace(/\\/g, '/');
+          return cleaned.startsWith('http') ? cleaned : `https://iscale-backend.onrender.com/${cleaned.replace(/^src\//, '')}`;
+        };
+
         if (Array.isArray(arr) && arr.length > 0) {
           const mapped = arr.map((item, idx) => {
-            let videoUrl = item.videoUrl || item.url || item.c_ss_video_url || item.c_ss_link || '';
-            if (videoUrl.includes('watch?v=')) videoUrl = videoUrl.replace('watch?v=', 'embed/');
-            if (videoUrl.includes('youtu.be/')) videoUrl = videoUrl.replace('youtu.be/', 'youtube.com/embed/');
-            if (videoUrl.includes('/shorts/')) videoUrl = videoUrl.replace('/shorts/', '/embed/');
-
-            const getImageUrl = (url) => {
-              if (!url || url === 'N/A') return 'https://ui-avatars.com/api/?name=User&background=random';
-              const cleaned = url.replace(/\\/g, '/');
-              return cleaned.startsWith('http') ? cleaned : `https://iscale-backend.onrender.com/${cleaned.replace(/^src\//, '')}`;
-            };
+            const rawVideoUrl = item.m_ss_youtube_url || item.m_ss_video || item.videoUrl || item.url || item.video || item.c_ss_video_url || item.c_ss_link || '';
+            const videoUrl = getEmbedUrl(rawVideoUrl);
+            const studentName = item.m_ss_name || item.name || item.studentName || item.c_ss_name || item.c_ss_student_name || 'Student';
 
             return {
               id: item._id || idx,
               type: idx === 0 ? 'featured' : 'grid',
-              name: item.name || item.studentName || item.c_ss_name || item.c_ss_student_name || 'Student',
-              company: item.company || item.companyName || item.c_ss_company || 'Partner Company',
-              role: item.role || item.c_ss_role || 'Placed Student',
-              feedback: item.feedback || item.c_ss_feedback || 'Grateful for the support from the placement team!',
+              name: studentName,
+              company: item.m_ss_placed || item.company || item.companyName || item.c_ss_company || 'Partner Company',
+              role: item.m_ss_designation || item.role || item.c_ss_role || 'Placed Student',
+              package: item.m_ss_package || item.package || item.c_ss_package || 'N/A',
+              feedback: item.m_ss_feedback || item.feedback || item.c_ss_feedback || 'Grateful for the support from the placement team!',
               ytLink: videoUrl,
-              img: getImageUrl(item.image || item.c_ss_image)
+              img: getImageUrl(item.m_ss_image || item.image || item.c_ss_image, studentName)
             };
           });
           setStories(mapped);
         }
       })
-      .catch(() => setStories([]))
+      .catch((err) => {
+        console.error("HomePage SuccessStories Fetch Error:", err);
+        setStories([]);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -1180,19 +1223,32 @@ export const SuccessStories = ({ setCurrentPage }) => {
   const gridItems = stories.slice(1);
 
   return (
-    <section style={{ padding: '50px 0', background: 'var(--gradient-pink)' }}>
+    <section style={{ padding: '80px 0', background: 'linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%)', position: 'relative', overflow: 'hidden' }}>
+      {/* Decorative Glow Orbs */}
+      <div className="bg-shape" style={{ top: '-10%', left: '-10%', width: 400, height: 400, background: 'rgba(237, 28, 36, 0.05)', borderRadius: '50%', filter: 'blur(100px)', pointerEvents: 'none' }} />
+      <div className="bg-shape" style={{ bottom: '-10%', right: '-10%', width: 500, height: 500, background: 'rgba(124, 58, 237, 0.05)', borderRadius: '50%', filter: 'blur(120px)', pointerEvents: 'none' }} />
+
       <div className="container">
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 44, fontWeight: 900, textAlign: 'center', marginBottom: 24, color: 'var(--text-primary)' }}>
-          Success Stories
-        </h2>
+        {/* Header Section */}
+        <div style={{ textAlign: 'center', marginBottom: 48, position: 'relative', zIndex: 1 }}>
+          <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1.5, display: 'inline-block', marginBottom: 16 }}>
+            OUR PROUD ALUMNI
+          </span>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 44, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 12 }}>
+            Alumni <span className="animated-text-gradient">Success Stories</span>
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 16, maxWidth: 650, margin: '0 auto' }}>
+            Hear directly from our graduates who successfully transitioned into their dream technical roles at top-tier companies.
+          </p>
+        </div>
 
         <div className="success-grid">
           {/* Featured Card */}
-          <div className="featured-success-card" style={{ background: 'var(--bg-primary)', borderRadius: 24, overflow: 'hidden', boxShadow: '0 10px 40px rgba(0,0,0,0.08)', position: 'relative', display: 'flex' }}>
+          <div className="featured-success-card" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 24, overflow: 'hidden', boxShadow: 'var(--card-shadow)', position: 'relative', display: 'flex', zIndex: 1 }}>
             <a href={featured.ytLink} target="_blank" rel="noopener noreferrer"
                className="featured-img-container" 
                style={{ 
-                 background: '#e2e8f0', 
+                 background: 'var(--bg-secondary)', 
                  display: 'flex', 
                  alignItems: 'center', 
                  justifyContent: 'center', 
@@ -1200,7 +1256,7 @@ export const SuccessStories = ({ setCurrentPage }) => {
                  cursor: featured.ytLink ? 'pointer' : 'default',
                  position: 'relative',
                  width: '50%',
-                 height: '100%'
+                 minHeight: 350
                }}
             >
                <img src={featured.img} alt="Student" style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'top center' }} />
@@ -1219,8 +1275,15 @@ export const SuccessStories = ({ setCurrentPage }) => {
               <h3 style={{ fontSize: 28, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 4 }}>{featured.name}</h3>
               <p style={{ color: 'var(--red)', fontSize: 14, fontWeight: 600, marginBottom: 16 }}>@ {featured.company}</p>
               
+              {featured.package && featured.package !== 'N/A' && (
+                <div style={{ fontSize: 18, color: '#10b981', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16 }}>
+                  <span>Package:</span>
+                  <span style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '4px 12px', borderRadius: 8 }}>{featured.package}</span>
+                </div>
+              )}
+
               <div style={{ color: 'var(--text-secondary)', fontSize: 13, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>feedback :</div>
-              <p style={{ color: 'var(--text-secondary)', fontSize: 16, lineHeight: 1.6, marginBottom: 32 }}>{featured.feedback}</p>
+              <p style={{ color: 'var(--text-secondary)', fontSize: 16, lineHeight: 1.6, fontStyle: 'italic', marginBottom: 32 }}>"{featured.feedback}"</p>
               
               <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                 <div 
@@ -1252,30 +1315,43 @@ export const SuccessStories = ({ setCurrentPage }) => {
               </div>
             </div>
             {/* Background shape */}
-            <div style={{ position: 'absolute', right: -50, top: -50, width: 200, height: 200, borderRadius: '50%', border: '40px solid #fae8e8', opacity: 0.5, zIndex: 0 }} />
+            <div style={{ position: 'absolute', right: -50, top: -50, width: 200, height: 200, borderRadius: '50%', border: '40px solid var(--border-color)', opacity: 0.2, zIndex: 0 }} />
           </div>
 
           {/* Auto Slider for Grid Cards */}
-          <div style={{ marginTop: 20 }}>
-            <AutoSlider 
-              items={gridItems} 
-              speed={40}
-              gap={24}
-              renderItem={(item, idx) => (
-                <SuccessStoryGridCard key={idx} item={item} />
-              )}
-            />
-          </div>
+          {gridItems.length > 0 && (
+            <div style={{ marginTop: 32, position: 'relative', zIndex: 1 }}>
+              <AutoSlider 
+                items={gridItems} 
+                speed={45}
+                gap={24}
+                renderItem={(item, idx) => (
+                  <SuccessStoryGridCard key={idx} item={item} />
+                )}
+              />
+            </div>
+          )}
         </div>
 
-        <div style={{ textAlign: 'center', marginTop: 20 }}>
+        <div style={{ textAlign: 'center', marginTop: 40, position: 'relative', zIndex: 1 }}>
           <button 
             onClick={() => setCurrentPage('success-story')}
-            style={{ padding: '12px 32px', background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)', color: 'var(--red)', borderRadius: 8, fontWeight: 700, fontSize: 15, border: 'none', cursor: 'pointer', transition: 'all 0.3s', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.1)'; e.currentTarget.style.background = 'linear-gradient(135deg, #e0e7ff, #d8e2ff)'; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.05)'; e.currentTarget.style.background = 'linear-gradient(135deg, #eef2ff, #e0e7ff)'; }}
+            style={{ 
+              padding: '14px 40px', 
+              background: 'var(--red)', 
+              color: '#fff', 
+              borderRadius: 10, 
+              fontWeight: 700, 
+              fontSize: 15, 
+              border: 'none', 
+              cursor: 'pointer', 
+              transition: 'all 0.3s', 
+              boxShadow: '0 4px 15px rgba(237, 28, 36, 0.3)' 
+            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.boxShadow = '0 10px 25px rgba(237, 28, 36, 0.5)'; e.currentTarget.style.background = 'var(--red-dark)'; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(237, 28, 36, 0.3)'; e.currentTarget.style.background = 'var(--red)'; }}
           >
-            View
+            Explore All Success Stories
           </button>
         </div>
       </div>
@@ -1340,15 +1416,23 @@ const NewsUpdates = ({ setCurrentPage }) => {
         if (Array.isArray(arr) && arr.length > 0) {
           const mapped = arr.map(item => {
             const getImageUrl = (url) => {
-              if (!url || url === 'N/A') return 'https://images.unsplash.com/photo-1593642532744-d377abf07dc6?auto=format&fit=crop&w=800&q=80';
+              if (!url || url === 'N/A') return '';
               const cleaned = url.replace(/\\/g, '/');
               return cleaned.startsWith('http') ? cleaned : `https://iscale-backend.onrender.com/${cleaned.replace(/^src\//, '')}`;
             };
+            
+            let dateStr = "Recent";
+            if (item.m_news_added_on || item.createdAt || item.date || item.m_news_date) {
+              const d = new Date(item.m_news_added_on || item.createdAt || item.date || item.m_news_date);
+              dateStr = d.toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' });
+            }
+
             return {
-              title: item.title || item.m_news_title || 'News Update',
-              desc: item.desc || item.m_news_intro || item.m_news_description || item.description || 'Read more about this latest update.',
+              title: item.m_news_title || item.title || 'News Update',
+              date: dateStr,
+              desc: item.m_news_intro || item.m_news_description || item.desc || item.description || 'Read more about this latest update.',
               link: item.link || item.url || item.m_news_link || `/news-details/${item._id}`,
-              img: getImageUrl(item.image || item.img || item.m_news_image || item.m_news_images)
+              img: getImageUrl(item.m_news_image || item.image || item.img || item.m_news_images)
             };
           });
           setNewsList(mapped);
@@ -1360,33 +1444,54 @@ const NewsUpdates = ({ setCurrentPage }) => {
       .finally(() => setLoading(false));
   }, []);
 
+  const handleLinkClick = (e, link) => {
+    if (link.startsWith('/')) {
+      e.preventDefault();
+      // Remove leading slash for setCurrentPage
+      setCurrentPage(link.substring(1));
+    }
+  };
+
   return (
-  <section style={{ padding: '60px 0', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+  <section style={{ padding: '80px 0', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
     <div className="container" style={{ maxWidth: 1100, margin: '0 auto' }}>
-      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 800, textAlign: 'center', marginBottom: 40, color: 'var(--text-primary)' }}>
-        Latest <span style={{ color: 'var(--red)' }}>News & Updates</span>
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 36, fontWeight: 900, textAlign: 'center', marginBottom: 48, color: 'var(--text-primary)' }}>
+        Latest <span style={{ background: 'linear-gradient(135deg, var(--red) 0%, #ff4d54 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'inline-block' }}>News & Updates</span>
       </h2>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '20px 0' }}>Loading news...</div>
+        <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-secondary)' }}>Loading news updates...</div>
       ) : newsList.length > 0 ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, justifyContent: 'center' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 28, justifyContent: 'center' }}>
           {newsList.slice(0, 3).map((news, idx) => (
-            <div key={idx} className="premium-card hover-glow" style={{ 
-              background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 8, overflow: 'hidden',
+            <div key={idx} className="news-card-interactive colorful-glow-border" style={{ 
+              background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 16, overflow: 'visible',
               boxShadow: 'var(--card-shadow)', display: 'flex', flexDirection: 'column'
             }}>
-              <div style={{ width: '100%', height: 300, overflow: 'hidden' }}>
-                <img src={news.img} alt={news.title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
+              <div className="news-card-image-wrap" style={{ width: '100%', height: 240, overflow: 'hidden', background: 'var(--bg-secondary)', position: 'relative', borderTopLeftRadius: 15, borderTopRightRadius: 15 }}>
+                {news.img ? (
+                  <img src={news.img} alt={news.title} className="news-card-image" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, rgba(237, 28, 36, 0.05), rgba(59, 130, 246, 0.05))', color: 'var(--text-muted)' }}>
+                    <Calendar size={36} strokeWidth={1.5} />
+                  </div>
+                )}
               </div>
               
               <div style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12, lineHeight: 1.4 }}>{news.title}</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 20, flex: 1 }}>{news.desc}</p>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                  <span className="news-tag-badge">Update</span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <Clock size={12} /> {news.date}
+                  </span>
+                </div>
                 
-                <a href={news.link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text-secondary)', fontWeight: 600, fontSize: 13, textDecoration: 'none', transition: 'color 0.2s' }}
-                   onMouseEnter={e => e.currentTarget.style.color = 'var(--red)'}
-                   onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}
+                <h3 style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 12, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', minHeight: '44px' }}>{news.title}</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 20, flex: 1, lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{news.desc}</p>
+                
+                <a href={news.link} onClick={(e) => handleLinkClick(e, news.link)} target={news.link.startsWith('http') ? "_blank" : "_self"} rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--red)', fontWeight: 700, fontSize: 13, textDecoration: 'none', transition: 'gap 0.2s' }}
+                   onMouseEnter={e => e.currentTarget.style.gap = '10px'}
+                   onMouseLeave={e => e.currentTarget.style.gap = '6px'}
                 >
                   Learn More <ArrowRight size={14} />
                 </a>
@@ -1395,29 +1500,30 @@ const NewsUpdates = ({ setCurrentPage }) => {
           ))}
         </div>
       ) : (
-        <div style={{ textAlign: 'center', padding: '20px 0', color: 'var(--text-secondary)' }}>
-          No news available yet.
+        <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-secondary)' }}>
+          No news updates available.
         </div>
       )}
       
-      <div style={{ textAlign: 'center', marginTop: 20 }}>
+      <div style={{ textAlign: 'center', marginTop: 40 }}>
         <button 
           onClick={() => setCurrentPage('news')}
           style={{ 
-            padding: '12px 28px', background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', border: '1px solid var(--border-color)', 
-            borderRadius: 6, fontWeight: 600, fontSize: 14, cursor: 'pointer',
-            transition: 'background 0.3s'
+            padding: '14px 36px', background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', border: '1px solid var(--border-color)', 
+            borderRadius: 10, fontWeight: 700, fontSize: 14, cursor: 'pointer',
+            transition: 'all 0.3s'
           }}
-          onMouseEnter={e => e.target.style.background = 'rgba(237, 28, 36, 0.15)'}
-          onMouseLeave={e => e.target.style.background = 'rgba(237, 28, 36, 0.08)'}
+          onMouseEnter={e => { e.currentTarget.style.background = 'var(--red)'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.transform = 'scale(1.05)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(237, 28, 36, 0.08)'; e.currentTarget.style.color = 'var(--red)'; e.currentTarget.style.transform = 'none'; }}
         >
-          View All News
+          View All News & Updates
         </button>
       </div>
     </div>
   </section>
   );
 };
+
 
 const InTheNews = () => {
   const [mentions, setMentions] = useState([]);
@@ -1434,9 +1540,17 @@ const InTheNews = () => {
               const cleaned = url.replace(/\\/g, '/');
               return cleaned.startsWith('http') ? cleaned : `https://iscale-backend.onrender.com/${cleaned.replace(/^src\//, '')}`;
             };
+            
+            let dateStr = "";
+            if (item.m_snews_added_on || item.createdAt) {
+              const d = new Date(item.m_snews_added_on || item.createdAt);
+              dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            }
+
             return {
-              title: item.m_snews_des || item.m_snews_title || 'The iScale in the news',
-              link: item.m_snews_url || '#',
+              title: item.m_snews_des || item.m_snews_title || 'Media Announcement',
+              link: item.m_snews_url || '',
+              date: dateStr,
               img: getImageUrl(item.m_snews_image || item.image)
             };
           });
@@ -1449,15 +1563,17 @@ const InTheNews = () => {
   if (mentions.length === 0) return null;
 
   return (
-    <section style={{ padding: '50px 0', background: 'var(--gradient-hero)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
+    <section style={{ padding: '80px 0', background: 'var(--gradient-hero)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: 16 }}>
           <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 13, fontWeight: 700, letterSpacing: 1 }}>
             THE MEDIA LOVES US, AND MORE SO, OUR STUDENTS.
           </span>
         </div>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 44, fontWeight: 900, textAlign: 'center', marginBottom: 30, color: 'var(--text-primary)' }}>
-          We've been in the news!
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 900, textAlign: 'center', marginBottom: 40 }}>
+          <span style={{ background: 'linear-gradient(135deg, #ed1c24 0%, #ff007f 35%, #7f00ff 70%, #3b82f6 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'inline-block' }}>
+            We've been in the news!
+          </span>
         </h2>
 
         <AutoSlider 
@@ -1465,36 +1581,49 @@ const InTheNews = () => {
           speed={80} 
           gap={24}
           renderItem={(mention, i) => (
-            <div key={i} className="premium-card hover-glow" style={{
-              width: 320, minHeight: 180, background: 'var(--card-bg)', borderRadius: 16, padding: '24px',
+            <div key={i} className="news-card-interactive colorful-glow-border" style={{
+              width: 320, minHeight: 200, background: 'var(--card-bg)', borderRadius: 16, padding: '28px 24px',
               boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)',
               display: 'flex', flexDirection: 'column', flexShrink: 0,
-              cursor: 'pointer'
+              cursor: mention.link ? 'pointer' : 'default'
             }}
-            onClick={() => window.open(mention.link, '_blank')}
+            onClick={() => mention.link && window.open(mention.link, '_blank')}
             >
-              <div style={{ marginBottom: 16, height: 40, display: 'flex', alignItems: 'center', filter: 'brightness(var(--theme-logo-brightness, 1))' }}>
-                <img src={mention.img} alt="News Logo" style={{ maxWidth: '60%', maxHeight: '100%', objectFit: 'contain' }} />
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                <div style={{ height: 36, display: 'flex', alignItems: 'center', filter: 'brightness(var(--theme-logo-brightness, 1))' }}>
+                  {mention.img ? (
+                    <img src={mention.img} alt="News Logo" style={{ maxWidth: '70%', maxHeight: '100%', objectFit: 'contain' }} />
+                  ) : (
+                    <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--red)' }}>Media Mention</span>
+                  )}
+                </div>
+                {mention.date && (
+                  <span style={{ color: 'var(--text-muted)', fontSize: 11, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <Clock size={10} /> {mention.date}
+                  </span>
+                )}
               </div>
-              <p style={{ color: 'var(--text-secondary)', fontSize: 13, lineHeight: 1.5, marginBottom: 20, flex: 1, fontWeight: 500 }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: 13, lineHeight: 1.5, marginBottom: 20, flex: 1, fontWeight: 500, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {mention.title}
               </p>
               
-              <a 
-                href={mention.link} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                style={{ 
-                  display: 'inline-block', background: 'var(--red)', color: '#fff', 
-                  padding: '6px 16px', borderRadius: 6, fontWeight: 700, fontSize: 12, 
-                  textDecoration: 'none', transition: 'background 0.3s', alignSelf: 'flex-start' 
-                }}
-                onMouseEnter={e => { e.target.style.background = '#991b1b'; e.stopPropagation(); }}
-                onMouseLeave={e => { e.target.style.background = 'var(--red)'; e.stopPropagation(); }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                Read More
-              </a>
+              {mention.link && (
+                <a 
+                  href={mention.link} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  style={{ 
+                    display: 'inline-block', background: 'var(--red)', color: '#fff', 
+                    padding: '8px 18px', borderRadius: 8, fontWeight: 700, fontSize: 12, 
+                    textDecoration: 'none', transition: 'all 0.3s', alignSelf: 'flex-start' 
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--red-dark)'; e.currentTarget.style.transform = 'scale(1.05)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'var(--red)'; e.currentTarget.style.transform = 'none'; }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Read More
+                </a>
+              )}
             </div>
           )}
         />

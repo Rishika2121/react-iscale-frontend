@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Download, Eye, Calendar, Globe, ChevronDown, ChevronUp, FileText, CheckCircle, XCircle, CreditCard, Video, ArrowRight, User, BookOpen, Award, Sparkles, Star, Search, Lock, Check, ShieldCheck, Printer } from 'lucide-react';
+import { Play, Download, Eye, Calendar, Globe, ChevronDown, ChevronUp, FileText, CheckCircle, XCircle, CreditCard, Video, ArrowRight, User, BookOpen, Award, Sparkles, Star, Search, Lock, Check, ShieldCheck, Printer, PlayCircle } from 'lucide-react';
+
 
 const coursesDatabase = {
   'data-science-with-generative-ai-course': {
@@ -580,7 +581,7 @@ const TabButton = ({ active, label, onClick }) => (
   </button>
 );
 
-const Accordion = ({ title, items, onPlay, completedLectures }) => {
+const Accordion = ({ title, items, onPlay, completedLectures, isEnrolled, isCohort }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const displayItems = showMore ? items : items.slice(0, 3);
@@ -601,6 +602,7 @@ const Accordion = ({ title, items, onPlay, completedLectures }) => {
       {isOpen && (
         <div style={{ paddingBottom: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
           {displayItems.map((item, idx) => {
+            const isPlayable = isEnrolled || item.isFree || (isCohort && idx < items.length / 2);
             const isCompleted = item.isCompleted || (item.id && completedLectures?.includes(item.id));
             return (
               <div key={idx} style={{ padding: '16px 24px', background: 'var(--bg-secondary)', borderRadius: 8, color: 'var(--text-primary)', fontWeight: 600, fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
@@ -608,14 +610,20 @@ const Accordion = ({ title, items, onPlay, completedLectures }) => {
                   <FileText size={18} color="var(--red)" />
                   <span style={{ textDecoration: isCompleted ? 'line-through' : 'none', opacity: isCompleted ? 0.6 : 1 }}>{item.title || item}</span>
                 </div>
-                {item.videoUrl && !item.isDummy && (
-                  <button 
-                    onClick={() => onPlay(item)}
-                    style={{ background: 'var(--red)', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
-                  >
-                    <PlayCircle size={14} /> Play
-                  </button>
-                )}
+                {item.videoUrl && !item.isDummy ? (
+                  isPlayable ? (
+                    <button 
+                      onClick={() => onPlay(item)}
+                      style={{ background: 'var(--red)', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
+                    >
+                      <PlayCircle size={14} /> Play
+                    </button>
+                  ) : (
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text-secondary)', fontSize: 13, fontWeight: 700 }}>
+                      <Lock size={14} /> Locked
+                    </span>
+                  )
+                ) : null}
               </div>
             );
           })}
@@ -633,8 +641,8 @@ const Accordion = ({ title, items, onPlay, completedLectures }) => {
 const CourseDetailsPage = ({ courseId, setCurrentPage }) => {
   const [activeTab, setActiveTab] = useState('Overview');
   const [apiData, setApiData] = useState(null);
-const [loading, setLoading] = useState(true);
-const [fetchError, setFetchError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(null);
   const [videoOpen, setVideoOpen] = useState(false);
   const [overviewShowMore, setOverviewShowMore] = useState(false);
   const [faqShowMore, setFaqShowMore] = useState(false);
@@ -654,148 +662,169 @@ const [fetchError, setFetchError] = useState(null);
   useEffect(() => {
     if (!courseId) return;
 
-    // Check if courseId is a valid MongoDB ObjectId
-    const isValidCourseObjectId = /^[0-9a-fA-F]{24}$/.test(courseId);
-    if (!isValidCourseObjectId) {
-      setLoading(false);
-      setSubjectsLoading(false);
-      setFeaturesLoading(false);
-      return; // Skip API calls for dummy slug IDs from mock data
-    }
+    const resolveSlugAndFetch = async () => {
+      setLoading(true);
+      let realCourseId = courseId;
+      let matchedCourse = null;
 
-    // Fetch Course
-    setLoading(true);
-    fetch(`https://iscale-backend.onrender.com/api/course/public-course/${courseId}`)
-      .then((res) => res.json())
-      .then((result) => {
-        setApiData(result.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setFetchError(err.message);
-        setLoading(false);
-      });
+      try {
+        const allRes = await fetch('https://iscale-backend.onrender.com/api/course/public-all-courses?page=1&limit=100');
+        const allData = await allRes.json();
+        if (allData.status && Array.isArray(allData.data)) {
+          matchedCourse = allData.data.find(c => c.slug === courseId || c._id === courseId);
+          if (matchedCourse) {
+            realCourseId = matchedCourse._id;
+            setApiData(matchedCourse);
+          }
+        }
+      } catch (err) {
+        console.error("Resolve slug error:", err);
+      }
 
-    // Fetch Subjects and their Topics
-    setSubjectsLoading(true);
-    fetch(`https://iscale-backend.onrender.com/api/subject/public-get-subjects/${courseId}`)
-      .then((res) => res.json())
-      .then(async (result) => {
+      if (!matchedCourse && !/^[0-9a-fA-F]{24}$/.test(realCourseId)) {
+        setFetchError("Course not found");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await fetch(`https://iscale-backend.onrender.com/api/course/public-course/${realCourseId}`);
+        const result = await res.json();
+        if (result.status && result.data) {
+          setApiData(result.data);
+        }
+      } catch (err) {
+        console.error("Fetch course details error:", err);
+      } finally {
+        setLoading(false);
+      }
+
+      setSubjectsLoading(true);
+      try {
+        const res = await fetch(`https://iscale-backend.onrender.com/api/subject/public-get-subjects/${realCourseId}`);
+        const result = await res.json();
         if (result.status && Array.isArray(result.data)) {
           setSubjects(result.data);
-          try {
-            const subjectsWithTopics = await Promise.all(result.data.map(async (subj) => {
-              const subjectId = subj._id || subj.id;
-              let modules = [{ title: 'Lecture Video', isDummy: true }];
-              const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(subjectId);
-              
-              if (subjectId && isValidObjectId) {
-                try {
-                  const token = localStorage.getItem('token');
-                  const enrolled = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
-                  const currentlyEnrolled = enrolled.some(c => c.id === courseId);
-                  
-                  let topicRes;
-                  if (token && currentlyEnrolled) {
-                    topicRes = await fetch(`https://iscale-backend.onrender.com/api/lecture-progress/lectures/${subjectId}`, {
-                      headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                  } else {
-                    topicRes = await fetch(`https://iscale-backend.onrender.com/api/topics/public/${subjectId}?page=1&limit=100`);
-                  }
+          
+          const subjectsWithTopics = await Promise.all(result.data.map(async (subj) => {
+            const subjectId = subj._id || subj.id;
+            let modules = [];
+            
+            if (subj.lectures && Array.isArray(subj.lectures) && subj.lectures.length > 0) {
+              modules = subj.lectures.map(l => ({
+                id: l._id || l.id,
+                title: l.title || l.m_topic_title || 'Topic',
+                videoUrl: l.video || l.video_link || l.ml_video_id || l.url || l.link || null,
+                isDummy: false,
+                isFree: l.isFree || l.is_free || false
+              }));
+            } else if (subjectId && /^[0-9a-fA-F]{24}$/.test(subjectId)) {
+              try {
+                const token = localStorage.getItem('token');
+                const enrolled = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
+                const currentlyEnrolled = enrolled.some(c => c.id === realCourseId);
+                
+                let topicRes;
+                if (token && currentlyEnrolled) {
+                  topicRes = await fetch(`https://iscale-backend.onrender.com/api/lecture-progress/lectures/${subjectId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                  });
+                } else {
+                  topicRes = await fetch(`https://iscale-backend.onrender.com/api/topics/public/${subjectId}?page=1&limit=100`);
+                }
 
-                  if (topicRes.ok) {
-                    const topicData = await topicRes.json();
-                    const topicsArr = topicData.data?.docs || topicData.data || [];
-                    if (Array.isArray(topicsArr) && topicsArr.length > 0) {
-                      modules = topicsArr.map(t => ({
-                        id: t._id,
-                        title: t.title || t.ml_title || t.m_topic_title || t.name || 'Topic',
-                        videoUrl: t.ml_video_id || null,
-                        isDummy: false,
-                        isCompleted: t.is_completed || false
-                      }));
-                    }
+                if (topicRes.ok) {
+                  const topicData = await topicRes.json();
+                  const topicsArr = topicData.data?.docs || topicData.data || [];
+                  if (Array.isArray(topicsArr) && topicsArr.length > 0) {
+                    modules = topicsArr.map(t => ({
+                      id: t._id,
+                      title: t.title || t.ml_title || t.m_topic_title || t.name || 'Topic',
+                      videoUrl: t.video || t.video_link || t.ml_video_id || t.url || t.link || null,
+                      isDummy: false,
+                      isFree: t.is_free || t.isFree || false,
+                      isCompleted: t.is_completed || false
+                    }));
                   }
-                } catch (e) {}
+                }
+              } catch (e) {
+                console.error("Topics fetch error:", e);
               }
-              return {
-                title: subj.m_subject_title || subj.title || 'Untitled Subject',
-                modules: modules
-              };
-            }));
-            setCurriculumData(subjectsWithTopics);
-          } catch(e) {
-            setCurriculumData(result.data.map(s => ({ title: s.m_subject_title || s.title || 'Untitled Subject', modules: [{ title: 'Lecture Video', isDummy: true }] })));
-          }
+            }
+            
+            return {
+              title: subj.m_subject_title || subj.title || 'Untitled Subject',
+              modules: modules
+            };
+          }));
+          setCurriculumData(subjectsWithTopics);
         } else {
           setSubjects([]);
           setCurriculumData([]);
         }
-      })
-      .catch((err) => {
+      } catch (err) {
+        console.error("Subjects fetch error:", err);
         setSubjects([]);
         setCurriculumData([]);
-      })
-      .finally(() => {
+      } finally {
         setSubjectsLoading(false);
-      });
+      }
 
-    // Fetch Features
-    setFeaturesLoading(true);
-    fetch(`https://iscale-backend.onrender.com/api/features/public-get-all-features/${courseId}`)
-      .then((res) => res.json())
-      .then((result) => {
+      setFeaturesLoading(true);
+      try {
+        const res = await fetch(`https://iscale-backend.onrender.com/api/features/public-get-all-features/${realCourseId}`);
+        const result = await res.json();
         if (result.status && Array.isArray(result.data)) {
           setFeatures(result.data);
         } else {
           setFeatures([]);
         }
-      })
-      .catch((err) => {
-        console.error("Features API Error:", err);
+      } catch (err) {
         setFeatures([]);
-      })
-      .finally(() => {
+      } finally {
         setFeaturesLoading(false);
-      });
+      }
 
-    // Fetch Training Highlights
-    fetch(`https://iscale-backend.onrender.com/api/training/public-get-th/${courseId}`)
-      .then((res) => res.json())
-      .then((result) => {
+      try {
+        const res = await fetch(`https://iscale-backend.onrender.com/api/training/public-get-th/${realCourseId}`);
+        const result = await res.json();
         if (result.status && Array.isArray(result.data)) {
           setTrainingHighlights(result.data);
         } else {
           setTrainingHighlights([]);
         }
-      })
-      .catch((err) => setTrainingHighlights([]));
+      } catch (err) {
+        setTrainingHighlights([]);
+      }
 
-    // Fetch Tools
-    fetch(`https://iscale-backend.onrender.com/api/tools/public-get-tools/${courseId}`)
-      .then((res) => res.json())
-      .then((result) => {
+      try {
+        const res = await fetch(`https://iscale-backend.onrender.com/api/tools/public-get-tools/${realCourseId}`);
+        const result = await res.json();
         if (result.status && Array.isArray(result.data)) {
           setToolsList(result.data);
         } else {
           setToolsList([]);
         }
-      })
-      .catch((err) => setToolsList([]));
+      } catch (err) {
+        setToolsList([]);
+      }
 
-    // Fetch Instructors
-    fetch(`https://iscale-backend.onrender.com/api/instructors/public-get-all-instructors`)
-      .then((res) => res.json())
-      .then((result) => {
+      try {
+        const res = await fetch(`https://iscale-backend.onrender.com/api/instructors/public-get-all-instructors`);
+        const result = await res.json();
         if (result.status && Array.isArray(result.data)) {
           setInstructorsList(result.data);
         } else {
           setInstructorsList([]);
         }
-      })
-      .catch((err) => setInstructorsList([]));
+      } catch (err) {
+        setInstructorsList([]);
+      }
+    };
+
+    resolveSlugAndFetch();
   }, [courseId]);
+
 
 
 const getImageUrl = (url) => {
@@ -808,85 +837,74 @@ const data = {
   id: apiData?._id || courseId,
   title: apiData?.title || '',
   description: apiData?.description || '',
-  thumbnail: getImageUrl(apiData?.banner) || coursesDatabase['data-science-with-generative-ai-course'].thumbnail,
-  videoUrl: apiData?.video_link || coursesDatabase['data-science-with-generative-ai-course'].videoUrl,
+  category: apiData?.category || '',
+  thumbnail: getImageUrl(apiData?.banner) || (coursesDatabase[courseId]?.thumbnail || coursesDatabase['data-science-with-generative-ai-course'].thumbnail),
+  videoUrl: apiData?.video || apiData?.video_link || (coursesDatabase[courseId]?.videoUrl || coursesDatabase['data-science-with-generative-ai-course'].videoUrl),
+  views: apiData?.views || 0,
+  lastUpdated: apiData?.updated_at ? new Date(apiData.updated_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : '10 May, 2026',
+  language: apiData?.language || 'Hinglish',
 };
-const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-science-with-generative-ai-course'];
-  
-  // Find the requested course, fallback to the generative AI one if unknown
- 
-  // Player state declarations
- 
-  
-  const [activeCohortLecture, setActiveCohortLecture] = useState(() => {
-    return currentLectures[0] || null;
-  });
-  const [isPlayingLecture, setIsPlayingLecture] = useState(false);
 
-  const [playlistSearch, setPlaylistSearch] = useState('');
-  const [isBwTheme, setIsBwTheme] = useState(false);
-  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+const allLecturesList = curriculumData.flatMap(subj => subj.modules).filter(m => !m.isDummy);
+const currentLectures = allLecturesList.length > 0 ? allLecturesList : (courseLecturesDb[data.id] || courseLecturesDb['data-science-with-generative-ai-course'] || []);
 
-  // Enrollment state
-  const [isEnrolled, setIsEnrolled] = useState(() => {
-    try {
-      const enrolled = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
-      return enrolled.some(c => c.id === data.id);
-    } catch (e) {
-      return false;
-    }
-  });
+const [activeCohortLecture, setActiveCohortLecture] = useState(null);
+const [isPlayingLecture, setIsPlayingLecture] = useState(false);
 
-  // Track completed lectures list
-  const [completedLectures, setCompletedLectures] = useState(() => {
-    try {
-      const stored = localStorage.getItem(`completed_lectures_${data.id}`);
-      return stored ? JSON.parse(stored) : [];
-    } catch (e) {
-      return [];
-    }
-  });
+const [playlistSearch, setPlaylistSearch] = useState('');
+const [isBwTheme, setIsBwTheme] = useState(false);
+const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
-  const [studentName, setStudentName] = useState(() => {
-    try {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        const u = JSON.parse(userStr);
-        if (u && u.name) return u.name;
-      }
-    } catch(e) {}
-    return 'Ridhi Mishra';
-  });
-  useEffect(() => {
-    if (currentLectures && currentLectures.length > 0) {
-      setActiveCohortLecture(currentLectures[0]);
-    } else {
-      setActiveCohortLecture(null);
-    }
-    try {
-      const enrolled = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
-      setIsEnrolled(enrolled.some(c => c.id === data.id));
-    } catch (e) {
-      setIsEnrolled(false);
-    }
-    try {
-      const stored = localStorage.getItem(`completed_lectures_${data.id}`);
-      setCompletedLectures(stored ? JSON.parse(stored) : []);
-    } catch (e) {
-      setCompletedLectures([]);
-    }
-    setPlaylistSearch('');
-  }, [data.id]);
+// Enrollment state
+const [isEnrolled, setIsEnrolled] = useState(false);
 
-  if (loading) {
-    return <div>Loading Course...</div>;
+// Track completed lectures list
+const [completedLectures, setCompletedLectures] = useState([]);
+
+const [studentName, setStudentName] = useState(() => {
+  try {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      const u = JSON.parse(userStr);
+      if (u && u.name) return u.name;
+    }
+  } catch(e) {}
+  return 'Ridhi Mishra';
+});
+
+useEffect(() => {
+  try {
+    const enrolled = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
+    setIsEnrolled(enrolled.some(c => c.id === data.id));
+  } catch (e) {
+    setIsEnrolled(false);
   }
-
-  if (fetchError) {
-    return <div>{fetchError}</div>;
+  try {
+    const stored = localStorage.getItem(`completed_lectures_${data.id}`);
+    setCompletedLectures(stored ? JSON.parse(stored) : []);
+  } catch (e) {
+    setCompletedLectures([]);
   }
+  setPlaylistSearch('');
+}, [data.id]);
 
-  const isCertUnlocked = isEnrolled && currentLectures.length > 0 && completedLectures.length === currentLectures.length;
+useEffect(() => {
+  if (currentLectures && currentLectures.length > 0) {
+    setActiveCohortLecture(currentLectures[0]);
+  } else {
+    setActiveCohortLecture(null);
+  }
+}, [curriculumData, data.id]);
+
+if (loading) {
+  return <div>Loading Course...</div>;
+}
+
+if (fetchError) {
+  return <div>{fetchError}</div>;
+}
+
+const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectures.every(l => completedLectures.includes(l.id));
 
   const getVerificationId = () => {
     let code = 'UPS';
@@ -976,32 +994,31 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
 
   // Optional: fallback arrays if data doesn't exist for the other courses yet
   // (Curriculum is now fetched dynamically with topics)
-  const details = features && features.length > 0
-    ? features.map(f => ({
-        title: f.m_feature_title || 'Feature',
-        desc: f.m_feature_desc || '',
-        img: getImageUrl(f.m_feature_image)
-      }))
-    : [];
-  const highlights = trainingHighlights && trainingHighlights.length > 0 
-    ? trainingHighlights.map(th => ({ title: th.title || th.m_feature_title || 'Highlight', img: getImageUrl(th.icon || th.m_feature_image) }))
-    : [];
   const faqs = data.faqs || coursesDatabase['data-science-with-generative-ai-course'].faqs;
   const certText = data.certificateText || coursesDatabase['data-science-with-generative-ai-course'].certificateText;
   const certImg = data.certificateImg || coursesDatabase['data-science-with-generative-ai-course'].certificateImg;
   const videoUrl = data.videoUrl || coursesDatabase['data-science-with-generative-ai-course'].videoUrl;
-  // Normalize common video URLs to embeddable player URLs (YouTube / Vimeo)
+  // Normalize common video URLs to embeddable player URLs (YouTube / Vimeo / MP4 uploads)
   const getEmbedUrl = (url) => {
     if (!url) return '';
+    const trimmed = String(url).trim();
+    // If it is a YouTube video ID (no spaces, length 11)
+    if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) {
+      return `https://www.youtube.com/embed/${trimmed}`;
+    }
+    // If it is a relative path (e.g. src/uploads/video/...) or direct backend url, resolve it via getImageUrl
+    if (trimmed.startsWith('src/') || trimmed.startsWith('uploads/')) {
+      return getImageUrl(trimmed);
+    }
     try {
-      const u = new URL(url);
+      const u = new URL(trimmed);
       const host = u.hostname.replace('www.', '').toLowerCase();
 
       if (host.includes('youtube.com')) {
         const v = u.searchParams.get('v');
         if (v) return `https://www.youtube.com/embed/${v}`;
         // fallback: convert /watch to /embed
-        return url.replace('/watch', '/embed');
+        return trimmed.replace('/watch', '/embed');
       }
 
       if (host === 'youtu.be') {
@@ -1015,18 +1032,35 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
         return `https://player.vimeo.com/video/${id}`;
       }
 
-      return url;
+      return trimmed;
     } catch (e) {
-      return url;
+      return trimmed;
     }
   };
 
   // In case activeCohortLecture is set, we use its videoUrl, else default preview
   const embedUrl = getEmbedUrl((activeCohortLecture && activeCohortLecture.videoUrl) ? activeCohortLecture.videoUrl : videoUrl);
-  const feesData = data.fees || coursesDatabase['data-science-with-generative-ai-course'].fees;
+  const baseFees = (coursesDatabase[courseId]?.fees || coursesDatabase['data-science-with-generative-ai-course'].fees);
+  const feesData = JSON.parse(JSON.stringify(baseFees));
+  const dynamicOfferPrice = (apiData?.offer_price && apiData.offer_price !== 'N/A' && apiData.offer_price !== 0) 
+    ? `₹${parseInt(apiData.offer_price).toLocaleString()}` 
+    : (apiData?.price && apiData.price !== 'N/A' && apiData.price !== 0 ? `₹${parseInt(apiData.price).toLocaleString()}` : null);
+  if (dynamicOfferPrice && feesData && feesData.premium) {
+    feesData.premium.price = dynamicOfferPrice;
+  }
   const toolsData = toolsList && toolsList.length > 0
-    ? toolsList.map(t => ({ name: t.title || t.m_tool_title || t.name || 'Tool', img: getImageUrl(t.image || t.m_tool_image || t.icon) }))
-    : [];
+    ? toolsList.map(t => ({ name: t.c_tool_title || t.title || t.m_tool_title || t.name || 'Tool', img: getImageUrl(t.c_tool_img || t.image || t.m_tool_image || t.icon) }))
+    : (coursesDatabase[courseId]?.tools || coursesDatabase['data-science-with-generative-ai-course'].tools || []);
+  const details = features && features.length > 0
+    ? features.map(f => ({
+        title: f.m_feature_title || 'Feature',
+        desc: f.m_feature_desc || '',
+        img: getImageUrl(f.m_feature_image)
+      }))
+    : (coursesDatabase[courseId]?.details || coursesDatabase['data-science-with-generative-ai-course'].details || []);
+  const highlights = trainingHighlights && trainingHighlights.length > 0 
+    ? trainingHighlights.map(th => ({ title: th.title || th.m_feature_title || 'Highlight', img: getImageUrl(th.icon || th.m_feature_image) }))
+    : (coursesDatabase[courseId]?.highlights || coursesDatabase['data-science-with-generative-ai-course'].highlights || []);
   const instructorsData = instructorsList && instructorsList.length > 0
     ? instructorsList.map(i => ({ 
         name: i.m_instructor_name || 'Instructor', 
@@ -1036,18 +1070,20 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
                : `https://ui-avatars.com/api/?name=${encodeURIComponent(i.m_instructor_name || 'Instructor')}&background=random` 
       }))
     : [];
-  const reviewsData = data.reviews || coursesDatabase['data-science-with-generative-ai-course'].reviews;
+  const reviewsData = (coursesDatabase[courseId]?.reviews || coursesDatabase['data-science-with-generative-ai-course'].reviews);
 
-  const tabs = ['Overview', 'Course Content', 'Details', 'Highlights', 'Certificate', 'FAQ\'s', 'Fees', 'Tools', 'Instructor', 'Review'];
+  const tabsConfig = [
+    { label: 'Overview', id: 'overview' },
+    { label: 'Curriculum', id: 'coursecontent' },
+    { label: 'Projects', id: 'details' },
+    { label: 'Tools', id: 'tools' },
+    { label: 'Certificate', id: 'certificate' },
+    { label: 'Instructor', id: 'instructor' },
+    { label: 'FAQ', id: 'faq' },
+    { label: 'Fees', id: 'fees' },
+    { label: 'Testimonials', id: 'review' }
+  ];
 
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
-    const element = document.getElementById(tab.replace(/['\s]/g, '').toLowerCase());
-    if (element) {
-      const y = element.getBoundingClientRect().top + window.scrollY - 150;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-  };
 
   return (
     <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', fontFamily: 'var(--font-body)', paddingBottom: 100 }}>
@@ -1057,14 +1093,23 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
             <button onClick={() => setVideoOpen(false)} style={{ position: 'absolute', top: -40, right: -40, background: 'none', border: 'none', color: '#fff', fontSize: 40, cursor: 'pointer' }}>&times;</button>
             <div style={{ paddingBottom: '56.25%', position: 'relative', height: 0, overflow: 'hidden' }}>
               {embedUrl ? (
-                <iframe
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                  src={embedUrl + (embedUrl.includes('?') ? '&autoplay=1' : '?autoplay=1')}
-                  title="Course Video"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
+                (embedUrl.endsWith('.mp4') || embedUrl.endsWith('.webm') || embedUrl.includes('/uploads/')) ? (
+                  <video
+                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: '#000' }}
+                    src={embedUrl}
+                    controls
+                    autoPlay
+                  />
+                ) : (
+                  <iframe
+                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                    src={embedUrl + (embedUrl.includes('?') ? '&autoplay=1' : '?autoplay=1')}
+                    title="Course Video"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                )
               ) : (
                 <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>Video unavailable</div>
               )}
@@ -1261,8 +1306,20 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
       <div style={{ position: 'sticky', top: 70, background: 'var(--nav-bg)', backdropFilter: 'blur(10px)', zIndex: 50, borderBottom: '1px solid var(--border-color)', boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
         <div className="container">
           <div style={{ display: 'flex', gap: 16, overflowX: 'auto', padding: '20px 0', scrollbarWidth: 'none' }}>
-            {tabs.map(tab => (
-              <TabButton key={tab} active={activeTab === tab} label={tab} onClick={() => handleTabClick(tab)} />
+            {tabsConfig.map(tab => (
+              <TabButton 
+                key={tab.id} 
+                active={activeTab === tab.id} 
+                label={tab.label} 
+                onClick={() => {
+                  setActiveTab(tab.id);
+                  const element = document.getElementById(tab.id);
+                  if (element) {
+                    const y = element.getBoundingClientRect().top + window.scrollY - 150;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
+                  }
+                }} 
+              />
             ))}
           </div>
         </div>
@@ -1274,16 +1331,10 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
           
           {/* Overview */}
           <div id="overview" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
-            <div style={{ maxHeight: overviewShowMore ? 'none' : 80, overflow: 'hidden', position: 'relative' }}>
-              <div dangerouslySetInnerHTML={{ __html: data.overviewHtml }} />
-              {!overviewShowMore && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 40, background: 'linear-gradient(transparent, var(--card-bg))' }} />}
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 }}>
-              <button onClick={() => setOverviewShowMore(!overviewShowMore)} style={{ color: 'var(--red)', fontWeight: 800, background: 'none', border: 'none', cursor: 'pointer', fontSize: 16 }}>
-                {overviewShowMore ? 'Show Less' : 'Show More'}
-              </button>
-              <button onClick={handleEnrollClick} style={{ background: 'var(--red)', color: '#fff', border: 'none', padding: '10px 24px', borderRadius: 8, fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 15px rgba(237, 28, 36, 0.3)' }}>
-                Enroll Now <ArrowRight size={16} />
+            <div dangerouslySetInnerHTML={{ __html: data.overviewHtml || `<p style="color:var(--text-secondary); font-size:16px;">${data.description}</p>` }} />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: 24 }}>
+              <button onClick={handleEnrollClick} style={{ background: 'var(--red)', color: '#fff', border: 'none', padding: '12px 32px', borderRadius: 8, fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 15px rgba(237, 28, 36, 0.3)' }}>
+                Enroll Now <ArrowRight size={18} />
               </button>
             </div>
           </div>
@@ -1298,8 +1349,10 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
                     <Accordion 
                       key={idx} 
                       title={curr.title} 
-                      items={curr.modules || [{ title: 'Lecture Video', isDummy: true }]} 
+                      items={curr.modules || []} 
                       completedLectures={completedLectures}
+                      isEnrolled={isEnrolled}
+                      isCohort={apiData?.category?.toLowerCase().includes('cohort') || apiData?.title?.toLowerCase().includes('cohort') || courseId.includes('cohort')}
                       onPlay={(lecture) => {
                         setActiveCohortLecture(lecture);
                         setVideoOpen(true);
@@ -1318,7 +1371,19 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
             </div>
             
             <div style={{ marginTop: 32, display: 'flex', justifyContent: 'center', gap: 16, borderTop: '1px solid var(--border-color)', paddingTop: 32, flexWrap: 'wrap' }}>
-               <button style={{ background: 'var(--card-bg)', color: 'var(--red)', border: '1px solid var(--red)', padding: '12px 32px', borderRadius: 8, fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8, boxShadow: 'var(--card-shadow)', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.background='var(--red)'; e.currentTarget.style.color='#fff'; }} onMouseLeave={e => { e.currentTarget.style.background='var(--card-bg)'; e.currentTarget.style.color='var(--red)'; }}>
+               <button 
+                 onClick={() => {
+                   const link = apiData?.pdf || apiData?.brochure || apiData?.fee_structure;
+                   if (link && link !== 'N/A') {
+                     window.open(getImageUrl(link), '_blank');
+                   } else {
+                     alert('Syllabus PDF is currently being prepared. We will email it to you shortly!');
+                   }
+                 }}
+                 style={{ background: 'var(--card-bg)', color: 'var(--red)', border: '1px solid var(--red)', padding: '12px 32px', borderRadius: 8, fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8, boxShadow: 'var(--card-shadow)', transition: 'all 0.2s' }}
+                 onMouseEnter={e => { e.currentTarget.style.background='var(--red)'; e.currentTarget.style.color='#fff'; }}
+                 onMouseLeave={e => { e.currentTarget.style.background='var(--card-bg)'; e.currentTarget.style.color='var(--red)'; }}
+               >
                  <Download size={18} /> Download Syllabus
                </button>
                <button onClick={handleEnrollClick} style={{ background: 'var(--red)', color: '#fff', border: 'none', padding: '12px 32px', borderRadius: 8, fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 15px rgba(237, 28, 36, 0.3)' }}>
@@ -1327,40 +1392,84 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
             </div>
           </div>
 
-          {/* Tools (Moved up near Curriculum) */}
-          {toolsData && (
-            <div id="tools" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 40 }}>Tools Covered</h2>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 32, justifyContent: 'flex-start' }}>
-                {toolsData.map((tool, idx) => (
-                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                    <img src={tool.img} alt={tool.name} style={{ height: 48, objectFit: 'contain' }} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
-
-          {/* Course Details List */}
+          {/* Projects & Portfolios / Case Studies */}
           <div id="details" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 48 }}>Course Details</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 48 }}>
-              {details.map((detail, idx) => (
-                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
-                  <img src={detail.img} alt={detail.title} style={{ width: 140, height: 110, objectFit: 'contain' }} />
-                  <div style={{ flex: 1, textAlign: 'center' }}>
-                    <h3 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 16, textDecoration: 'underline', textDecorationColor: 'var(--border-color)', textUnderlineOffset: 8 }}>
-                      {detail.title}
-                    </h3>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: 16, lineHeight: 1.6, maxWidth: 600, margin: '0 auto' }}>
-                      {detail.desc}
-                    </p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40, flexWrap: 'wrap', gap: 16 }}>
+              <div>
+                <span style={{ color: 'var(--red)', fontSize: 12, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase' }}>Hands-On Experience</span>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)', marginTop: 8 }}>Projects & Portfolios</h2>
+              </div>
+              <p style={{ color: 'var(--text-secondary)', fontSize: 16, maxWidth: 450, margin: 0, fontWeight: 500 }}>
+                Build 15+ production-grade projects. Deploy them to live servers and build an impressive portfolio to showcase to hiring managers.
+              </p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
+              {[
+                {
+                  title: "WhatsApp Chat Analyzer",
+                  desc: "Develop an end-to-end NLP and parsing pipeline. Extract chat logs, generate dynamic word clouds, and plot user activity distribution dashboards.",
+                  tech: ["Python", "Streamlit", "NLTK", "Matplotlib"],
+                  highlight: "Regex stream extraction"
+                },
+                {
+                  title: "Google Image Scraper & Dataset Builder",
+                  desc: "Build a web scraping engine with anti-bot bypass techniques to automatically curate, download, and catalog high-res images for custom ML models.",
+                  tech: ["Selenium", "BeautifulSoup", "Python", "Pillow"],
+                  highlight: "Anti-scraping bypass filters"
+                },
+                {
+                  title: "Covid-19 Global Data Pipeline",
+                  desc: "Clean complex raw datasets, perform regression models on vaccination runs, and present interactive geographic dashboards.",
+                  tech: ["Power BI", "Pandas", "MySQL", "DAX"],
+                  highlight: "Complex geographic mapping"
+                },
+                {
+                  title: "Collaborative Filtering Recommendation Engine",
+                  desc: "Create and train collaborative and content-filtering models. Deploy the system as a containerized microservice API with real-time caching.",
+                  tech: ["Scikit-Learn", "Flask", "Pandas", "Docker"],
+                  highlight: "Cosine similarity calculations"
+                }
+              ].map((proj, idx) => (
+                <div key={idx} style={{ background: 'var(--bg-secondary)', padding: 32, borderRadius: 20, border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: 20, transition: 'all 0.3s', cursor: 'default' }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-6px)'} onMouseLeave={e => e.currentTarget.style.transform = 'none'}>
+                  <div style={{ display: 'inline-flex', alignSelf: 'flex-start', background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '6px 12px', borderRadius: 8, fontSize: 11, fontWeight: 800, textTransform: 'uppercase' }}>
+                    Project {idx + 1}
+                  </div>
+                  <h3 style={{ fontSize: 20, fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>{proj.title}</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.6, margin: 0 }}>{proj.desc}</p>
+                  
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 'auto' }}>
+                    {proj.tech.map((t, i) => (
+                      <span key={i} style={{ background: 'var(--card-bg)', color: 'var(--text-primary)', border: '1px solid var(--border-color)', padding: '4px 10px', borderRadius: 6, fontSize: 11, fontWeight: 700 }}>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div style={{ borderTop: '1px dashed var(--border-color)', paddingTop: 16, display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>
+                    <Sparkles size={14} color="var(--red)" />
+                    <span>Focus: <span style={{ color: 'var(--text-secondary)' }}>{proj.highlight}</span></span>
                   </div>
                 </div>
               ))}
             </div>
           </div>
+
+          {/* Tools */}
+          {toolsData && toolsData.length > 0 && (
+            <div id="tools" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 40 }}>Tools Covered</h2>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 32, justifyContent: 'flex-start' }}>
+                {toolsData.map((tool, idx) => (
+                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, background: 'var(--bg-secondary)', padding: '16px 24px', borderRadius: 12, border: '1px solid var(--border-color)', minWidth: 100, textAlign: 'center' }}>
+                    <img src={tool.img} alt={tool.name} style={{ height: 40, width: 40, objectFit: 'contain' }} />
+                    <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-secondary)' }}>{tool.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Highlights */}
           <div id="highlights" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
@@ -1468,7 +1577,7 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
                                 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@700;800&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
                                 <style>
                                   body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f0f0; }
-                                  .certificate-container { position: relative; width: 1000px; height: 707px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); background: var(--card-bg); border: 15px double #d4af37; box-sizing: border-box; padding: 30px; text-align: center; font-family: 'Inter', sans-serif; }
+                                  .certificate-container { position: relative; width: 1000px; height: 707px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); background: #ffffff; border: 15px double #ca8a04; box-sizing: border-box; padding: 30px; text-align: center; font-family: 'Inter', sans-serif; }
                                   .cert-border { border: 2px solid #ca8a04; height: 100%; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; padding: 30px; position: relative; border-radius: 4px; }
                                   .cert-title { font-family: 'Poppins', sans-serif; font-size: 38px; color: #ca8a04; font-weight: 800; letter-spacing: 3px; margin: 0 0 5px 0; }
                                   .cert-subtitle { font-size: 13px; text-transform: uppercase; color: #78350f; letter-spacing: 5px; font-weight: 700; margin-bottom: 30px; }
@@ -1484,7 +1593,7 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
                                   .cert-verification-footer { margin-top: 25px; font-size: 9px; color: #94a3b8; font-weight: 500; }
                                   @media print {
                                     body { background: none; }
-                                    .certificate-container { box-shadow: none; border: 15px double #d4af37 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                                    .certificate-container { box-shadow: none; border: 15px double #ca8a04 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                                     @page { size: landscape; margin: 0; }
                                   }
                                 </style>
@@ -1514,7 +1623,7 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
                                           <circle cx="50" cy="48" r="28" fill="url(#goldGradSec)" stroke="#9a7b56" stroke-width="1.5" />
                                           <circle cx="50" cy="48" r="24" fill="none" stroke="#fff" stroke-width="1" stroke-dasharray="3 2" opacity="0.8" />
                                           <polygon points="50,38 52,43 57,43 53,46 55,51 50,48 45,51 47,46 43,43 48,43" fill="#78350f" />
-                                          <text x="50" y="60" font-family="'Inter', sans-serif" font-size="6" font-weight="bold" fill="#78350f" text-anchor="middle">iSCALE</text>
+                                          <text x="50" y="60" font-family="'Inter', sans-serif" font-size="6" font-weight="bold" fill="#78350f" text-anchor="middle">I-SCALE</text>
                                           <text x="50" y="67" font-family="'Inter', sans-serif" font-size="5" font-weight="bold" fill="#b45309" text-anchor="middle">OFFICIAL SEAL</text>
                                           <defs>
                                             <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -1532,65 +1641,53 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
                                       </div>
                                       
                                       <div class="cert-meta-col">
-                                        <div class="cert-meta-val">
-                                          <svg width="100" height="32" viewBox="0 0 150 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M10 35 Q30 10 50 35 T90 20 T130 38 M30 30 L120 30" stroke="#1e40af" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9" />
-                                            <path d="M45 20 Q60 5 70 25 T100 20" stroke="#1e40af" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.8" />
-                                          </svg>
-                                        </div>
+                                        <div class="cert-meta-val" style="font-family: 'Great Vibes', cursive; font-size: 26px; border-bottom: none; height: auto;">iScale Learning</div>
                                         <div class="cert-meta-line"></div>
-                                        <div class="cert-meta-label">Director, iSCALE Learning</div>
+                                        <div class="cert-meta-label">Director Signature</div>
                                       </div>
                                     </div>
-                                    
-                                    <div class="cert-verification-footer">
-                                      Verification ID: <span style="font-weight: 700; color: #475569;">${getVerificationId()}</span> &bull; Verified Online at: <span style="font-weight: 700; color: #475569;">iscale-learning.com/verify</span>
-                                    </div>
+                                    <div class="cert-verification-footer">Official Verification ID: ${getVerificationId()} | Verify securely at iscale-learning.com/verify</div>
                                   </div>
                                 </div>
-                                <script>
-                                  window.onload = function() {
-                                    window.print();
-                                    setTimeout(function() { window.close(); }, 500);
-                                  }
-                                </script>
+                                <script>window.onload = function() { window.print(); }</script>
                               </body>
                             </html>
                           `);
                           printWindow.document.close();
                         }}
                         style={{
-                          background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
+                          background: 'var(--red)',
                           color: '#fff',
+                          border: 'none',
                           padding: '12px 24px',
                           borderRadius: 8,
-                          fontSize: 14,
                           fontWeight: 700,
-                          border: 'none',
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
                           gap: 8,
-                          boxShadow: '0 4px 14px rgba(217, 119, 6, 0.25)'
+                          fontSize: 14
                         }}
                       >
-                        <Printer size={16} /> Print Official Copy
+                        <Printer size={16} /> Print Certificate
                       </button>
 
                       <button
-                        onClick={() => setCurrentPage(`verify-certificate?id=${getVerificationId()}`)}
+                        onClick={() => {
+                          window.location.href = `/verify-certificate?id=${getVerificationId()}`;
+                        }}
                         style={{
-                          background: 'var(--card-bg)',
-                          color: 'var(--text-secondary)',
+                          background: 'var(--bg-secondary)',
+                          color: 'var(--text-primary)',
+                          border: '1.5px solid var(--border-color)',
                           padding: '12px 24px',
                           borderRadius: 8,
-                          fontSize: 14,
                           fontWeight: 700,
-                          border: '1.5px solid var(--border-color)',
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
-                          gap: 8
+                          gap: 8,
+                          fontSize: 14
                         }}
                       >
                         <ShieldCheck size={16} color="#d97706" /> Verify Online
@@ -1600,8 +1697,8 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
 
                   {/* HTML Preview representation of Certificate */}
                   <div style={{
-                    border: '8px double #d4af37',
-                    background: 'var(--card-bg)',
+                    border: '8px double #ca8a04',
+                    background: '#ffffff',
                     borderRadius: 16,
                     padding: '24px 20px',
                     textAlign: 'center',
@@ -1631,18 +1728,18 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
                     }}>
                       <h4 style={{ fontFamily: 'var(--font-display)', color: '#ca8a04', fontSize: 14, fontWeight: 800, letterSpacing: 1.5, margin: '0 0 2px 0' }}>iSCALE LEARNING</h4>
                       <span style={{ fontSize: 8, letterSpacing: 2, fontWeight: 700, textTransform: 'uppercase', color: '#78350f', marginBottom: 10 }}>Certificate of Completion</span>
-                      <span style={{ fontSize: 9, fontStyle: 'italic', color: 'var(--text-secondary)' }}>This is proudly presented to</span>
-                      <h2 style={{ fontFamily: "'Great Vibes', cursive", fontSize: 28, color: 'var(--text-primary)', margin: '2px 0 6px 0', fontWeight: 'bold' }}>{studentName}</h2>
-                      <p style={{ fontSize: 8, color: 'var(--text-secondary)', maxWidth: 280, margin: '0 auto 6px auto', lineHeight: 1.3 }}>
+                      <span style={{ fontSize: 9, fontStyle: 'italic', color: '#64748b' }}>This is proudly presented to</span>
+                      <h2 style={{ fontFamily: "'Great Vibes', cursive", fontSize: 28, color: '#0f172a', margin: '2px 0 6px 0', fontWeight: 'bold' }}>{studentName}</h2>
+                      <p style={{ fontSize: 8, color: '#64748b', maxWidth: 280, margin: '0 auto 6px auto', lineHeight: 1.3 }}>
                         for successfully finishing all learning modules and industry-oriented practical tasks for
                       </p>
-                      <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', marginBottom: 12 }}>{data.title}</div>
+                      <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, fontWeight: 700, color: '#b45309', textTransform: 'uppercase', marginBottom: 12 }}>{data.title}</div>
                       
                       {/* Compact Footer: 3 Columns (Date, Seal, Signature) */}
-                      <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-color)', paddingTop: 8, marginTop: 'auto' }}>
+                      <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #e2e8f0', paddingTop: 8, marginTop: 'auto' }}>
                         {/* Date */}
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
-                          <span style={{ fontSize: 8, fontWeight: 700, color: 'var(--text-secondary)' }}>
+                          <span style={{ fontSize: 8, fontWeight: 700, color: '#0f172a' }}>
                             {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                           </span>
                           <span style={{ fontSize: 6, color: '#94a3b8', textTransform: 'uppercase', marginTop: 2 }}>Date</span>
@@ -1738,159 +1835,184 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
             )}
           </div>
 
-          {/* FAQ moved below Instructor */}
-
-        </div>
-      </section>
-
-      {/* Fees */}
-      {feesData && (
-        <section id="fees" style={{ padding: '60px 0', background: 'var(--card-bg)', borderTop: '1px solid var(--border-color)' }}>
-          <div className="container" style={{ background: 'var(--red)', borderRadius: 24, padding: 48, boxShadow: '0 20px 60px rgba(237,28,36,0.2)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: '#fff' }}>Fees</h2>
-              <button style={{ background: 'var(--card-bg)', color: 'var(--red)', border: 'none', padding: '12px 24px', borderRadius: 8, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Download size={18} /> Download Fee Structure
-              </button>
-            </div>
-
-            <div style={{ background: 'var(--card-bg)', borderRadius: 16, overflow: 'hidden' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
-                <thead>
-                  <tr>
-                    <th style={{ padding: 24, textAlign: 'left', borderBottom: '2px solid var(--border-color)', color: 'var(--text-primary)', fontSize: 18, width: '40%' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 6px)', gap: 2 }}>
-                          <div style={{ width: 6, height: 6, background: '#2dd4bf', borderRadius: '50%' }}></div>
-                          <div style={{ width: 6, height: 6, background: '#2dd4bf', borderRadius: '50%' }}></div>
-                          <div style={{ width: 6, height: 6, background: '#2dd4bf', borderRadius: '50%' }}></div>
-                          <div style={{ width: 6, height: 6, background: '#2dd4bf', borderRadius: '50%' }}></div>
-                        </div>
-                        FEATURES
-                      </div>
-                    </th>
-                    <th style={{ padding: 24, borderBottom: '2px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
-                      <div style={{ color: '#2dd4bf', fontSize: 18, fontWeight: 800 }}>★ BASIC</div>
-                    </th>
-                    <th style={{ padding: 24, borderBottom: '2px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
-                      <div style={{ color: '#d97706', fontSize: 18, fontWeight: 800 }}>👑 PREMIUM</div>
-                    </th>
-                    <th style={{ padding: 24, borderBottom: '2px solid var(--border-color)', borderLeft: '1px solid var(--border-color)', background: 'var(--bg-secondary)', position: 'relative' }}>
-                      <div style={{ position: 'absolute', top: -16, left: '50%', transform: 'translateX(-50%)', background: 'var(--card-bg)', border: '1px solid #8b5cf6', color: '#8b5cf6', padding: '4px 12px', borderRadius: 100, fontSize: 10, fontWeight: 800, whiteSpace: 'nowrap' }}>★ MOST POPULAR</div>
-                      <div style={{ color: '#8b5cf6', fontSize: 18, fontWeight: 800 }}>💎 PRO</div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {feesData.features.map((feat, idx) => (
-                    <tr key={idx}>
-                      <td style={{ padding: '16px 24px', textAlign: 'left', borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)', fontSize: 14, fontWeight: 500 }}>
-                        {feat.name}
-                      </td>
-                      <td style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
-                        {typeof feat.basic === 'boolean' ? (feat.basic ? <CheckCircle color="#2dd4bf" size={20} /> : <XCircle color="#cbd5e1" size={20} />) : <span style={{ color: '#2dd4bf', fontWeight: 600 }}>{feat.basic}</span>}
-                      </td>
-                      <td style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
-                        {typeof feat.premium === 'boolean' ? (feat.premium ? <CheckCircle color="#d97706" size={20} /> : <XCircle color="#cbd5e1" size={20} />) : <span style={{ color: '#d97706', fontWeight: 600 }}>{feat.premium}</span>}
-                      </td>
-                      <td style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)', background: 'var(--bg-secondary)' }}>
-                        {typeof feat.pro === 'boolean' ? (feat.pro ? <CheckCircle color="#8b5cf6" size={20} /> : <XCircle color="#cbd5e1" size={20} />) : <span style={{ color: '#8b5cf6', fontWeight: 600 }}>{feat.pro}</span>}
-                      </td>
-                    </tr>
-                  ))}
-                  <tr>
-                    <td style={{ padding: 24, textAlign: 'left', borderBottom: '1px solid var(--border-color)' }}></td>
-                    <td style={{ padding: 24, borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
-                      <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)' }}>{feesData.basic.price}</div>
-                      <button style={{ background: 'var(--card-bg)', border: '1px solid #2dd4bf', color: '#2dd4bf', padding: '8px 24px', borderRadius: 8, fontWeight: 700, marginTop: 12, cursor: 'pointer' }}>Get Started</button>
-                    </td>
-                    <td style={{ padding: 24, borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
-                      <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)' }}>{feesData.premium.price}</div>
-                      <button style={{ background: '#d97706', border: 'none', color: '#fff', padding: '8px 24px', borderRadius: 8, fontWeight: 700, marginTop: 12, cursor: 'pointer' }}>Go Premium</button>
-                    </td>
-                    <td style={{ padding: 24, borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)', background: 'var(--bg-secondary)' }}>
-                      <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)' }}>{feesData.pro.price}</div>
-                      <button style={{ background: '#8b5cf6', border: 'none', color: '#fff', padding: '8px 24px', borderRadius: 8, fontWeight: 700, marginTop: 12, cursor: 'pointer' }}>Choose Pro</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            
-            <div style={{ marginTop: 40, color: '#fff' }}>
-              <h3 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Program Fees- Indian Residents</h3>
-              <p style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>INR 29,999 (Incl. Taxes)*</p>
-              <p style={{ fontSize: 14, opacity: 0.9 }}>No Cost EMI options available.</p>
-              <div style={{ marginTop: 16 }}>
-                <button style={{ background: 'var(--card-bg)', color: 'var(--red)', border: 'none', padding: '12px 32px', borderRadius: 8, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, float: 'right', marginTop: -40 }}>
-                  <CreditCard size={18} /> Pay Now
-                </button>
+          {/* Instructor */}
+          {instructorsData && instructorsData.length > 0 && (
+            <div id="instructor" style={{ background: 'var(--card-bg)', borderRadius: 24, padding: 48, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 40 }}>Instructor</h2>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 24 }}>
+                {instructorsData.map((inst, idx) => (
+                  <div key={idx} style={{ border: '1px solid var(--border-color)', borderRadius: 16, padding: 32, textAlign: 'center', boxShadow: '0 4px 15px rgba(0,0,0,0.02)', background: 'var(--card-bg)' }}>
+                    <div style={{ width: 140, height: 140, margin: '0 auto 16px auto', backgroundColor: '#f3e8ff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 10, overflow: 'hidden' }}>
+                      <img src={inst.img} alt={inst.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <h3 style={{ fontSize: 20, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 4 }}>{inst.name}</h3>
+                    <p style={{ color: 'var(--red)', fontSize: 14, fontWeight: 600, marginBottom: 16 }}>{inst.role}</p>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40, background: 'var(--bg-secondary)', borderRadius: '50%', color: '#0077b5' }}>
+                      <i className="fab fa-linkedin-in"></i>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
-        </section>
-      )}
+          )}
 
-      {/* Tools Section moved into Course Content left column */}
-
-      {/* Instructor */}
-      {instructorsData && (
-        <section id="instructor" style={{ padding: '60px 0' }}>
-          <div className="container" style={{ background: 'var(--card-bg)', borderRadius: 24, padding: 48, boxShadow: 'var(--card-shadow)' }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 40 }}>Instructor</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 24 }}>
-              {instructorsData.map((inst, idx) => (
-                <div key={idx} style={{ border: '1px solid var(--border-color)', borderRadius: 16, padding: 32, textAlign: 'center', boxShadow: '0 4px 15px rgba(0,0,0,0.02)', background: 'var(--card-bg)' }}>
-                  <div style={{ width: 140, height: 140, margin: '0 auto 16px auto', backgroundColor: '#f3e8ff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 10 }}>
-                    <img src={inst.img} alt={inst.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                  </div>
-                  <h3 style={{ fontSize: 20, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 4 }}>{inst.name}</h3>
-                  <p style={{ color: 'var(--red)', fontSize: 14, fontWeight: 600, marginBottom: 16 }}>{inst.role}</p>
-                  <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40, background: 'var(--bg-secondary)', borderRadius: '50%', color: '#0077b5' }}>
-                    <i className="fab fa-linkedin-in"></i>
-                  </div>
-                </div>
+          {/* FAQ's (Moved down after Instructor) */}
+          <div id="faq" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 32 }}>FAQ's</h2>
+            <div>
+              {faqs.slice(0, faqShowMore ? faqs.length : 3).map((faq, idx) => (
+                <Accordion key={idx} title={faq.q} items={[faq.a]} />
               ))}
             </div>
+            {faqs.length > 3 && (
+              <button onClick={() => setFaqShowMore(!faqShowMore)} style={{ color: 'var(--red)', fontWeight: 800, background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, marginTop: 16 }}>
+                {faqShowMore ? 'Show Less' : 'Show More'}
+              </button>
+            )}
           </div>
-        </section>
-      )}
 
-      {/* FAQ's (Moved down after Instructor) */}
-      <section id="faq" style={{ padding: '60px 0', background: 'var(--bg-secondary)' }}>
-        <div className="container" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 32 }}>FAQ's</h2>
-          <div>
-            {faqs.slice(0, faqShowMore ? faqs.length : 3).map((faq, idx) => (
-              <Accordion key={idx} title={faq.q} items={[faq.a]} />
-            ))}
-          </div>
-          {faqs.length > 3 && (
-            <button onClick={() => setFaqShowMore(!faqShowMore)} style={{ color: 'var(--red)', fontWeight: 800, background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, marginTop: 16 }}>
-              {faqShowMore ? 'Show Less' : 'Show More'}
-            </button>
-          )}
         </div>
       </section>
 
-      {/* Testimonials */}
-      {reviewsData && (
-        <section id="review" style={{ padding: '60px 0', background: 'var(--bg-primary)' }}>
-          <div className="container" style={{ background: 'var(--card-bg)', borderRadius: 24, padding: 48, boxShadow: 'var(--card-shadow)' }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 40 }}>Testimonials</h2>
-            <div style={{ display: 'flex', gap: 24, overflowX: 'auto', paddingBottom: 24, scrollbarWidth: 'none' }}>
-              {reviewsData.map((rev, idx) => (
-                <div key={idx} style={{ flexShrink: 0, width: 260, padding: 24, background: 'var(--card-bg)', borderRadius: 24, border: '1px solid var(--border-color)', textAlign: 'center', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
-                  <img src={rev.img} alt={rev.name} style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', margin: '0 auto 20px auto', display: 'block', border: '4px solid #f8fafc' }} />
-                  <h4 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{rev.name}</h4>
-                  <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 20 }}>Placed at</p>
-                  <img src={rev.companyImg} alt="Company Logo" style={{ height: 40, width: 'auto', objectFit: 'contain', margin: '0 auto', display: 'block' }} />
-                </div>
-              ))}
+      {/* Fees Section */}
+      {feesData && (
+        <section id="fees" style={{ padding: '60px 0', background: 'var(--card-bg)', borderTop: '1px solid var(--border-color)' }}>
+          <div className="container">
+            <div style={{ textAlign: 'center', marginBottom: 40 }}>
+              <span style={{ color: 'var(--red)', fontSize: 12, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase' }}>Invest in Your Future</span>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)', marginTop: 8 }}>Flexible Pricing Plans</h2>
             </div>
+
+            {(data.category?.toLowerCase().includes('foundation') || courseId.includes('python') || courseId.includes('excel') || courseId.includes('visualization')) ? (
+              /* Foundation Course: Single Price Card */
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <div style={{ background: 'var(--bg-secondary)', border: '1.5px solid var(--border-color)', borderRadius: 24, padding: 40, maxWidth: 500, width: '100%', boxShadow: 'var(--card-shadow)', textAlign: 'left' }}>
+                  <div style={{ display: 'inline-flex', background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', padding: '6px 12px', borderRadius: 8, fontSize: 11, fontWeight: 800, textTransform: 'uppercase', marginBottom: 16 }}>
+                    Foundation Program
+                  </div>
+                  <h3 style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 12 }}>{data.title}</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>Get lifetime access to high-quality recorded video lectures, self-assessment tests, complete code notebooks, and direct mentor query support.</p>
+                  
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 24, borderTop: '1px solid var(--border-color)', paddingTop: 20 }}>
+                    <span style={{ fontSize: 36, fontWeight: 900, color: 'var(--text-primary)' }}>{dynamicOfferPrice || (apiData?.price ? `₹${parseInt(apiData.price).toLocaleString()}` : '₹1,199')}</span>
+                    {apiData?.price && apiData?.offer_price && apiData.price !== apiData.offer_price && (
+                      <span style={{ fontSize: 18, color: '#94a3b8', textDecoration: 'line-through' }}>₹{parseInt(apiData.price).toLocaleString()}</span>
+                    )}
+                  </div>
+
+                  <ul style={{ padding: 0, margin: '0 0 32px 0', listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {['LMS Software Access (Web + Android)', 'Recorded Lectures with Notes & Materials', 'Lifetime Access & Free Updates', 'ISO 9001:2015 Verified Certificate', 'Dedicated Email Doubt Support'].map((f, i) => (
+                      <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: 'var(--text-secondary)', fontWeight: 600 }}>
+                        <CheckCircle size={16} color="#22c55e" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button onClick={handleEnrollClick} style={{ width: '100%', background: 'var(--red)', color: '#fff', border: 'none', padding: '14px', borderRadius: 10, fontWeight: 700, fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 15px rgba(237, 28, 36, 0.3)' }}>
+                    Enroll & Start Learning <ArrowRight size={18} />
+                  </button>
+                </div>
+              </div>
+            ) : (data.category?.toLowerCase().includes('cohort') || data.title?.toLowerCase().includes('cohort') || courseId.includes('cohort')) ? (
+              /* Cohort / AI Course: Bundle and YouTube Preview Info Card */
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <div style={{ background: 'var(--bg-secondary)', border: '1.5px solid var(--border-color)', borderRadius: 24, padding: 40, maxWidth: 600, width: '100%', boxShadow: 'var(--card-shadow)', textAlign: 'left' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                    <div style={{ display: 'inline-flex', background: 'rgba(139, 92, 246, 0.1)', color: '#8b5cf6', padding: '6px 12px', borderRadius: 8, fontSize: 11, fontWeight: 800, textTransform: 'uppercase' }}>
+                      Live Cohort Batch
+                    </div>
+                    <div style={{ color: 'var(--red)', fontSize: 12, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <span style={{ width: 8, height: 8, background: 'var(--red)', borderRadius: '50%', display: 'inline-block' }}></span> LIVE + YouTube Preview
+                    </div>
+                  </div>
+
+                  <h3 style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 12 }}>{data.title}</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>Learn dynamically in a group cohort. Get 30+ interactive lectures where **the first half of modules are completely free on YouTube** and the remaining advanced topics are exclusive to premium members.</p>
+                  
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 24, borderTop: '1px solid var(--border-color)', paddingTop: 20 }}>
+                    <span style={{ fontSize: 36, fontWeight: 900, color: 'var(--text-primary)' }}>{dynamicOfferPrice || (apiData?.price ? `₹${parseInt(apiData.price).toLocaleString()}` : '₹1,299')}</span>
+                    {apiData?.price && apiData?.offer_price && apiData.price !== apiData.offer_price && (
+                      <span style={{ fontSize: 18, color: '#94a3b8', textDecoration: 'line-through' }}>₹{parseInt(apiData.price).toLocaleString()}</span>
+                    )}
+                  </div>
+
+                  <ul style={{ padding: 0, margin: '0 0 32px 0', listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {['First Half Video Modules Unlocked (Free Preview)', 'Second Half Live Interactive Sessions (Locked)', '1-on-1 Dedicated Support Slack Channel', 'Premium Capstone Projects & Submissions', 'Official Cohort Graduation Certificate'].map((f, i) => (
+                      <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: 'var(--text-secondary)', fontWeight: 600 }}>
+                        <CheckCircle size={16} color="#8b5cf6" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button onClick={handleEnrollClick} style={{ width: '100%', background: 'linear-gradient(135deg, #8b5cf6, #ec4899)', color: '#fff', border: 'none', padding: '14px', borderRadius: 10, fontWeight: 700, fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 15px rgba(139, 92, 246, 0.3)' }}>
+                    Join Cohort Batch <ArrowRight size={18} />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* Advance Course: 3-Plan Comparison Table */
+              <div style={{ background: 'var(--bg-secondary)', borderRadius: 24, border: '1px solid var(--border-color)', overflow: 'hidden', boxShadow: 'var(--card-shadow)' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
+                  <thead>
+                    <tr>
+                      <th style={{ padding: 24, textAlign: 'left', borderBottom: '2px solid var(--border-color)', color: 'var(--text-primary)', fontSize: 18, width: '40%' }}>
+                        FEATURES
+                      </th>
+                      <th style={{ padding: 24, borderBottom: '2px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
+                        <div style={{ color: '#2dd4bf', fontSize: 18, fontWeight: 800 }}>★ BASIC</div>
+                      </th>
+                      <th style={{ padding: 24, borderBottom: '2px solid var(--border-color)', borderLeft: '1px solid var(--border-color)', background: 'rgba(237, 28, 36, 0.03)', position: 'relative' }}>
+                        <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', background: 'var(--red)', color: '#fff', padding: '4px 12px', borderRadius: '0 0 12px 12px', fontSize: 10, fontWeight: 800, whiteSpace: 'nowrap' }}>RECOMMENDED</div>
+                        <div style={{ color: 'var(--red)', fontSize: 18, fontWeight: 800, marginTop: 12 }}>👑 PREMIUM</div>
+                      </th>
+                      <th style={{ padding: 24, borderBottom: '2px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
+                        <div style={{ color: '#8b5cf6', fontSize: 18, fontWeight: 800 }}>💎 PRO</div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {feesData.features.map((feat, idx) => (
+                      <tr key={idx}>
+                        <td style={{ padding: '16px 24px', textAlign: 'left', borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)', fontSize: 14, fontWeight: 600 }}>
+                          {feat.name}
+                        </td>
+                        <td style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
+                          {typeof feat.basic === 'boolean' ? (feat.basic ? <CheckCircle color="#2dd4bf" size={20} /> : <XCircle color="#cbd5e1" size={20} />) : <span style={{ color: '#2dd4bf', fontWeight: 700 }}>{feat.basic}</span>}
+                        </td>
+                        <td style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)', background: 'rgba(237, 28, 36, 0.02)' }}>
+                          {typeof feat.premium === 'boolean' ? (feat.premium ? <CheckCircle color="var(--red)" size={20} /> : <XCircle color="#cbd5e1" size={20} />) : <span style={{ color: 'var(--red)', fontWeight: 700 }}>{feat.premium}</span>}
+                        </td>
+                        <td style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
+                          {typeof feat.pro === 'boolean' ? (feat.pro ? <CheckCircle color="#8b5cf6" size={20} /> : <XCircle color="#cbd5e1" size={20} />) : <span style={{ color: '#8b5cf6', fontWeight: 700 }}>{feat.pro}</span>}
+                        </td>
+                      </tr>
+                    ))}
+                    <tr>
+                      <td style={{ padding: 24, textAlign: 'left', borderBottom: '1px solid var(--border-color)' }}></td>
+                      <td style={{ padding: 24, borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
+                        <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)' }}>{feesData.basic.price}</div>
+                        <button onClick={handleEnrollClick} style={{ background: 'var(--card-bg)', border: '1px solid #2dd4bf', color: '#2dd4bf', padding: '8px 24px', borderRadius: 8, fontWeight: 700, marginTop: 12, cursor: 'pointer', width: '100%' }}>Get Started</button>
+                      </td>
+                      <td style={{ padding: 24, borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)', background: 'rgba(237, 28, 36, 0.03)' }}>
+                        <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)' }}>{feesData.premium.price}</div>
+                        <button onClick={handleEnrollClick} style={{ background: 'var(--red)', border: 'none', color: '#fff', padding: '8px 24px', borderRadius: 8, fontWeight: 700, marginTop: 12, cursor: 'pointer', width: '100%', boxShadow: '0 4px 12px rgba(237,28,36,0.2)' }}>Go Premium</button>
+                      </td>
+                      <td style={{ padding: 24, borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
+                        <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)' }}>{feesData.pro.price}</div>
+                        <button onClick={handleEnrollClick} style={{ background: '#8b5cf6', border: 'none', color: '#fff', padding: '8px 24px', borderRadius: 8, fontWeight: 700, marginTop: 12, cursor: 'pointer', width: '100%' }}>Choose Pro</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </section>
       )}
+
+
 
       {/* Related Courses */}
       <section style={{ padding: '60px 0' }}>
@@ -1898,7 +2020,7 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
           <div style={{ color: 'var(--red)', fontSize: 12, fontWeight: 800, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 8 }}>Top Course</div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)' }}>More Course By <span style={{ color: 'var(--red)' }}>{data.category || 'Data Science Courses'}</span></h2>
-            <button style={{ border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: '10px 24px', borderRadius: 100, fontWeight: 600, color: 'var(--text-secondary)', cursor: 'pointer' }}>View All Course</button>
+            <button onClick={() => setCurrentPage('courses')} style={{ border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: '10px 24px', borderRadius: 100, fontWeight: 600, color: 'var(--text-secondary)', cursor: 'pointer' }}>View All Course</button>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 32 }}>
             {[1, 2, 3].map((_, i) => (
@@ -1931,7 +2053,3 @@ const currentLectures = courseLecturesDb[data.id] || courseLecturesDb['data-scie
 };
 
 export default CourseDetailsPage;
-
-
-
- 
