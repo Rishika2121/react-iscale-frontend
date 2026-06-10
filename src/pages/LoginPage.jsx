@@ -58,7 +58,13 @@ const LoginPage = ({ setCurrentPage }) => {
     setPopupMessage(`Welcome back! Verified via secure OTP...`);
     setShowSuccessPopup(true);
     setTimeout(() => {
-      setCurrentPage("dashboard");
+      const redirect = localStorage.getItem('redirectAfterLogin');
+      if (redirect) {
+        localStorage.removeItem('redirectAfterLogin');
+        setCurrentPage(redirect);
+      } else {
+        setCurrentPage("dashboard");
+      }
     }, 2200);
   };
 
@@ -95,7 +101,13 @@ const LoginPage = ({ setCurrentPage }) => {
         setPopupMessage(`Welcome back! Preparing your customized dashboard...`);
         setShowSuccessPopup(true);
         setTimeout(() => {
-          setCurrentPage("dashboard");
+          const redirect = localStorage.getItem('redirectAfterLogin');
+          if (redirect) {
+            localStorage.removeItem('redirectAfterLogin');
+            setCurrentPage(redirect);
+          } else {
+            setCurrentPage("dashboard");
+          }
         }, 2200);
       } else {
         alert(data.message || "Login Failed");

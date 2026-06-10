@@ -658,7 +658,7 @@ const CurriculumAccordion = ({ title, items, onPlay, completedLectures, isEnroll
             const isCompleted = topic.isCompleted || (topic.id && completedLectures?.includes(topic.id));
             
             return (
-              <div key={idx} style={{ padding: '16px 24px', background: 'var(--bg-secondary)', borderRadius: 8, color: 'var(--text-primary)', display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div key={idx} style={{ padding: '16px 24px', background: 'var(--bg-primary)', borderRadius: 12, borderLeft: '4px solid var(--red)', boxShadow: '0 4px 15px rgba(0,0,0,0.03)', color: 'var(--text-primary)', display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontWeight: 700, fontSize: 16 }}>
                     <FileText size={18} color="var(--red)" />
@@ -746,7 +746,7 @@ const CourseDetailsPage = ({ courseId, setCurrentPage }) => {
       let matchedCourse = null;
 
       try {
-        const allRes = await fetch('https://iscale-backend.onrender.com/api/course/public-all-courses?page=1&limit=100');
+        const allRes = await fetch('https://iscale-backend.onrender.com/api/course/public-all-courses?page=1&limit=1000');
         const allData = await allRes.json();
         if (allData.status && Array.isArray(allData.data)) {
           matchedCourse = allData.data.find(c => c.slug === courseId || c._id === courseId);
@@ -808,7 +808,7 @@ const CourseDetailsPage = ({ courseId, setCurrentPage }) => {
                     headers: { 'Authorization': `Bearer ${token}` }
                   });
                 } else {
-                  topicRes = await fetch(`https://iscale-backend.onrender.com/api/topics/public/${subjectId}?page=1&limit=100`);
+                  topicRes = await fetch(`https://iscale-backend.onrender.com/api/topics/public/${subjectId}?page=1&limit=1000`);
                 }
 
                 if (topicRes.ok) {
@@ -925,7 +925,7 @@ const CourseDetailsPage = ({ courseId, setCurrentPage }) => {
 
       setReviewsLoading(true);
       try {
-        const res = await fetch(`https://iscale-backend.onrender.com/api/reviews/public-get-reviews/${realCourseId}`);
+        const res = await fetch(`https://iscale-backend.onrender.com/api/user-reviews/all-reviews?page=1&limit=1000`);
         const result = await res.json();
         if (result.status && Array.isArray(result.data)) {
           setReviewsList(result.data);
@@ -955,10 +955,10 @@ const data = {
   title: apiData?.title || '',
   description: apiData?.description || '',
   category: apiData?.category || '',
-  thumbnail: getImageUrl(apiData?.banner) || (coursesDatabase[courseId]?.thumbnail || coursesDatabase['data-science-with-generative-ai-course'].thumbnail),
-  videoUrl: apiData?.video || apiData?.video_link || (coursesDatabase[courseId]?.videoUrl || coursesDatabase['data-science-with-generative-ai-course'].videoUrl),
+  thumbnail: getImageUrl(apiData?.banner) || `https://ui-avatars.com/api/?name=${encodeURIComponent(apiData?.title || 'Course')}&background=random&size=800`,
+  videoUrl: apiData?.video || apiData?.video_link,
   views: apiData?.views || 0,
-  lastUpdated: apiData?.updated_at ? new Date(apiData.updated_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : '10 May, 2026',
+  lastUpdated: apiData?.updated_at ? new Date(apiData.updated_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : '',
   language: apiData?.language || 'Hinglish',
 };
 
@@ -1077,7 +1077,12 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        window.location.href = '/login';
+        localStorage.setItem('redirectAfterLogin', `course-details/${courseId}`);
+        if (setCurrentPage) {
+          setCurrentPage('login');
+        } else {
+          window.location.href = '/login';
+        }
         return;
       }
 
@@ -1094,7 +1099,12 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
       if (res.status === 401) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        window.location.href = '/login';
+        localStorage.setItem('redirectAfterLogin', `course-details/${courseId}`);
+        if (setCurrentPage) {
+          setCurrentPage('login');
+        } else {
+          window.location.href = '/login';
+        }
         return;
       }
 
@@ -1160,8 +1170,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
 
   // In case activeCohortLecture is set, we use its videoUrl, else default preview
   const embedUrl = getEmbedUrl((activeCohortLecture && activeCohortLecture.videoUrl) ? activeCohortLecture.videoUrl : videoUrl);
-  const baseFees = (coursesDatabase[courseId]?.fees || coursesDatabase['data-science-with-generative-ai-course'].fees);
-  const feesData = JSON.parse(JSON.stringify(baseFees));
+  const feesData = apiData?.fees ? JSON.parse(JSON.stringify(apiData.fees)) : null;
   const dynamicOfferPrice = (apiData?.offer_price && apiData.offer_price !== 'N/A' && apiData.offer_price !== 0) 
     ? `₹${parseInt(apiData.offer_price).toLocaleString()}` 
     : (apiData?.price && apiData.price !== 'N/A' && apiData.price !== 0 ? `₹${parseInt(apiData.price).toLocaleString()}` : null);
@@ -1171,13 +1180,31 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
   const toolsData = toolsList && toolsList.length > 0
     ? toolsList.map(t => ({ name: t.c_tool_title || t.title || t.m_tool_title || t.name || 'Tool', img: getImageUrl(t.c_tool_img || t.image || t.m_tool_image || t.icon) }))
     : [];
+  const defaultProjects = [
+    {
+      title: 'Enterprise Capstone Project',
+      desc: 'Develop a highly scalable, industry-standard solution from scratch. Build, test, and deploy a complete ecosystem that solves real business challenges.',
+      img: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80'
+    },
+    {
+      title: 'End-to-End Architecture',
+      desc: 'Gain hands-on expertise by structuring robust architectures. Transition seamlessly from development to live production environments like a pro.',
+      img: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80'
+    },
+    {
+      title: 'Live Industry Case Studies',
+      desc: 'Analyze actual production datasets. Implement strategic problem-solving techniques identical to those used by top tech companies globally.',
+      img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80'
+    }
+  ];
+
   const details = features && features.length > 0
     ? features.map(f => ({
         title: f.m_feature_title || 'Feature',
         desc: f.m_feature_desc || '',
         img: getImageUrl(f.m_feature_image)
       }))
-    : [];
+    : defaultProjects;
   const highlights = trainingHighlights && trainingHighlights.length > 0 
     ? trainingHighlights.map(th => ({ title: th.title || th.m_feature_title || 'Highlight', img: getImageUrl(th.icon || th.m_feature_image) }))
     : [];
@@ -1198,11 +1225,11 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
     : [];
   const reviewsData = reviewsList && reviewsList.length > 0
     ? reviewsList.map(r => ({
-        name: r.m_review_name || r.name || 'Student',
-        role: r.m_review_designation || r.designation || r.role || 'Student',
-        text: r.m_review_description || r.description || r.review || r.text || '',
+        name: r.m_review_name || r.name || r.user_name || 'Student',
+        role: r.m_review_designation || r.designation || r.role || r.user_designation || 'Student',
+        text: r.m_review_description || r.description || r.review || r.text || r.user_review || '',
         rating: r.m_review_rating || r.rating || 5,
-        img: r.m_review_image || r.image || r.avatar || null,
+        img: r.m_review_image || r.image || r.avatar || r.user_image || null,
         companyImg: r.m_company_image || r.company_logo || null,
         company: r.m_company_name || r.company || ''
       }))
@@ -1467,7 +1494,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
           {/* Overview Removed */}
 
           {/* Course Content - Curriculum — all data from API backend, no dummy/static fallback */}
-          <div id="coursecontent" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
+          <div id="coursecontent" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)', borderTop: '6px solid var(--red)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32, flexWrap: 'wrap', gap: 12 }}>
               <div>
                 <span style={{ color: 'var(--red)', fontSize: 11, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase' }}>What You Will Learn</span>
@@ -1547,25 +1574,35 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
               </p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
-              {details && details.length > 0 ? details.map((proj, idx) => (
-                <div key={idx} style={{ background: 'var(--bg-secondary)', padding: 32, borderRadius: 20, border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: 20, transition: 'all 0.3s', cursor: 'default' }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-6px)'} onMouseLeave={e => e.currentTarget.style.transform = 'none'}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 32 }}>
+              {details.map((proj, idx) => {
+                const colors = ['#1e3a8a', '#065f46', '#5b21b6', '#881337', '#7c2d12'];
+                const accent = colors[idx % colors.length];
+                return (
+                <div key={idx} className="hover-glow" style={{ background: 'var(--bg-secondary)', padding: 0, borderRadius: 24, border: '1px solid var(--border-color)', borderBottom: `6px solid ${accent}`, display: 'flex', flexDirection: 'column', transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)', cursor: 'pointer', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.06)' }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-10px)'} onMouseLeave={e => e.currentTarget.style.transform = 'none'}>
                   {proj.img && (
-                    <div style={{ width: '100%', height: 160, borderRadius: 12, overflow: 'hidden', marginBottom: 16 }}>
-                      <img src={proj.img} alt={proj.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <div style={{ width: '100%', height: 200, overflow: 'hidden', position: 'relative' }}>
+                      <img src={proj.img} alt={proj.title} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s' }} onMouseEnter={e => e.target.style.transform = 'scale(1.1)'} onMouseLeave={e => e.target.style.transform = 'scale(1)'} />
+                      <div style={{ position: 'absolute', top: 16, left: 16, background: accent, backdropFilter: 'blur(8px)', color: '#fff', padding: '6px 14px', borderRadius: 100, fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, border: '1px solid rgba(255,255,255,0.2)' }}>
+                        Project {idx + 1}
+                      </div>
                     </div>
                   )}
-                  <div style={{ display: 'inline-flex', alignSelf: 'flex-start', background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '6px 12px', borderRadius: 8, fontSize: 11, fontWeight: 800, textTransform: 'uppercase' }}>
-                    Project {idx + 1}
+                  <div style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 16, flex: 1 }}>
+                    {!proj.img && (
+                      <div style={{ display: 'inline-flex', alignSelf: 'flex-start', background: accent, color: '#fff', padding: '6px 12px', borderRadius: 8, fontSize: 11, fontWeight: 800, textTransform: 'uppercase' }}>
+                        Project {idx + 1}
+                      </div>
+                    )}
+                    <h3 style={{ fontSize: 22, fontWeight: 900, color: 'var(--text-primary)', margin: 0, fontFamily: 'var(--font-display)', lineHeight: 1.3 }}>{proj.title}</h3>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: 15, lineHeight: 1.7, margin: 0, opacity: 0.9 }}>{proj.desc}</p>
+                    <div style={{ marginTop: 'auto', paddingTop: 20, borderTop: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', color: accent, fontWeight: 700, fontSize: 14, gap: 6 }}>
+                      Explore Project <ArrowRight size={16} />
+                    </div>
                   </div>
-                  <h3 style={{ fontSize: 20, fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>{proj.title}</h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.6, margin: 0 }}>{proj.desc || 'Gain hands-on experience by building and deploying this real-world application.'}</p>
                 </div>
-              )) : (
-                <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)' }}>
-                  No projects available for this course yet.
-                </div>
-              )}
+              );
+            })}
             </div>
           </div>
 
@@ -1813,7 +1850,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                   {/* HTML Preview representation of Certificate */}
                   <div style={{
                     border: '8px double #ca8a04',
-                    background: '#ffffff',
+                    background: 'var(--card-bg)',
                     borderRadius: 16,
                     padding: '24px 20px',
                     textAlign: 'center',
@@ -1951,7 +1988,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
           </div>
 
           {/* Instructor — all data from API, no static/dummy */}
-          <div id="instructor" style={{ background: 'var(--card-bg)', borderRadius: 24, padding: 40, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
+          <div id="instructor" style={{ background: 'var(--card-bg)', borderRadius: 24, padding: 40, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)', borderTop: '6px solid #3b82f6' }}>
             <div style={{ marginBottom: 32 }}>
               <span style={{ color: 'var(--red)', fontSize: 11, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase' }}>Meet the Experts</span>
               <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 900, color: 'var(--text-primary)', marginTop: 6, marginBottom: 0 }}>Your Instructors</h2>
@@ -1959,28 +1996,10 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
             {instructorsData && instructorsData.length > 0 ? (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: 20 }}>
                 {instructorsData.map((inst, idx) => (
-                  <div key={idx} style={{
-                    background: 'var(--bg-secondary)',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: 18,
-                    padding: '24px 20px 20px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    textAlign: 'center',
-                    gap: 10,
-                    position: 'relative',
-                    overflow: 'hidden',
-                    transition: 'box-shadow 0.25s, transform 0.25s'
-                  }}
-                    onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 10px 36px rgba(237,28,36,0.12)'; e.currentTarget.style.transform = 'translateY(-4px)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'none'; }}
-                  >
-                    {/* Top gradient strip */}
-                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: 'linear-gradient(90deg, var(--red), #f97316)' }} />
-
+                  <div key={idx} className="hover-glow" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 24, padding: '32px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, textAlign: 'center', boxShadow: 'var(--card-shadow)', position: 'relative', transition: 'transform 0.3s' }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-6px)'} onMouseLeave={e => e.currentTarget.style.transform = 'none'}>
+                    
                     {/* Avatar */}
-                    <div style={{ width: 80, height: 80, borderRadius: '50%', overflow: 'hidden', border: '3px solid var(--border-color)', background: 'var(--card-bg)', flexShrink: 0, marginTop: 4 }}>
+                    <div style={{ width: 110, height: 110, borderRadius: '50%', overflow: 'hidden', border: '4px solid var(--border-color)', background: 'var(--card-bg)', flexShrink: 0, marginTop: 4, boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}>
                       <img
                         src={inst.img}
                         alt={inst.name}
@@ -1990,46 +2009,46 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                     </div>
 
                     {/* Name */}
-                    <h3 style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)', margin: 0, lineHeight: 1.3 }}>{inst.name}</h3>
+                    <h3 style={{ fontSize: 20, fontWeight: 900, color: 'var(--text-primary)', margin: 0, lineHeight: 1.3, fontFamily: 'var(--font-display)' }}>{inst.name}</h3>
 
                     {/* Experience badge */}
                     {inst.experience && (
-                      <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--red)', background: 'rgba(237,28,36,0.08)', padding: '3px 10px', borderRadius: 20 }}>{inst.experience}</span>
+                      <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--red)', background: 'rgba(237,28,36,0.08)', padding: '4px 14px', borderRadius: 100, border: '1px solid rgba(237,28,36,0.15)' }}>{inst.experience}</span>
                     )}
 
                     {/* Bio */}
                     {inst.bio && (
-                      <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.55, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}>{inst.bio}</p>
+                      <p style={{ fontSize: 14, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', opacity: 0.9 }}>{inst.bio}</p>
                     )}
 
                     {/* Skills */}
                     {inst.skills && inst.skills.length > 0 && (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, justifyContent: 'center', marginTop: 2 }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center', marginTop: 4 }}>
                         {inst.skills.map((sk, si) => (
-                          <span key={si} style={{ fontSize: 10, fontWeight: 700, background: 'var(--card-bg)', border: '1px solid var(--border-color)', color: 'var(--text-secondary)', padding: '2px 8px', borderRadius: 20, textTransform: 'capitalize' }}>{sk}</span>
+                          <span key={si} style={{ fontSize: 12, fontWeight: 700, background: 'var(--card-bg)', border: '1px solid var(--border-color)', color: 'var(--text-secondary)', padding: '4px 12px', borderRadius: 100, textTransform: 'capitalize' }}>{sk}</span>
                         ))}
                       </div>
                     )}
 
                     {/* Stats row */}
                     {(inst.rating > 0 || inst.reviews > 0 || inst.totalCourses > 0) && (
-                      <div style={{ display: 'flex', justifyContent: 'center', gap: 14, marginTop: 4, paddingTop: 10, borderTop: '1px solid var(--border-color)', width: '100%' }}>
+                      <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 8, paddingTop: 16, borderTop: '1px solid var(--border-color)', width: '100%' }}>
                         {inst.rating > 0 && (
                           <div style={{ textAlign: 'center' }}>
-                            <div style={{ fontSize: 13, fontWeight: 800, color: '#f59e0b' }}>⭐ {Number(inst.rating).toFixed(1)}</div>
-                            <div style={{ fontSize: 10, color: 'var(--text-secondary)', fontWeight: 600 }}>Rating</div>
+                            <div style={{ fontSize: 16, fontWeight: 900, color: '#f59e0b' }}>⭐ {Number(inst.rating).toFixed(1)}</div>
+                            <div style={{ fontSize: 12, color: 'var(--text-secondary)', fontWeight: 700 }}>Rating</div>
                           </div>
                         )}
                         {inst.reviews > 0 && (
                           <div style={{ textAlign: 'center' }}>
-                            <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-primary)' }}>{inst.reviews}</div>
-                            <div style={{ fontSize: 10, color: 'var(--text-secondary)', fontWeight: 600 }}>Reviews</div>
+                            <div style={{ fontSize: 16, fontWeight: 900, color: 'var(--text-primary)' }}>{inst.reviews}</div>
+                            <div style={{ fontSize: 12, color: 'var(--text-secondary)', fontWeight: 700 }}>Reviews</div>
                           </div>
                         )}
                         {inst.totalCourses > 0 && (
                           <div style={{ textAlign: 'center' }}>
-                            <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-primary)' }}>{inst.totalCourses}</div>
-                            <div style={{ fontSize: 10, color: 'var(--text-secondary)', fontWeight: 600 }}>Courses</div>
+                            <div style={{ fontSize: 16, fontWeight: 900, color: 'var(--text-primary)' }}>{inst.totalCourses}</div>
+                            <div style={{ fontSize: 12, color: 'var(--text-secondary)', fontWeight: 700 }}>Courses</div>
                           </div>
                         )}
                       </div>
@@ -2041,9 +2060,11 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                         href={inst.linkedin}
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{ marginTop: 4, display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, fontWeight: 700, color: '#0077b5', textDecoration: 'none', padding: '5px 12px', borderRadius: 20, border: '1px solid #0077b530', background: 'rgba(0,119,181,0.06)' }}
+                        style={{ marginTop: 8, display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 14, fontWeight: 800, color: '#0077b5', textDecoration: 'none', padding: '8px 20px', borderRadius: 100, border: '1px solid rgba(0,119,181,0.2)', background: 'rgba(0,119,181,0.06)', transition: 'all 0.2s' }}
+                        onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,119,181,0.12)'}
+                        onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,119,181,0.06)'}
                       >
-                        <i className="fab fa-linkedin-in" style={{ fontSize: 12 }}></i> LinkedIn
+                        <i className="fab fa-linkedin-in" style={{ fontSize: 14 }}></i> LinkedIn
                       </a>
                     )}
                   </div>
@@ -2057,7 +2078,24 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
             )}
           </div>
 
-          {/* FAQ moved to bottom */}
+          {/* FAQ section placed after Instructor */}
+          <div id="faq" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)', borderTop: '6px solid #10b981', marginTop: 40 }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 32 }}>FAQ's</h2>
+            <div>
+              {faqs && faqs.length > 0 ? (
+                faqs.slice(0, faqShowMore ? faqs.length : 3).map((faq, idx) => (
+                  <Accordion key={idx} title={faq.q} items={[faq.a]} />
+                ))
+              ) : (
+                <p style={{ color: 'var(--text-secondary)' }}>No FAQs available for this course yet.</p>
+              )}
+            </div>
+            {faqs && faqs.length > 3 && (
+              <button onClick={() => setFaqShowMore(!faqShowMore)} style={{ color: 'var(--red)', fontWeight: 800, background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, marginTop: 16 }}>
+                {faqShowMore ? 'Show Less' : 'Show More'}
+              </button>
+            )}
+          </div>
 
         </div>
       </section>
@@ -2219,36 +2257,40 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                 borderTopColor: 'var(--red)',
                 animation: 'spin 0.8s linear infinite'
               }} />
-              <span style={{ color: 'var(--text-secondary)', fontSize: 15, fontWeight: 600 }}>Loading reviews...</span>
+              <span style={{ color: 'var(--text-secondary)', fontSize: 15, fontWeight: 600 }}>Loading testimonials...</span>
             </div>
           )}
 
           {/* Reviews grid — only real API data, zero dummy/static reviews */}
           {!reviewsLoading && reviewsData.length > 0 && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 28 }}>
-              {reviewsData.map((rev, idx) => (
-                <div key={idx} style={{
-                  background: 'var(--card-bg)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 20,
-                  padding: 32,
-                  boxShadow: 'var(--card-shadow)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 20,
-                  transition: 'transform 0.3s, box-shadow 0.3s',
-                  cursor: 'default'
-                }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 16px 40px rgba(0,0,0,0.12)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--card-shadow)'; }}
-                >
-                  {/* Stars */}
-                  <div style={{ display: 'flex', gap: 4 }}>
-                    {Array.from({ length: 5 }).map((_, si) => (
-                      <Star
-                        key={si}
-                        size={16}
-                        fill={si < (rev.rating || 5) ? '#f59e0b' : 'none'}
+              {reviewsData.map((rev, idx) => {
+                const colors = ['#1e3a8a', '#065f46', '#5b21b6', '#881337', '#7c2d12'];
+                const accent = colors[idx % colors.length];
+                return (
+                  <div key={idx} style={{
+                    background: 'var(--card-bg)',
+                    border: '1px solid rgba(255,255,255,0.05)',
+                    borderTop: `6px solid ${accent}`,
+                    borderRadius: 20,
+                    padding: 32,
+                    boxShadow: 'var(--card-shadow)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 20,
+                    transition: 'transform 0.3s, box-shadow 0.3s',
+                    cursor: 'default'
+                  }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 16px 40px rgba(0,0,0,0.12)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.04)'; }}
+                  >
+                    {/* Stars */}
+                    <div style={{ display: 'flex', gap: 4 }}>
+                      {Array.from({ length: 5 }).map((_, si) => (
+                        <Star
+                          key={si}
+                          size={16}
+                          fill={si < (rev.rating || 5) ? '#f59e0b' : 'none'}
                         color={si < (rev.rating || 5) ? '#f59e0b' : '#cbd5e1'}
                       />
                     ))}
@@ -2293,7 +2335,8 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                     )}
                   </div>
                 </div>
-              ))}
+              );
+              })}
             </div>
           )}
 
@@ -2301,33 +2344,10 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
           {!reviewsLoading && reviewsData.length === 0 && (
             <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-secondary)' }}>
               <div style={{ fontSize: 48, marginBottom: 16 }}>⭐</div>
-              <p style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>No reviews yet for this course.</p>
+              <p style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>No testimonials yet for this course.</p>
               <p style={{ fontSize: 14, marginTop: 8, opacity: 0.7 }}>Be the first to share your experience!</p>
             </div>
           )}
-        </div>
-      </section>
-
-      {/* FAQ's Section */}
-      <section style={{ padding: '60px 0', borderTop: '1px solid var(--border-color)' }}>
-        <div className="container" style={{ display: 'flex', flexDirection: 'column' }}>
-          <div id="faq" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 32 }}>FAQ's</h2>
-            <div>
-              {faqs && faqs.length > 0 ? (
-                faqs.slice(0, faqShowMore ? faqs.length : 3).map((faq, idx) => (
-                  <Accordion key={idx} title={faq.q} items={[faq.a]} />
-                ))
-              ) : (
-                <p style={{ color: 'var(--text-secondary)' }}>No FAQs available for this course yet.</p>
-              )}
-            </div>
-            {faqs && faqs.length > 3 && (
-              <button onClick={() => setFaqShowMore(!faqShowMore)} style={{ color: 'var(--red)', fontWeight: 800, background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, marginTop: 16 }}>
-                {faqShowMore ? 'Show Less' : 'Show More'}
-              </button>
-            )}
-          </div>
         </div>
       </section>
 

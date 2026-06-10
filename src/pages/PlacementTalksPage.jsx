@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import useReveal from '../hooks/useReveal';
-import './PlacementTalks.css';
+import '../assets/css/PlacementTalks.css';
 
 const PlacementTalksPage = ({ setCurrentPage }) => {
   const [talks, setTalks] = useState([]);

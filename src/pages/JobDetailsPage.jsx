@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { MapPin, Briefcase, IndianRupee, Clock, Globe, Linkedin, Twitter, Instagram } from 'lucide-react';
 import useReveal from '../hooks/useReveal';
-import './JobDetails.css';
+import '../assets/css/JobDetails.css';
 
 const JobDetailsPage = ({ setCurrentPage }) => {
   useReveal();
@@ -40,7 +40,12 @@ const JobDetailsPage = ({ setCurrentPage }) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        window.location.href = '/login';
+        localStorage.setItem('redirectAfterLogin', `job-details/${id}`);
+        if (setCurrentPage) {
+          setCurrentPage('login');
+        } else {
+          window.location.href = '/login';
+        }
         return;
       }
       setApplyLoading(true);
@@ -57,7 +62,12 @@ const JobDetailsPage = ({ setCurrentPage }) => {
       if (res.status === 401) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        window.location.href = '/login';
+        localStorage.setItem('redirectAfterLogin', `job-details/${id}`);
+        if (setCurrentPage) {
+          setCurrentPage('login');
+        } else {
+          window.location.href = '/login';
+        }
         return;
       }
       

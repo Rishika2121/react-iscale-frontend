@@ -1,7 +1,7 @@
 import React from 'react';
 import { Home, LogIn, Calendar, PlayCircle, Eye, Award, ArrowRight } from 'lucide-react';
 import useReveal from '../hooks/useReveal';
-import './CohortPage.css';
+import '../assets/css/CohortPage.css';
 
 const CohortPage = ({ setCurrentPage }) => {
   useReveal();

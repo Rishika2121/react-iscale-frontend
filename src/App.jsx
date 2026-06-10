@@ -49,7 +49,7 @@ const AppContent = () => {
   const currentPage = path.split('/')[0] || 'home';
   
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('theme') || 'light';
+    return localStorage.getItem('theme') || 'dark';
   });
 
   const toggleTheme = () => {
@@ -81,12 +81,13 @@ const AppContent = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (privatePages.includes(currentPage) && !token) {
+      localStorage.setItem('redirectAfterLogin', window.location.pathname);
       navigate('/login', { replace: true });
     }
   }, [currentPage, navigate]);
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', display: 'block' }}>
       {showNavAndFooter && (
         <Navbar 
           currentPage={currentPage} 

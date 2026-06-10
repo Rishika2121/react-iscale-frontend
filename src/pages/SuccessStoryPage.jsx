@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useReveal from '../hooks/useReveal';
-import './SuccessStory.css';
+import '../assets/css/SuccessStory.css';
 
 // Utility to generate dynamic YouTube Embed URLs from any YouTube link format
 const getEmbedUrl = (url) => {

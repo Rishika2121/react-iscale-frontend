@@ -67,7 +67,7 @@ html {
   scroll-behavior: smooth; 
   width: 100%;
   max-width: 100%;
-  overflow-x: hidden;
+  
 }
 
 body {
@@ -77,14 +77,14 @@ body {
   line-height: 1.6;
   width: 100%;
   max-width: 100%;
-  overflow-x: hidden;
+  
   position: relative;
 }
 
 #root {
   width: 100%;
   max-width: 100%;
-  overflow-x: hidden;
+  
   position: relative;
 }
 

@@ -6,7 +6,7 @@ const AlliedCollegesPage = () => {
 
   useEffect(() => { 
     window.scrollTo(0, 0); 
-    fetch('https://iscale-backend.onrender.com/api/allied/public-all-allied?page=1&limit=100')
+    fetch('https://iscale-backend.onrender.com/api/allied/public-all-allied?page=1&limit=1000')
       .then(res => res.json())
       .then(result => {
         const arr = result.data?.docs || result.data || [];

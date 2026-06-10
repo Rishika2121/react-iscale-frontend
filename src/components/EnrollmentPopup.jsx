@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Zap } from 'lucide-react';
+import DataAnalyticsImg from '../assets/images/Data_Analytics_paid_compressed.png';
 
 const mockStudents = [
   { name: 'Aman Sharma', city: 'Delhi' },
@@ -16,7 +17,6 @@ const mockStudents = [
   { name: 'Divya Reddy', city: 'Visakhapatnam' }
 ];
 
-import DataAnalyticsImg from '../assets/Data_Analytics_paid_compressed.png';
 
 const mockCourses = [
   { title: 'Data Science with Generative AI', img: 'https://www.theiscale.com/myadmin/uploads/courses/Data_science_Course_paid_compressed.png' },

@@ -20,7 +20,7 @@ const CoursesPage = ({ setCurrentPage }) => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch('https://iscale-backend.onrender.com/api/course/public-all-courses?page=1&limit=100');
+        const response = await fetch('https://iscale-backend.onrender.com/api/course/public-all-courses?page=1&limit=1000');
         const data = await response.json();
         
         const arr = data.data?.docs || data.data || [];
@@ -144,19 +144,22 @@ const CoursesPage = ({ setCurrentPage }) => {
           gap: 30px;
         }
         .public-card {
-          background: var(--card-bg);
-          border: 1px solid var(--border-color);
+          background: #ffffff;
           border-radius: 16px;
           overflow: hidden;
-          box-shadow: var(--card-shadow);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.04);
           cursor: pointer;
-          transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
           text-align: left;
+          position: relative;
+          border: 1px solid rgba(0,0,0,0.05);
+          display: flex;
+          flex-direction: column;
+          height: 100%;
         }
         .public-card:hover {
-          transform: translateY(-8px);
-          border-color: var(--red);
-          box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+          transform: translateY(-8px) scale(1.02);
+          box-shadow: 0 20px 40px rgba(0,0,0,0.12);
         }
         .public-card-thumb {
           height: 180px;
@@ -299,29 +302,24 @@ const CoursesPage = ({ setCurrentPage }) => {
           </div>
         ) : (
           <div className="public-course-grid">
-            {filtered.map((course, idx) => (
+            {filtered.map((course, idx) => {
+              const cardColor = defaultColors[idx % defaultColors.length];
+              return (
               <div 
                 key={idx} 
                 className="public-card hover-glow"
                 onClick={() => setCurrentPage(`course-details/${course.id}`)}
                 style={{
-                  borderRadius: 16, 
-                  overflow: 'hidden', 
-                  background: '#fff', 
-                  border: '1px solid var(--border-color)', 
-                  boxShadow: 'var(--card-shadow)', 
-                  cursor: 'pointer',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  height: '100%',
-                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                  borderTop: `6px solid transparent`,
+                  borderImage: `${cardColor} 1`,
+                  borderImageSlice: '1 0 0 0',
                   color: '#333'
                 }}
               >
-                <div style={{ padding: '16px 16px 0 16px' }}>
-                  <div style={{ borderRadius: 8, overflow: 'hidden', height: 160, marginBottom: 16 }}>
-                    <img src={course.img} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <div style={{ padding: '16px 16px 0 16px', flex: 1 }}>
+                  <div style={{ borderRadius: 12, overflow: 'hidden', height: 160, marginBottom: 16, position: 'relative' }}>
+                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: cardColor, opacity: 0.1, zIndex: 1 }}></div>
+                    <img src={course.img} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'relative', zIndex: 0 }} />
                   </div>
                   
                   <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 12, lineHeight: 1.3, color: '#0f172a' }}>
@@ -346,16 +344,17 @@ const CoursesPage = ({ setCurrentPage }) => {
                   </div>
                 </div>
 
-                <div style={{ padding: '0 16px 16px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20, color: '#64748b' }}>
+                <div style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(0,0,0,0.02)', borderTop: '1px solid rgba(0,0,0,0.04)', marginTop: 'auto' }}>
+                  <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, color: '#0f172a' }}>
                     {course.price}
                   </span>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: '#fff', background: cardColor, padding: '8px 16px', borderRadius: '100px', display: 'flex', alignItems: 'center', gap: 6, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
                     Learn More <ArrowRight size={14} />
                   </span>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

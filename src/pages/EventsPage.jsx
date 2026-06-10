@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Users, ArrowRight, Search, Filter } from 'lucide-react';
 import useReveal from '../hooks/useReveal';
-import './Events.css';
+import '../assets/css/Events.css';
 
 const EventsPage = ({ setCurrentPage }) => {
   useReveal();

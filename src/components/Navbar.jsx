@@ -522,15 +522,16 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
               style={{
                 position: 'relative',
                 width: 54, height: 28,
-                background: theme === 'dark' ? '#0f172a' : '#f1f5f9',
-                border: '1.5px solid var(--border-color)',
+                background: theme === 'dark' ? '#0f172a' : 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%)',
+                border: theme === 'dark' ? '1.5px solid var(--border-color)' : '1.5px solid #7dd3fc',
                 borderRadius: 100,
                 cursor: 'pointer',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                 padding: 0,
                 outline: 'none',
                 display: 'flex',
-                alignItems: 'center'
+                alignItems: 'center',
+                boxShadow: theme === 'dark' ? 'none' : 'inset 0 2px 4px rgba(255,255,255,0.5)'
               }}
             >
               <div
@@ -541,13 +542,13 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
                   width: 20,
                   height: 20,
                   borderRadius: '50%',
-                  background: theme === 'dark' ? '#334155' : '#fff',
-                  boxShadow: '0 2px 5px rgba(0,0,0,0.15)',
+                  background: theme === 'dark' ? '#334155' : '#ffffff',
+                  boxShadow: theme === 'dark' ? '0 2px 5px rgba(0,0,0,0.15)' : '0 2px 8px rgba(245, 158, 11, 0.5)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   transform: theme === 'dark' ? 'translateX(26px)' : 'translateX(0)',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                   color: theme === 'dark' ? '#e2e8f0' : '#f59e0b'
                 }}
               >
@@ -622,16 +623,17 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
                 title="Toggle Light/Dark Theme"
                 style={{
                   position: 'relative',
-                  width: 50, height: 26,
-                  background: theme === 'dark' ? '#0f172a' : '#f1f5f9',
-                  border: '1.5px solid var(--border-color)',
+                  width: 54, height: 28,
+                  background: theme === 'dark' ? '#0f172a' : 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%)',
+                  border: theme === 'dark' ? '1.5px solid var(--border-color)' : '1.5px solid #7dd3fc',
                   borderRadius: 100,
                   cursor: 'pointer',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                   padding: 0,
                   outline: 'none',
                   display: 'flex',
-                  alignItems: 'center'
+                  alignItems: 'center',
+                  boxShadow: theme === 'dark' ? 'none' : 'inset 0 2px 4px rgba(255,255,255,0.5)'
                 }}
               >
                 <div
@@ -639,16 +641,16 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
                     position: 'absolute',
                     top: 2,
                     left: 2,
-                    width: 18,
-                    height: 18,
+                    width: 20,
+                    height: 20,
                     borderRadius: '50%',
-                    background: theme === 'dark' ? '#334155' : '#fff',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
+                    background: theme === 'dark' ? '#334155' : '#ffffff',
+                    boxShadow: theme === 'dark' ? '0 2px 5px rgba(0,0,0,0.15)' : '0 2px 8px rgba(245, 158, 11, 0.5)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    transform: theme === 'dark' ? 'translateX(24px)' : 'translateX(0)',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transform: theme === 'dark' ? 'translateX(26px)' : 'translateX(0)',
+                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                     color: theme === 'dark' ? '#e2e8f0' : '#f59e0b'
                   }}
                 >

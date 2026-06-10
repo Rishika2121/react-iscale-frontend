@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowRight, ChevronLeft, ChevronRight, Star, Play, CheckCircle, Users, BookOpen, Award, TrendingUp, Sparkles, Gift, Layers, Brain, BarChart2, Check, Phone, Clock, Globe, Video, Eye, Calendar, Zap } from 'lucide-react';
 import useReveal from '../hooks/useReveal';
-import DataAnalyticsImg from '../assets/Data_Analytics_paid_compressed.png';
-import MandsaurImg from '../assets/Mandsaur_University_logo.png';
-import DJSanghviImg from '../assets/dj_sanghvi_logo.png';
-import HRITImg from '../assets/HRIT_logo.png';
-import MediCapsImg from '../assets/medi_caps.png';
+import DataAnalyticsImg from '../assets/images/Data_Analytics_paid_compressed.png';
+import MandsaurImg from '../assets/images/Mandsaur_University_logo.png';
+import DJSanghviImg from '../assets/images/dj_sanghvi_logo.png';
+import HRITImg from '../assets/images/HRIT_logo.png';
+import MediCapsImg from '../assets/images/medi_caps.png';
 
 const AutoSlider = ({ items, renderItem, speed = 30, direction = 'left', gap = 24 }) => (
   <div style={{ overflow: 'hidden', width: '100%', position: 'relative', padding: '10px 0' }}>
@@ -655,7 +655,7 @@ const LatestUpdates = ({ setCurrentPage }) => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch('https://iscale-backend.onrender.com/api/comp-requirement/user-get-all-jobs?page=1&limit=100');
+        const response = await fetch('https://iscale-backend.onrender.com/api/comp-requirement/user-get-all-jobs?page=1&limit=1000');
         const data = await response.json();
         if (data && Array.isArray(data.data)) {
           setJobs(data.data.slice(0, 9));
@@ -766,7 +766,7 @@ const PopularCourses = ({ setCurrentPage }) => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch('https://iscale-backend.onrender.com/api/course/public-all-courses?page=1&limit=100');
+        const response = await fetch('https://iscale-backend.onrender.com/api/course/public-all-courses?page=1&limit=1000');
         const data = await response.json();
         const arr = data.data?.docs || data.data || [];
         if (Array.isArray(arr) && arr.length > 0) {
@@ -832,60 +832,75 @@ const PopularCourses = ({ setCurrentPage }) => {
       ) : (
         <>
           <div className="courses-grid">
-            {coursesData.map((course, i) => (
+            {coursesData.map((course, i) => {
+              const colors = [
+                'linear-gradient(135deg, #1e3a8a 0%, #0d1b3e 100%)',
+                'linear-gradient(135deg, #065f46 0%, #022c22 100%)',
+                'linear-gradient(135deg, #5b21b6 0%, #2e1065 100%)',
+                'linear-gradient(135deg, #881337 0%, #4c0519 100%)',
+                'linear-gradient(135deg, #7c2d12 0%, #431407 100%)'
+              ];
+              const cardColor = colors[i % colors.length];
+              return (
               <div 
-            key={i} 
-            onClick={() => setCurrentPage(`course-details/${course.id}`)}
-            className="hover-glow" 
-            style={{ 
-              borderRadius: 16, 
-              overflow: 'hidden', 
-              background: '#fff', 
-              border: '1px solid var(--border-color)', 
-              boxShadow: 'var(--card-shadow)', 
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              height: '100%',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-              color: '#333'
-            }}
-          >
-            <div style={{ padding: '16px 16px 0 16px' }}>
-              <div style={{ borderRadius: 8, overflow: 'hidden', height: 160, marginBottom: 16 }}>
-                <img src={course.img} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </div>
-              
-              <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 12, lineHeight: 1.3, color: '#0f172a' }}>
-                {course.title}
-              </h4>
+                key={i} 
+                onClick={() => setCurrentPage(`course-details/${course.id}`)}
+                className="hover-glow" 
+                style={{ 
+                  borderRadius: 16,
+                  overflow: 'hidden',
+                  background: 'var(--card-bg)',
+                  border: '1px solid rgba(255,255,255,0.05)',
+                  borderTop: `6px solid transparent`,
+                  borderImage: `${cardColor} 1`,
+                  borderImageSlice: '1 0 0 0',
+                  boxShadow: 'var(--card-shadow)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: '100%',
+                  transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                  color: 'var(--text-primary)'
+                }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)'; e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.12)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.04)'; }}
+              >
+                <div style={{ padding: '16px 16px 0 16px', flex: 1 }}>
+                  <div style={{ borderRadius: 12, overflow: 'hidden', height: 160, marginBottom: 16, position: 'relative' }}>
+                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: cardColor, opacity: 0.1, zIndex: 1 }}></div>
+                    <img src={course.img} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'relative', zIndex: 0 }} />
+                  </div>
+                  
+                  <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 12, lineHeight: 1.3, color: '#0f172a' }}>
+                    {course.title}
+                  </h4>
 
-              <div style={{ display: 'flex', gap: 16, marginBottom: 12, fontSize: 13, color: '#64748b', fontWeight: 500 }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Eye size={14} color="#94a3b8" /> {course.views}
-                </span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Calendar size={14} color="#94a3b8" /> {course.duration}
-                </span>
-              </div>
+                  <div style={{ display: 'flex', gap: 16, marginBottom: 12, fontSize: 13, color: '#64748b', fontWeight: 500 }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <Eye size={14} color="#94a3b8" /> {course.views}
+                    </span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <Calendar size={14} color="#94a3b8" /> {course.duration}
+                    </span>
+                  </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#64748b', fontWeight: 500, marginBottom: 16 }}>
-                <Zap size={14} color="#94a3b8" /> Category : {course.category}
-              </div>
-            </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#64748b', fontWeight: 500, marginBottom: 16 }}>
+                    <Zap size={14} color="#94a3b8" /> Category : {course.category}
+                  </div>
+                </div>
 
-            <div style={{ padding: '0 16px 16px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20, color: '#64748b' }}>
-                {course.price}
-              </span>
-              <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 4 }}>
-                Learn More <ArrowRight size={14} />
-              </span>
-            </div>
+                <div style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(0,0,0,0.02)', borderTop: '1px solid rgba(0,0,0,0.04)', marginTop: 'auto' }}>
+                  <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, color: '#0f172a' }}>
+                    {course.price}
+                  </span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: '#fff', background: cardColor, padding: '8px 16px', borderRadius: '100px', display: 'flex', alignItems: 'center', gap: 6, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                    Learn More <ArrowRight size={14} />
+                  </span>
+                </div>
+              </div>
+              );
+            })}
           </div>
-        ))}
-      </div>
       <div style={{ textAlign: 'center', marginTop: 48 }}>
         <button
           onClick={() => setCurrentPage('courses')}
@@ -1016,7 +1031,7 @@ const CompanyMarquee = ({ setCurrentPage }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('https://iscale-backend.onrender.com/api/client/public-get-all-client?page=1&limit=100')
+    fetch('https://iscale-backend.onrender.com/api/client/public-get-all-client?page=1&limit=1000')
       .then(res => res.json())
       .then(result => {
         const arr = result.data?.docs || result.data || [];
@@ -1159,7 +1174,7 @@ export const SuccessStories = ({ setCurrentPage }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('https://iscale-backend.onrender.com/api/success-story/public-all-ss?page=1&limit=100')
+    fetch('https://iscale-backend.onrender.com/api/success-story/public-all-ss?page=1&limit=1000')
       .then(res => res.json())
       .then(result => {
         const arr = result.data?.docs || result.data || [];
@@ -1409,7 +1424,7 @@ const NewsUpdates = ({ setCurrentPage }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('https://iscale-backend.onrender.com/api/news&updates/public-all-news&updates?page=1&limit=100')
+    fetch('https://iscale-backend.onrender.com/api/news&updates/public-all-news&updates?page=1&limit=1000')
       .then(res => res.json())
       .then(result => {
         const arr = result.data?.docs || result.data || [];
@@ -1463,14 +1478,20 @@ const NewsUpdates = ({ setCurrentPage }) => {
         <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-secondary)' }}>Loading news updates...</div>
       ) : newsList.length > 0 ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 28, justifyContent: 'center' }}>
-          {newsList.slice(0, 3).map((news, idx) => (
+          {newsList.slice(0, 3).map((news, idx) => {
+            const colors = ['#1e3a8a', '#065f46', '#5b21b6'];
+            const accent = colors[idx % colors.length];
+            return (
             <div key={idx} className="news-card-interactive colorful-glow-border" style={{ 
-              background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 16, overflow: 'visible',
-              boxShadow: 'var(--card-shadow)', display: 'flex', flexDirection: 'column'
-            }}>
+              background: 'var(--card-bg)', border: '1px solid rgba(255,255,255,0.05)', borderBottom: `6px solid ${accent}`, borderRadius: 16, overflow: 'visible',
+              boxShadow: 'var(--card-shadow)', display: 'flex', flexDirection: 'column', transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)'; e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.12)'; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.04)'; }}
+            >
               <div className="news-card-image-wrap" style={{ width: '100%', height: 240, overflow: 'hidden', background: 'var(--bg-secondary)', position: 'relative', borderTopLeftRadius: 15, borderTopRightRadius: 15 }}>
                 {news.img ? (
-                  <img src={news.img} alt={news.title} className="news-card-image" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
+                  <img src={news.img} alt={news.title} className="news-card-image" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', transition: 'transform 0.5s' }} onMouseEnter={e => e.target.style.transform = 'scale(1.05)'} onMouseLeave={e => e.target.style.transform = 'scale(1)'} />
                 ) : (
                   <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, rgba(237, 28, 36, 0.05), rgba(59, 130, 246, 0.05))', color: 'var(--text-muted)' }}>
                     <Calendar size={36} strokeWidth={1.5} />
@@ -1480,24 +1501,25 @@ const NewsUpdates = ({ setCurrentPage }) => {
               
               <div style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                  <span className="news-tag-badge">Update</span>
+                  <span className="news-tag-badge" style={{ background: accent, color: '#fff', padding: '4px 12px', borderRadius: 100, fontSize: 11, fontWeight: 700, textTransform: 'uppercase' }}>Update</span>
                   <span style={{ color: 'var(--text-muted)', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
                     <Clock size={12} /> {news.date}
                   </span>
                 </div>
                 
-                <h3 style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 12, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', minHeight: '44px' }}>{news.title}</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 20, flex: 1, lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{news.desc}</p>
+                <h3 style={{ fontSize: 18, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 12, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', minHeight: '44px' }}>{news.title}</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 20, flex: 1, lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{news.desc}</p>
                 
-                <a href={news.link} onClick={(e) => handleLinkClick(e, news.link)} target={news.link.startsWith('http') ? "_blank" : "_self"} rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--red)', fontWeight: 700, fontSize: 13, textDecoration: 'none', transition: 'gap 0.2s' }}
+                <a href={news.link} onClick={(e) => handleLinkClick(e, news.link)} target={news.link.startsWith('http') ? "_blank" : "_self"} rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 6, color: accent, fontWeight: 800, fontSize: 14, textDecoration: 'none', transition: 'gap 0.2s', marginTop: 'auto', paddingTop: 16, borderTop: '1px solid rgba(0,0,0,0.05)' }}
                    onMouseEnter={e => e.currentTarget.style.gap = '10px'}
                    onMouseLeave={e => e.currentTarget.style.gap = '6px'}
                 >
-                  Learn More <ArrowRight size={14} />
+                  Learn More <ArrowRight size={16} />
                 </a>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-secondary)' }}>
@@ -1529,7 +1551,7 @@ const InTheNews = () => {
   const [mentions, setMentions] = useState([]);
 
   useEffect(() => {
-    fetch('https://iscale-backend.onrender.com/api/news/public-all-news?page=1&limit=100')
+    fetch('https://iscale-backend.onrender.com/api/news/public-all-news?page=1&limit=1000')
       .then(res => res.json())
       .then(result => {
         const arr = result.data?.docs || result.data || [];
@@ -1667,7 +1689,7 @@ const AlliedCollegesSection = ({ setCurrentPage }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('https://iscale-backend.onrender.com/api/allied/public-all-allied?page=1&limit=100')
+    fetch('https://iscale-backend.onrender.com/api/allied/public-all-allied?page=1&limit=1000')
       .then(res => res.json())
       .then(result => {
         const arr = result.data?.docs || result.data || [];
@@ -1881,25 +1903,33 @@ const HomePage = ({ setCurrentPage }) => {
   }, [isLoggedIn]);
 
   return (
-    <div style={{ overflowX: 'hidden' }}>
-      <Hero setCurrentPage={setCurrentPage} />
-      
-      {isLoggedIn && enrolledCourses.length > 0 && (
-        <EnrolledCoursesSection enrolledCourses={enrolledCourses} userName={userName} setCurrentPage={setCurrentPage} />
-      )}
+    <div style={{ overflowX: 'hidden', position: 'relative' }}>
+      {/* Ambient Background Glows */}
+      <div style={{ position: 'absolute', top: '5%', left: '-10%', width: '50vw', height: '50vw', minWidth: 600, minHeight: 600, background: 'radial-gradient(circle, rgba(237,28,36,0.06) 0%, rgba(237,28,36,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
+      <div style={{ position: 'absolute', top: '25%', right: '-15%', width: '60vw', height: '60vw', minWidth: 800, minHeight: 800, background: 'radial-gradient(circle, rgba(59,130,246,0.05) 0%, rgba(59,130,246,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
+      <div style={{ position: 'absolute', top: '55%', left: '-5%', width: '55vw', height: '55vw', minWidth: 700, minHeight: 700, background: 'radial-gradient(circle, rgba(16,185,129,0.04) 0%, rgba(16,185,129,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
+      <div style={{ position: 'absolute', top: '80%', right: '-5%', width: '50vw', height: '50vw', minWidth: 600, minHeight: 600, background: 'radial-gradient(circle, rgba(217,70,239,0.04) 0%, rgba(217,70,239,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
 
-      <AboutSection setCurrentPage={setCurrentPage} />
-      <PopularCourses setCurrentPage={setCurrentPage} />
-      <TestimonialsSection setCurrentPage={setCurrentPage} />
-      <LatestUpdates setCurrentPage={setCurrentPage} />
-      <ExpertsSection setCurrentPage={setCurrentPage} />
-      <CompanyMarquee setCurrentPage={setCurrentPage} />
-      <SuccessStories setCurrentPage={setCurrentPage} />
-      <LearnersCommunity />
-      <AlliedCollegesSection setCurrentPage={setCurrentPage} />
-      <NewsUpdates setCurrentPage={setCurrentPage} />
-      <InTheNews setCurrentPage={setCurrentPage} />
-      <TalkToTeam setCurrentPage={setCurrentPage} />
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <Hero setCurrentPage={setCurrentPage} />
+        
+        {isLoggedIn && enrolledCourses.length > 0 && (
+          <EnrolledCoursesSection enrolledCourses={enrolledCourses} userName={userName} setCurrentPage={setCurrentPage} />
+        )}
+
+        <AboutSection setCurrentPage={setCurrentPage} />
+        <PopularCourses setCurrentPage={setCurrentPage} />
+        <TestimonialsSection setCurrentPage={setCurrentPage} />
+        <LatestUpdates setCurrentPage={setCurrentPage} />
+        <ExpertsSection setCurrentPage={setCurrentPage} />
+        <CompanyMarquee setCurrentPage={setCurrentPage} />
+        <SuccessStories setCurrentPage={setCurrentPage} />
+        <LearnersCommunity />
+        <AlliedCollegesSection setCurrentPage={setCurrentPage} />
+        <NewsUpdates setCurrentPage={setCurrentPage} />
+        <InTheNews setCurrentPage={setCurrentPage} />
+        <TalkToTeam setCurrentPage={setCurrentPage} />
+      </div>
     </div>
   );
 };
