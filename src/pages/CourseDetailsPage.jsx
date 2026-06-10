@@ -1346,10 +1346,10 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
             </p>
             
             <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 32 }}>
-              <div style={{ background: '#e0e7ff', color: 'var(--text-primary)', padding: '6px 16px', borderRadius: 100, fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
-                Popular <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>({data.views} No Of Views)</span>
+                <div style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6', border: '1px solid rgba(59, 130, 246, 0.3)', padding: '6px 16px', borderRadius: 100, fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  Popular <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>({data.views} No Of Views)</span>
+                </div>
               </div>
-            </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 24, color: 'var(--text-secondary)', fontSize: 14, fontWeight: 500 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Calendar size={16} /> Last updated {data.lastUpdated}</div>

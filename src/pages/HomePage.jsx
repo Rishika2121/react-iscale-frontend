@@ -8,7 +8,14 @@ import HRITImg from '../assets/images/HRIT_logo.png';
 import MediCapsImg from '../assets/images/medi_caps.png';
 
 const AutoSlider = ({ items, renderItem, speed = 30, direction = 'left', gap = 24 }) => (
-  <div style={{ overflow: 'hidden', width: '100%', position: 'relative', padding: '10px 0' }}>
+  <div style={{ 
+    overflow: 'hidden', 
+    width: '100%', 
+    position: 'relative', 
+    padding: '10px 0',
+    WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
+    maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)'
+  }}>
     <style dangerouslySetInnerHTML={{__html: `
       @keyframes scroll-${direction} {
         0% { transform: translateX(${direction === 'left' ? '0' : 'calc(-50% - ' + (gap/2) + 'px)'}); }
@@ -427,7 +434,7 @@ const Hero = ({ setCurrentPage }) => {
                 <div style={{ color: 'var(--red)' }}>{stat.icon}</div>
                 <div>
                   <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20 }}>{stat.val}</div>
-                  <div style={{ color: '#777', fontSize: 12 }}>{stat.label}</div>
+                  <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>{stat.label}</div>
                 </div>
               </div>
             ))}
@@ -871,26 +878,26 @@ const PopularCourses = ({ setCurrentPage }) => {
                     <img src={course.img} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'relative', zIndex: 0 }} />
                   </div>
                   
-                  <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 12, lineHeight: 1.3, color: '#0f172a' }}>
+                  <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 12, lineHeight: 1.3, color: 'var(--text-primary)' }}>
                     {course.title}
                   </h4>
 
-                  <div style={{ display: 'flex', gap: 16, marginBottom: 12, fontSize: 13, color: '#64748b', fontWeight: 500 }}>
+                  <div style={{ display: 'flex', gap: 16, marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)', fontWeight: 500 }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <Eye size={14} color="#94a3b8" /> {course.views}
+                      <Eye size={14} style={{ color: 'var(--text-muted)' }} /> {course.views}
                     </span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <Calendar size={14} color="#94a3b8" /> {course.duration}
+                      <Calendar size={14} style={{ color: 'var(--text-muted)' }} /> {course.duration}
                     </span>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#64748b', fontWeight: 500, marginBottom: 16 }}>
-                    <Zap size={14} color="#94a3b8" /> Category : {course.category}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--text-secondary)', fontWeight: 500, marginBottom: 16 }}>
+                    <Zap size={14} style={{ color: 'var(--text-muted)' }} /> Category : {course.category}
                   </div>
                 </div>
 
-                <div style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(0,0,0,0.02)', borderTop: '1px solid rgba(0,0,0,0.04)', marginTop: 'auto' }}>
-                  <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, color: '#0f172a' }}>
+                <div style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', marginTop: 'auto' }}>
+                  <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, color: 'var(--text-primary)' }}>
                     {course.price}
                   </span>
                   <span style={{ fontSize: 14, fontWeight: 700, color: '#fff', background: cardColor, padding: '8px 16px', borderRadius: '100px', display: 'flex', alignItems: 'center', gap: 6, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
@@ -1903,7 +1910,7 @@ const HomePage = ({ setCurrentPage }) => {
   }, [isLoggedIn]);
 
   return (
-    <div style={{ overflowX: 'hidden', position: 'relative' }}>
+    <div style={{ overflowX: 'clip', position: 'relative' }}>
       {/* Ambient Background Glows */}
       <div style={{ position: 'absolute', top: '5%', left: '-10%', width: '50vw', height: '50vw', minWidth: 600, minHeight: 600, background: 'radial-gradient(circle, rgba(237,28,36,0.06) 0%, rgba(237,28,36,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
       <div style={{ position: 'absolute', top: '25%', right: '-15%', width: '60vw', height: '60vw', minWidth: 800, minHeight: 800, background: 'radial-gradient(circle, rgba(59,130,246,0.05) 0%, rgba(59,130,246,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
