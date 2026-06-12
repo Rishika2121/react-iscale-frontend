@@ -34,6 +34,7 @@ const EnrolledCourses = () => {
         if (token && enrolledList.length > 0) {
           enrolledList = await Promise.all(enrolledList.map(async (c) => {
             try {
+              
               const progRes = await fetch(`https://iscale-backend.onrender.com/api/lecture-progress/course/${c.id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
               });
@@ -169,7 +170,7 @@ const EnrolledCourses = () => {
                 </div>
 
                 <button 
-                  onClick={() => navigate(`/course-details/${course.id}`)}
+                  onClick={() => navigate(`/enrolled-course-details/${course.id}`)}
                   className="compact-resume-btn"
                 >
                   Resume Player <ArrowRight size={13} />

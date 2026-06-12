@@ -407,7 +407,7 @@ const DashboardPage = ({ setCurrentPage }) => {
           </div>
           
           <button
-            onClick={() => setCurrentPage(`course-details/${activeCourseId}`)}
+              onClick={() => setCurrentPage(`enrolled-course-details/${activeCourseId}`)}
             style={{
               background: '#ffffff',
               color: '#0f172a',
@@ -564,7 +564,7 @@ const DashboardPage = ({ setCurrentPage }) => {
             </div>
             
             <button
-              onClick={() => setCurrentPage(`course-details/${activeCourseId}`)}
+                onClick={() => setCurrentPage(`enrolled-course-details/${activeCourseId}`)}
               style={{
                 background: '#166534',
                 color: '#fff',

@@ -28,7 +28,8 @@
 .cohort-content {
   position: relative;
   z-index: 10;
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1536px;
   margin: 0 auto;
   padding: 20px 24px 80px;
 }

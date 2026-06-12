@@ -22,85 +22,6 @@ const AutoSlider = ({ items, renderItem, speed = 30, direction = 'left', gap = 2
         100% { transform: translateX(${direction === 'left' ? 'calc(-50% - ' + (gap/2) + 'px)' : '0'}); }
       }
       .slider-track:hover { animation-play-state: paused !important; }
-      
-      /* Home Page Responsive Classes */
-      .hero-grid {
-        display: grid;
-        grid-template-columns: 1fr 420px;
-        gap: 60px;
-        align-items: center;
-      }
-      .about-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 64px;
-        align-items: center;
-      }
-      .features-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 16px;
-      }
-      .stats-container {
-        display: flex;
-        gap: 32px;
-        margin-top: 48px;
-        flex-wrap: wrap;
-      }
-      .courses-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-      }
-      .success-grid {
-        display: grid;
-        grid-template-columns: 1.2fr 1fr;
-        gap: 32px;
-      }
-      .community-stats {
-        display: flex;
-        justify-content: space-between;
-        padding: 0 20px;
-        flex-wrap: wrap;
-        gap: 20px;
-      }
-      .community-stat-item {
-        width: 22%;
-      }
-      .connecting-line {
-        position: absolute;
-        top: 12px;
-        left: 60px;
-        right: 60px;
-        height: 2px;
-        background: var(--red);
-        z-index: 1;
-      }
-      .featured-success-card {
-        flex-direction: row;
-      }
-      .featured-img-container {
-        width: 45%;
-      }
-      
-      @media (max-width: 1024px) {
-        .hero-grid { grid-template-columns: 1fr 350px; gap: 40px; }
-        .courses-grid { grid-template-columns: repeat(2, 1fr); }
-        .success-grid { grid-template-columns: 1fr; }
-        .community-stat-item { width: 45%; }
-        .connecting-line { display: none; }
-      }
-      
-      @media (max-width: 768px) {
-        .hero-grid { grid-template-columns: 1fr; text-align: center; }
-        .stats-container { justify-content: center; }
-        .about-grid { grid-template-columns: 1fr; gap: 40px; }
-        .features-grid { grid-template-columns: 1fr; }
-        .courses-grid { grid-template-columns: 1fr; }
-        .community-stat-item { width: 100%; }
-        .featured-success-card { flex-direction: column !important; }
-        .featured-img-container { width: 100% !important; height: 300px; }
-      }
     `}} />
     <div className="slider-track" style={{
       display: 'flex', gap: gap, width: 'max-content',
@@ -191,7 +112,7 @@ const MarketingCarousel = () => {
       <div className="animate-float" style={{
         position: 'relative',
         width: '100%',
-        height: 560,
+        height: 720,
         borderRadius: 48,
         background: 'linear-gradient(145deg, #2b3044 0%, #0f121a 100%)', // Brighter metallic bezel
         padding: 12, // Bezel width
@@ -372,7 +293,7 @@ const Hero = ({ setCurrentPage }) => {
     alert('Thank you! We will contact you shortly for the FREE Live Class.');
   };
   return (
-    <section style={{ background: 'var(--gradient-hero)', padding: '80px 0 60px', minHeight: '85vh', display: 'flex', alignItems: 'center', position: 'relative' }}>
+    <section className="hero-section" style={{ background: 'var(--gradient-hero)', padding: '80px 0 60px', minHeight: '85vh', display: 'flex', alignItems: 'center', position: 'relative' }}>
       <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
         <div className="bg-dots" style={{ position: 'absolute', inset: 0, opacity: 0.5 }} />
         <div className="abstract-grid" />
@@ -380,7 +301,7 @@ const Hero = ({ setCurrentPage }) => {
         <div className="bg-shape" style={{ width: 500, height: 500, background: 'var(--glow-primary)', top: '-10%', left: '-5%', animationDelay: '0s' }} />
         <div className="bg-shape" style={{ width: 400, height: 400, background: 'var(--glow-secondary)', bottom: '10%', right: '-5%', animationDelay: '2s', animationName: 'float-medium' }} />
       </div>
-      <div className="container mobile-col" style={{ position: 'relative', zIndex: 1, display: 'flex', gap: 60, alignItems: 'center' }}>
+      <div className="container mobile-col mobile-gap-fix" style={{ position: 'relative', zIndex: 1, display: 'flex', gap: 60, alignItems: 'center' }}>
         {/* Left content */}
         <div style={{ flex: 1, animation: 'fadeUp 0.7s ease forwards', width: '100%' }}>
           <div className="glass-card hover-glow" style={{
@@ -460,7 +381,8 @@ const AboutSection = ({ setCurrentPage }) => (
         aspectRatio: '9/16', position: 'relative',
         boxShadow: '0 20px 50px rgba(0,0,0,0.12)',
         border: '8px solid var(--card-bg)',
-        height: '600px',
+        width: '100%',
+        height: 'auto',
         maxWidth: '340px',
         margin: '0 auto'
       }}>
@@ -473,7 +395,7 @@ const AboutSection = ({ setCurrentPage }) => (
 
       {/* Content */}
       <div>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 44, fontWeight: 800, marginBottom: 20, lineHeight: 1.1, color: 'var(--text-primary)' }}>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(32px, 5vw, 44px)', fontWeight: 800, marginBottom: 20, lineHeight: 1.1, color: 'var(--text-primary)' }}>
           Know About <span style={{ color: 'var(--red)' }}>iScale</span><br />Learning
         </h2>
         <p style={{ color: 'var(--text-secondary)', fontSize: 16, lineHeight: 1.75, marginBottom: 40, maxWidth: 540 }}>
@@ -1078,7 +1000,7 @@ const CompanyMarquee = ({ setCurrentPage }) => {
       {loading ? (
         <div style={{ textAlign: 'center', padding: '20px 0' }}>Loading partners...</div>
       ) : companies.length > 0 ? (
-        <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', position: 'relative' }}>
+        <div style={{ padding: '0 5%', overflow: 'hidden', whiteSpace: 'nowrap', position: 'relative' }}>
           <div style={{ display: 'inline-flex', gap: 32, animation: 'marquee 50s linear infinite', padding: '10px 0' }}>
             {[...companies, ...companies, ...companies].map((c, i) => (
               <div key={i} className="hover-glow" style={{
@@ -1241,11 +1163,8 @@ export const SuccessStories = ({ setCurrentPage }) => {
 
   if (loading || stories.length === 0) return null; // Hide if no data
 
-  const featured = stories[0];
-  const gridItems = stories.slice(1);
-
   return (
-    <section style={{ padding: '80px 0', background: 'linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%)', position: 'relative', overflow: 'hidden' }}>
+    <section style={{ padding: '60px 0', background: 'linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%)', position: 'relative', overflow: 'hidden' }}>
       {/* Decorative Glow Orbs */}
       <div className="bg-shape" style={{ top: '-10%', left: '-10%', width: 400, height: 400, background: 'rgba(237, 28, 36, 0.05)', borderRadius: '50%', filter: 'blur(100px)', pointerEvents: 'none' }} />
       <div className="bg-shape" style={{ bottom: '-10%', right: '-10%', width: 500, height: 500, background: 'rgba(124, 58, 237, 0.05)', borderRadius: '50%', filter: 'blur(120px)', pointerEvents: 'none' }} />
@@ -1256,7 +1175,7 @@ export const SuccessStories = ({ setCurrentPage }) => {
           <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1.5, display: 'inline-block', marginBottom: 16 }}>
             OUR PROUD ALUMNI
           </span>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 44, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 12 }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(32px, 5vw, 44px)', fontWeight: 900, color: 'var(--text-primary)', marginBottom: 12 }}>
             Alumni <span className="animated-text-gradient">Success Stories</span>
           </h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: 16, maxWidth: 650, margin: '0 auto' }}>
@@ -1264,87 +1183,12 @@ export const SuccessStories = ({ setCurrentPage }) => {
           </p>
         </div>
 
-        <div className="success-grid">
-          {/* Featured Card */}
-          <div className="featured-success-card" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 24, overflow: 'hidden', boxShadow: 'var(--card-shadow)', position: 'relative', display: 'flex', zIndex: 1 }}>
-            <a href={featured.ytLink} target="_blank" rel="noopener noreferrer"
-               className="featured-img-container" 
-               style={{ 
-                 background: 'var(--bg-secondary)', 
-                 display: 'flex', 
-                 alignItems: 'center', 
-                 justifyContent: 'center', 
-                 overflow: 'hidden',
-                 cursor: featured.ytLink ? 'pointer' : 'default',
-                 position: 'relative',
-                 width: '50%',
-                 minHeight: 350
-               }}
-            >
-               <img src={featured.img} alt="Student" style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'top center' }} />
-               {featured.ytLink && (
-                 <div style={{
-                   position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-                   background: 'var(--red)', color: '#fff', width: 64, height: 64, borderRadius: '50%',
-                   display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 20px rgba(237, 28, 36, 0.6)'
-                 }}>
-                   <Play size={24} fill="#fff" style={{ marginLeft: 4 }} />
-                 </div>
-               )}
-            </a>
-            <div style={{ padding: 40, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 8 }}>{featured.company}</div>
-              <h3 style={{ fontSize: 28, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 4 }}>{featured.name}</h3>
-              <p style={{ color: 'var(--red)', fontSize: 14, fontWeight: 600, marginBottom: 16 }}>@ {featured.company}</p>
-              
-              {featured.package && featured.package !== 'N/A' && (
-                <div style={{ fontSize: 18, color: '#10b981', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16 }}>
-                  <span>Package:</span>
-                  <span style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '4px 12px', borderRadius: 8 }}>{featured.package}</span>
-                </div>
-              )}
-
-              <div style={{ color: 'var(--text-secondary)', fontSize: 13, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>feedback :</div>
-              <p style={{ color: 'var(--text-secondary)', fontSize: 16, lineHeight: 1.6, fontStyle: 'italic', marginBottom: 32 }}>"{featured.feedback}"</p>
-              
-              <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                <div 
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px',
-                    background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', borderRadius: 100,
-                    fontWeight: 700, fontSize: 13, width: 'fit-content', letterSpacing: 0.5
-                  }}
-                >
-                  Verified Alumni Story
-                </div>
-                {featured.ytLink && (
-                  <a
-                    href={featured.ytLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px',
-                      background: 'var(--red)', color: '#fff', borderRadius: 100, border: 'none',
-                      fontWeight: 700, fontSize: 13, cursor: 'pointer', transition: 'all 0.3s',
-                      textDecoration: 'none'
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'var(--red-dark)'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'var(--red)'}
-                  >
-                    Play Video <Play size={12} fill="#fff" />
-                  </a>
-                )}
-              </div>
-            </div>
-            {/* Background shape */}
-            <div style={{ position: 'absolute', right: -50, top: -50, width: 200, height: 200, borderRadius: '50%', border: '40px solid var(--border-color)', opacity: 0.2, zIndex: 0 }} />
-          </div>
-
+        <div>
           {/* Auto Slider for Grid Cards */}
-          {gridItems.length > 0 && (
+          {stories.length > 0 && (
             <div style={{ marginTop: 32, position: 'relative', zIndex: 1 }}>
               <AutoSlider 
-                items={gridItems} 
+                items={stories} 
                 speed={45}
                 gap={24}
                 renderItem={(item, idx) => (
@@ -1391,6 +1235,39 @@ const communityStats = [
 
 const LearnersCommunity = () => (
   <section style={{ padding: '50px 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
+    <style>{`
+      .community-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+        position: relative;
+        padding-top: 40px;
+      }
+      .connecting-line {
+        position: absolute;
+        top: 51px;
+        left: 12.5%;
+        right: 12.5%;
+        height: 2px;
+        background: var(--red);
+        z-index: 1;
+      }
+      @media (max-width: 1024px) {
+        .community-stats { grid-template-columns: repeat(2, 1fr); }
+        .connecting-line { display: none; }
+      }
+      @media (max-width: 640px) {
+        .community-stats { grid-template-columns: 1fr; }
+      }
+      .talk-to-team-card {
+        padding: 40px 60px;
+      }
+      @media (max-width: 768px) {
+        .talk-to-team-card { padding: 30px 20px !important; }
+        .hero-section { padding: 40px 0 30px !important; min-height: auto !important; }
+        .mobile-gap-fix { gap: 30px !important; }
+      }
+    `}</style>
     <div className="container">
       <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 900, textAlign: 'center', marginBottom: 30, color: 'var(--text-primary)' }}>
         India's Most Loved <br/> Learners Community <span style={{ color: 'var(--red)' }}>❤️</span>
@@ -1664,12 +1541,12 @@ const InTheNews = () => {
 /* ── Talk To Team ── */
 const TalkToTeam = ({ setCurrentPage }) => (
   <section style={{ padding: '50px 0', background: 'var(--bg-primary)' }}>
-    <div className="container mobile-col" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--card-bg)', borderRadius: 24, padding: '40px 60px', border: '1px solid var(--border-color)', boxShadow: 'var(--card-shadow)', gap: 30 }}>
+    <div className="container mobile-col mobile-gap-fix talk-to-team-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--card-bg)', borderRadius: 24, border: '1px solid var(--border-color)', boxShadow: 'var(--card-shadow)', gap: 30 }}>
       <div style={{ flex: 1 }}>
         <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', marginBottom: 20, display: 'inline-block' }}>
           GOT MORE QUESTIONS ?
         </span>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 44, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 16 }}>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(32px, 5vw, 44px)', fontWeight: 900, color: 'var(--text-primary)', marginBottom: 16 }}>
           Talk <span style={{ color: 'var(--red)' }}>to our team directly</span>
         </h2>
         <p style={{ color: 'var(--text-secondary)', fontSize: 16, marginBottom: 32 }}>Contact us and our team will get in touch with you shortly</p>
@@ -1911,6 +1788,90 @@ const HomePage = ({ setCurrentPage }) => {
 
   return (
     <div style={{ overflowX: 'clip', position: 'relative' }}>
+      <style dangerouslySetInnerHTML={{__html: `
+        /* Home Page Responsive Classes */
+        .hero-grid {
+          display: grid;
+          grid-template-columns: 1fr 420px;
+          gap: 60px;
+          align-items: center;
+        }
+        .about-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 64px;
+          align-items: center;
+        }
+        .features-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
+          gap: 16px;
+        }
+        .stats-container {
+          display: flex;
+          gap: 32px;
+          margin-top: 48px;
+          flex-wrap: wrap;
+        }
+        .courses-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 20px;
+        }
+        .success-grid {
+          display: grid;
+          grid-template-columns: 1.2fr 1fr;
+          gap: 24px;
+        }
+        .community-stats {
+          display: flex;
+          justify-content: space-between;
+          padding: 0 20px;
+          flex-wrap: wrap;
+          gap: 20px;
+        }
+        .community-stat-item {
+          width: 22%;
+        }
+        .connecting-line {
+          position: absolute;
+          top: 12px;
+          left: 60px;
+          right: 60px;
+          height: 2px;
+          background: var(--red);
+          z-index: 1;
+        }
+        .featured-success-card {
+          flex-direction: row;
+        }
+        .featured-img-container {
+          flex: 0 0 45%;
+          max-width: 45%;
+          min-width: 0;
+          min-height: 300px;
+        }
+        
+        @media (max-width: 1024px) {
+          .hero-grid { grid-template-columns: 1fr 350px; gap: 40px; }
+          .courses-grid { grid-template-columns: repeat(2, 1fr); }
+          .success-grid { grid-template-columns: 1fr; }
+          .community-stat-item { width: 45%; }
+          .connecting-line { display: none; }
+          .featured-img-container { min-height: 280px; }
+        }
+        
+        @media (max-width: 768px) {
+          .hero-grid { grid-template-columns: 1fr; text-align: center; }
+          .stats-container { justify-content: center; }
+          .about-grid { grid-template-columns: 1fr; gap: 40px; }
+          .features-grid { grid-template-columns: 1fr; }
+          .courses-grid { grid-template-columns: 1fr; }
+          .community-stat-item { width: 100%; }
+          .featured-success-card { flex-direction: column !important; }
+          .featured-img-container { flex: 0 0 100% !important; max-width: 100% !important; min-height: auto !important; aspect-ratio: 16/9; }
+        }
+      `}} />
       {/* Ambient Background Glows */}
       <div style={{ position: 'absolute', top: '5%', left: '-10%', width: '50vw', height: '50vw', minWidth: 600, minHeight: 600, background: 'radial-gradient(circle, rgba(237,28,36,0.06) 0%, rgba(237,28,36,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
       <div style={{ position: 'absolute', top: '25%', right: '-15%', width: '60vw', height: '60vw', minWidth: 800, minHeight: 800, background: 'radial-gradient(circle, rgba(59,130,246,0.05) 0%, rgba(59,130,246,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />

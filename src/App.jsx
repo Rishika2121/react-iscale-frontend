@@ -35,6 +35,8 @@ import ExpertDetailsPage from './pages/ExpertDetailsPage';
 import StudentTestimonialPage from './pages/StudentTestimonialPage';
 import FaqPage from './pages/FaqPage';
 import CertificateVerificationPage from './pages/CertificateVerificationPage';
+import EnrolledCourseDetails from './pages/EnrolledCourseDetails';
+import EnrollCourseDetailsList from './pages/EnrollCourseDetailsList';
 
 
 const CourseDetailsWrapper = ({ setCurrentPage }) => {
@@ -122,6 +124,8 @@ const AppContent = () => {
             <Route path="/placement-talks" element={<PlacementTalksPage setCurrentPage={handleNavigate} />} />
             <Route path="/cohort-courses" element={<CohortPage setCurrentPage={handleNavigate} />} />
             <Route path="/course-details/:id" element={<CourseDetailsWrapper setCurrentPage={handleNavigate} />} />
+            <Route path="/enrolled-course-details/:id" element={<EnrolledCourseDetails />} />
+            <Route path="/enroll-course-details-list/:id" element={<EnrollCourseDetailsList />} />
             
             {/* New Routes */}
             <Route path="/about-us" element={<AboutPage />} />

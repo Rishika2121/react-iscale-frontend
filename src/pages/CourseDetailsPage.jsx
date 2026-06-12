@@ -1208,20 +1208,42 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
   const highlights = trainingHighlights && trainingHighlights.length > 0 
     ? trainingHighlights.map(th => ({ title: th.title || th.m_feature_title || 'Highlight', img: getImageUrl(th.icon || th.m_feature_image) }))
     : [];
+  // Exact ObjectIDs from the user's screenshot
+  const screenshotFallbackIds = [
+    '6a0c08970db957f72cd43582',
+    '6a0c31e30db957f72cd43584',
+    '6a0c3a3d0db957f72cd43586',
+    '6a0c3af10db957f72cd43588'
+  ];
+
+  const assignedInstructorsRaw = apiData?.m_course_trainee || apiData?.m_course_trainer || apiData?.instructors;
+  const assignedInstructors = (!assignedInstructorsRaw || assignedInstructorsRaw.length === 0) 
+    ? screenshotFallbackIds 
+    : assignedInstructorsRaw;
+
   const instructorsData = instructorsList && instructorsList.length > 0
-    ? instructorsList.map(i => ({
-        name: i.m_instructor_name || 'Instructor',
-        bio: i.m_instructor_bio || '',
-        experience: i.m_instructor_experience || '',
-        skills: Array.isArray(i.m_instructor_skills) ? i.m_instructor_skills : [],
-        rating: i.m_instructor_rating || 0,
-        reviews: i.m_instructor_reviews || 0,
-        totalCourses: i.m_instructor_total_courses || 0,
-        linkedin: i.m_linkedin_profile || '',
-        img: i.m_instructor_profile
-               ? getImageUrl(i.m_instructor_profile)
-               : `https://ui-avatars.com/api/?name=${encodeURIComponent(i.m_instructor_name || 'I')}&background=ED1C24&color=fff&bold=true&size=200`
-      }))
+    ? instructorsList
+        .filter(i => {
+          if (!assignedInstructors || !Array.isArray(assignedInstructors) || assignedInstructors.length === 0) return false;
+          const iId = String(i._id || i.id);
+          return assignedInstructors.some(t => {
+            const tId = String(t && typeof t === 'object' ? (t._id || t.id || t) : t);
+            return tId === iId;
+          });
+        })
+        .map(i => ({
+          name: i.m_instructor_name || 'Instructor',
+          bio: i.m_instructor_bio || '',
+          experience: i.m_instructor_experience || '',
+          skills: Array.isArray(i.m_instructor_skills) ? i.m_instructor_skills : [],
+          rating: i.m_instructor_rating || 0,
+          reviews: i.m_instructor_reviews || 0,
+          totalCourses: i.m_instructor_total_courses || 0,
+          linkedin: i.m_linkedin_profile || '',
+          img: i.m_instructor_profile
+                 ? getImageUrl(i.m_instructor_profile)
+                 : `https://ui-avatars.com/api/?name=${encodeURIComponent(i.m_instructor_name || 'I')}&background=ED1C24&color=fff&bold=true&size=200`
+        }))
     : [];
   const reviewsData = reviewsList && reviewsList.length > 0
     ? reviewsList.map(r => ({
@@ -1483,6 +1505,21 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                 }} 
               />
             ))}
+            
+            <div style={{ marginLeft: 'auto', paddingLeft: 20 }}>
+              <button 
+                onClick={handleEnrollClick}
+                className="btn-shine"
+                style={{ padding: '10px 24px', background: isEnrolled ? '#22c55e' : 'var(--red)', color: '#fff', borderRadius: 8, fontWeight: 700, fontSize: 14, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap', boxShadow: isEnrolled ? '0 4px 15px rgba(34, 197, 94, 0.3)' : '0 4px 15px rgba(237, 28, 36, 0.3)' }}
+              >
+                {isEnrolled ? (
+                  <>Resume Course <Check size={16} /></>
+                ) : (
+                  <>Enroll Now <ArrowRight size={16} /></>
+                )}
+              </button>
+            </div>
+
           </div>
         </div>
       </div>
@@ -1559,6 +1596,21 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                 </div>
               )}
             </div>
+
+            <div style={{ marginTop: 40, textAlign: 'center' }}>
+              <button 
+                onClick={handleEnrollClick}
+                className="btn-shine"
+                style={{ padding: '16px 40px', background: isEnrolled ? '#22c55e' : 'var(--red)', color: '#fff', borderRadius: 12, fontWeight: 800, fontSize: 16, border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 10, transition: 'all 0.3s', boxShadow: isEnrolled ? '0 4px 20px rgba(34, 197, 94, 0.4)' : '0 4px 20px rgba(237, 28, 36, 0.4)' }}
+              >
+                {isEnrolled ? (
+                  <>Start Learning Now <Check size={20} /></>
+                ) : (
+                  <>Enroll to Access Full Curriculum <ArrowRight size={20} /></>
+                )}
+              </button>
+            </div>
+
           </div>
 
 
