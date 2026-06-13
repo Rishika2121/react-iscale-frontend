@@ -202,33 +202,46 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
           gap: 30px;
         }
         .sidebar {
-          width: 260px;
-          background: var(--card-bg);
-          padding: 16px 12px;
+          width: 320px;
+          padding: 24px 20px;
           display: flex;
           flex-direction: column;
-          gap: 6px;
           flex-shrink: 0;
-          border: 1.5px solid var(--border-color);
           border-radius: 12px;
           box-sizing: border-box;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+          height: fit-content;
+          transition: all 0.3s ease;
+        }
+        .sidebar.light-mode {
+          background: #eff6ff;
+          border: 1px solid #dbeafe;
+          box-shadow: 0 4px 25px rgba(0, 0, 0, 0.03);
+        }
+        .sidebar.dark-mode {
+          background: rgba(30, 41, 59, 0.6);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
         .sidebar-btn {
           display: flex;
           align-items: center;
-          gap: 12px;
+          gap: 16px;
           width: 100%;
-          padding: 14px 20px;
+          padding: 28px 16px;
           background: none;
           border: none;
-          border-radius: 8px;
-          color: var(--text-secondary);
-          font-size: 15px;
-          font-weight: 500;
+          border-bottom: 1px solid var(--border-color);
+          color: var(--text-primary);
+          font-size: 16px;
+          font-weight: 600;
           text-align: left;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sidebar-btn.no-border {
+          border-bottom: none;
         }
         .sidebar-btn:hover {
           background: var(--bg-secondary);
@@ -239,18 +252,20 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
           background: rgba(237, 28, 36, 0.1);
           color: #ED1C24;
           font-weight: 600;
+          border-radius: 8px;
+        }
+        .sidebar-section-title {
+          font-size: 12px;
+          font-weight: 700;
+          text-transform: uppercase;
+          color: var(--text-muted);
+          padding: 32px 16px 8px;
+          letter-spacing: 1.5px;
         }
         .sidebar-btn svg {
           stroke-width: 1.5;
         }
-        .sidebar-section-title {
-          font-size: 11px;
-          font-weight: 700;
-          text-transform: uppercase;
-          color: var(--text-muted);
-          padding: 24px 20px 8px;
-          letter-spacing: 1.2px;
-        }
+
         .content-area {
           flex: 1;
           background: transparent;
@@ -535,31 +550,33 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
       </header>
 
       <div className="main-layout">
-        <aside className={`sidebar ${mobileMenuOpen ? 'open' : ''}`}>
+        <aside className={`sidebar ${mobileMenuOpen ? 'open' : ''} ${theme === 'dark' ? 'dark-mode' : 'light-mode'}`}>
           <button onClick={() => navigateToTab('dashboard')} className={`sidebar-btn ${activeTab === 'dashboard' ? 'active' : ''}`}>
-            <Home size={18} /><span>Dashboard</span>
+            <Home size={20} /><span>Dashboard</span>
           </button>
           <button onClick={() => navigateToTab('my-profile')} className={`sidebar-btn ${activeTab === 'my-profile' ? 'active' : ''}`}>
-            <User size={18} /><span>My Profile</span>
+            <User size={20} /><span>My Profile</span>
           </button>
           <button onClick={() => navigateToTab('explore-courses')} className={`sidebar-btn ${activeTab === 'explore-courses' ? 'active' : ''}`}>
-            <Compass size={18} /><span>Explore Courses</span>
+            <Compass size={20} /><span>Explore Courses</span>
           </button>
           <button onClick={() => navigateToTab('enrolled-courses')} className={`sidebar-btn ${activeTab === 'enrolled-courses' ? 'active' : ''}`}>
-            <BookOpen size={18} /><span>Enrolled Courses</span>
+            <BookOpen size={20} /><span>Enrolled Courses</span>
           </button>
           <button onClick={() => navigateToTab('enrolled-events')} className={`sidebar-btn ${activeTab === 'enrolled-events' ? 'active' : ''}`}>
-            <Calendar size={18} /><span>Enrolled Events</span>
+            <Calendar size={20} /><span>Enrolled Events</span>
           </button>
-          <button onClick={() => navigateToTab('test-series-result')} className={`sidebar-btn ${activeTab === 'test-series-result' ? 'active' : ''}`}>
-            <Award size={18} /><span>Test Series Result</span>
+          <button onClick={() => navigateToTab('test-series-result')} className={`sidebar-btn no-border ${activeTab === 'test-series-result' ? 'active' : ''}`}>
+            <Award size={20} /><span>Test Series Result</span>
           </button>
+          
           <div className="sidebar-section-title">User</div>
+          
           <button onClick={() => navigateToTab('settings')} className={`sidebar-btn ${activeTab === 'settings' ? 'active' : ''}`}>
-            <SettingsIcon size={18} /><span>Settings</span>
+            <SettingsIcon size={20} /><span>Settings</span>
           </button>
-          <button onClick={handleLogout} className="sidebar-btn" style={{ color: '#b91c1c' }}>
-            <LogOut size={18} /><span>Logout</span>
+          <button onClick={handleLogout} className="sidebar-btn no-border" style={{ color: '#ef4444' }}>
+            <LogOut size={20} /><span>Logout</span>
           </button>
         </aside>
 

@@ -184,7 +184,7 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
   return (
     <>
       <style>{`
-        .nav-links { display: flex; gap: 4px; flex: 1; justify-content: center; align-items: center; }
+        .nav-links { display: flex; gap: clamp(8px, 1.5vw, 24px); flex: 1; justify-content: center; align-items: center; }
         .nav-ctas { display: flex; gap: 12px; align-items: center; }
         .mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: var(--text-primary); }
         
@@ -409,8 +409,8 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
         transition: 'all 0.3s ease'
       }}>
         <div style={{
-          maxWidth: 1280, margin: '0 auto', padding: '0 24px',
-          display: 'flex', alignItems: 'center', height: 70, gap: 24, justifyContent: 'space-between'
+          width: '100%', margin: '0 auto', padding: '0 4%',
+          display: 'flex', alignItems: 'center', height: 70, gap: '2%', justifyContent: 'space-between'
         }}>
           <div onClick={() => { setCurrentPage('home'); setDropdownAllOpen(false); setDropdownCohortOpen(false); }}>
             <Logo />
@@ -425,16 +425,17 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
               <button
                 style={{
                   display: 'flex', alignItems: 'center', gap: 6,
-                  padding: '8px 16px', borderRadius: 8,
+                  padding: '14px 18px', borderRadius: 8,
                   border: `1.5px solid ${dropdownAllOpen ? 'var(--red)' : 'var(--border-color)'}`,
                   background: 'var(--bg-secondary)',
-                  fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 14,
+                  fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 20,
                   color: dropdownAllOpen ? 'var(--red)' : 'var(--text-primary)',
-                  transition: 'all 0.2s', cursor: 'pointer'
+                  transition: 'all 0.2s', cursor: 'pointer',
+                  whiteSpace: 'nowrap'
                 }}
               >
                 <span>▦ All Courses</span>
-                <ChevronDown size={14} style={{ transform: dropdownAllOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                <ChevronDown size={20} style={{ transform: dropdownAllOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
               </button>
             </div>
 
@@ -444,11 +445,11 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
                 key={item}
                 onClick={() => { setCurrentPage(item.toLowerCase().replace(' ', '-')); setDropdownAllOpen(false); setDropdownCohortOpen(false); }}
                 style={{
-                  padding: '8px 16px', background: 'none', border: 'none',
-                  fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 15,
+                  padding: '14px 18px', background: 'none', border: 'none',
+                  fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 20,
                   color: currentPage === item.toLowerCase().replace(' ', '-') ? 'var(--red)' : 'var(--text-primary)',
                   borderRadius: 8, transition: 'all 0.2s',
-                  cursor: 'pointer'
+                  cursor: 'pointer', whiteSpace: 'nowrap'
                 }}
                 onMouseEnter={e => e.target.style.color = 'var(--red)'}
                 onMouseLeave={e => e.target.style.color = currentPage === item.toLowerCase().replace(' ', '-') ? 'var(--red)' : 'var(--text-primary)'}
@@ -465,8 +466,8 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
               <div 
                 onClick={() => { setCurrentPage('cohort-courses'); setDropdownCohortOpen(false); }}
                 style={{
-                  padding: '8px 16px', fontWeight: 600, fontSize: 15,
-                  color: dropdownCohortOpen ? 'var(--red)' : 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6
+                  padding: '14px 18px', fontWeight: 600, fontSize: 20,
+                  color: dropdownCohortOpen ? 'var(--red)' : 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap'
                 }}
               >
                 <span>Cohort Courses</span>
@@ -478,14 +479,14 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
             {/* More Menu Dropdown */}
             <div 
               style={{
-                padding: '8px 16px', fontWeight: 600, fontSize: 15,
+                padding: '14px 18px', fontWeight: 600, fontSize: 20,
                 color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4,
-                position: 'relative'
+                position: 'relative', whiteSpace: 'nowrap'
               }}
               onMouseEnter={() => setMoreOpen(true)}
               onMouseLeave={() => setMoreOpen(false)}
             >
-              More <ChevronDown size={14} />
+              More <ChevronDown size={20} />
               {moreOpen && (
                 <div style={{
                   position: 'absolute', top: '100%', right: 0,

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Download, Award } from 'lucide-react';
+import VideoPlayer from '../components/VideoPlayer';
 
 const EnrollCourseDetailsList = () => {
   const { id } = useParams();
@@ -172,18 +173,16 @@ const EnrollCourseDetailsList = () => {
         </div>
       </div>
       
-      {/* Content Section Placeholder */}
+      {/* Video Player Section */}
       <div style={{ padding: '40px 5%', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ 
           backgroundColor: 'var(--card-bg)', 
-          border: '1px dashed var(--border-color)', 
+          border: '1px solid var(--border-color)', 
           borderRadius: '12px', 
-          padding: '60px 20px', 
-          textAlign: 'center',
-          color: 'var(--text-secondary)'
+          padding: '30px', 
         }}>
-          <h2>Curriculum & Video Player Area</h2>
-          <p>This section will be populated with the course modules and content once the API is integrated.</p>
+          <h2 style={{ marginBottom: '24px', textAlign: 'center', color: 'var(--text-primary)' }}>Course Video</h2>
+          <VideoPlayer videoId={id} />
         </div>
       </div>
     </div>
