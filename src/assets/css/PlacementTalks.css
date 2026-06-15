@@ -156,7 +156,7 @@
   font-weight: 600;
   display: inline-block;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(237, 28, 36, 0.3);
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
 }
 
 .placement-btn:hover {

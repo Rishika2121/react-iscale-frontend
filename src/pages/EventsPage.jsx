@@ -119,7 +119,7 @@ const EventsPage = ({ setCurrentPage }) => {
           <select 
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            style={{ width: '100%', padding: '12px 12px 12px 44px', borderRadius: 12, border: '1px solid var(--border-color)', outline: 'none', appearance: 'none', background: '#fff' }}
+            style={{ width: '100%', padding: '12px 12px 12px 44px', borderRadius: 12, border: '1px solid var(--border-color)', outline: 'none', appearance: 'none', background: 'var(--card-bg)' }}
           >
             <option value="">All Categories</option>
             {categories.map(cat => (
@@ -132,7 +132,7 @@ const EventsPage = ({ setCurrentPage }) => {
           <select 
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            style={{ width: '100%', padding: '12px 12px 12px 44px', borderRadius: 12, border: '1px solid var(--border-color)', outline: 'none', appearance: 'none', background: '#fff' }}
+            style={{ width: '100%', padding: '12px 12px 12px 44px', borderRadius: 12, border: '1px solid var(--border-color)', outline: 'none', appearance: 'none', background: 'var(--card-bg)' }}
           >
             <option value="active">Upcoming Events</option>
             <option value="inactive">Past Events</option>

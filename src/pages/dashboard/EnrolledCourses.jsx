@@ -64,7 +64,7 @@ const EnrolledCourses = () => {
   if (loading) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '40vh' }}>
-        <div style={{ width: 36, height: 36, border: '3px solid rgba(237,28,36,0.1)', borderTop: '3px solid #ED1C24', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+        <div style={{ width: 36, height: 36, border: '3px solid rgba(37,99,235,0.1)', borderTop: '3px solid #2563eb', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
       </div>
     );
   }
@@ -129,7 +129,7 @@ const EnrolledCourses = () => {
           </p>
           <button
             onClick={() => navigate('/explore-courses')}
-            style={{ padding: '8px 16px', background: '#ED1C24', color: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer' }}
+            style={{ padding: '8px 16px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer' }}
           >
             Explore Courses
           </button>
@@ -146,7 +146,7 @@ const EnrolledCourses = () => {
                     <PlayCircle size={36} color="var(--text-muted)" />
                   </div>
                 )}
-                <span style={{ position: 'absolute', top: 12, right: 12, background: 'rgba(237, 28, 36, 0.95)', color: '#fff', fontSize: 8, fontWeight: 800, padding: '3px 8px', borderRadius: 4, letterSpacing: 0.5, textTransform: 'uppercase' }}>
+                <span style={{ position: 'absolute', top: 12, right: 12, background: 'rgba(37, 99, 235, 0.95)', color: '#fff', fontSize: 8, fontWeight: 800, padding: '3px 8px', borderRadius: 4, letterSpacing: 0.5, textTransform: 'uppercase' }}>
                   Enrolled
                 </span>
               </div>
@@ -161,10 +161,10 @@ const EnrolledCourses = () => {
                   <div style={{ marginBottom: 16 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text-secondary)', marginBottom: 4, fontWeight: 600 }}>
                       <span>Syllabus Progress</span>
-                      <span style={{ color: '#ED1C24' }}>{course.progress || 0}%</span>
+                      <span style={{ color: '#2563eb' }}>{course.progress || 0}%</span>
                     </div>
                     <div style={{ width: '100%', height: 5, background: 'var(--bg-secondary)', borderRadius: 3, overflow: 'hidden' }}>
-                      <div style={{ width: `${course.progress || 0}%`, height: '100%', background: 'linear-gradient(90deg, #ED1C24, #f72a32)', borderRadius: 3 }} />
+                      <div style={{ width: `${course.progress || 0}%`, height: '100%', background: 'linear-gradient(90deg, #2563eb, #f72a32)', borderRadius: 3 }} />
                     </div>
                   </div>
                 </div>

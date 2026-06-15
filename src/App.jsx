@@ -6,8 +6,7 @@ import Footer from './components/Footer';
 import EnrollmentPopup from './components/EnrollmentPopup';
 import DashboardLayout from './components/DashboardLayout';
 import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
+import AuthPage from './pages/AuthPage';
 import CoursesPage from './pages/CoursesPage';
 import EventsPage from './pages/EventsPage';
 import SuccessStoryPage from './pages/SuccessStoryPage';
@@ -113,8 +112,9 @@ const AppContent = () => {
         ) : (
           <Routes>
             <Route path="/" element={<HomePage setCurrentPage={handleNavigate} />} />
-            <Route path="/login" element={<LoginPage setCurrentPage={handleNavigate} />} />
-            <Route path="/register" element={<RegisterPage setCurrentPage={handleNavigate} />} />
+            <Route path="/login" element={<AuthPage setCurrentPage={handleNavigate} />} />
+            <Route path="/register" element={<AuthPage setCurrentPage={handleNavigate} />} />
+            <Route path="/auth" element={<AuthPage setCurrentPage={handleNavigate} />} />
             <Route path="/courses" element={<CoursesPage setCurrentPage={handleNavigate} />} />
             <Route path="/explore-courses" element={<ExploreCourses setCurrentPage={handleNavigate} />} />
             <Route path="/events" element={<EventsPage />} />

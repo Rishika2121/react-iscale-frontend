@@ -59,7 +59,7 @@ const NewsDetailsPage = () => {
         
         <h1 style={{ fontSize: 38, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 20, lineHeight: 1.25 }}>{news.m_news_title || news.title}</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
-          <span style={{ color: 'var(--red)', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 1, background: 'rgba(237, 28, 36, 0.08)', padding: '6px 16px', borderRadius: 100 }}>Press Release</span>
+          <span style={{ color: 'var(--red)', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 1, background: 'rgba(37, 99, 235, 0.08)', padding: '6px 16px', borderRadius: 100 }}>Press Release</span>
           <span style={{ color: 'var(--text-muted)', fontSize: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
             {dateStr}
@@ -70,7 +70,7 @@ const NewsDetailsPage = () => {
           {(news.m_news_image || news.image || news.img || news.m_news_images) ? (
             <img src={getImageUrl(news.m_news_image || news.image || news.img || news.m_news_images)} alt={news.m_news_title || 'News Update'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           ) : (
-            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(135deg, rgba(237, 28, 36, 0.05), rgba(59, 130, 246, 0.05))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(59, 130, 246, 0.05))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
             </div>
           )}

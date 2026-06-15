@@ -167,14 +167,14 @@
   color: #fff;
   border-color: var(--red);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(237, 28, 36, 0.2);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
 .pagination-btn.active {
   background: var(--red);
   color: #fff;
   border-color: var(--red);
-  box-shadow: 0 4px 12px rgba(237, 28, 36, 0.3);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
 .pagination-btn:disabled {

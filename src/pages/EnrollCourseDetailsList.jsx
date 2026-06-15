@@ -27,7 +27,7 @@ const EnrollCourseDetailsList = () => {
           to { opacity: 1; transform: translateY(0); }
         }
         .study-hero {
-          background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 50%, #fce7f3 100%);
+          background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 50%, #e0e7ff 100%);
           padding: 60px 5%;
           position: relative;
         }

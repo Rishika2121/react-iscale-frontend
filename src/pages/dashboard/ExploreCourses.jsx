@@ -25,7 +25,7 @@ const styles = `
   left: -20%;
   width: 60%;
   height: 150%;
-  background: radial-gradient(circle, rgba(237, 28, 36, 0.04) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.04) 0%, transparent 70%);
   z-index: 1;
   pointer-events: none;
 }
@@ -163,7 +163,7 @@ const styles = `
 .search-input:focus {
   background: var(--bg-primary);
   border-color: var(--red);
-  box-shadow: 0 0 0 4px rgba(237, 28, 36, 0.08);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
 }
 
 .search-input:focus + .search-icon {
@@ -189,7 +189,7 @@ const styles = `
   background: var(--red);
   color: white;
   border-color: var(--red);
-  box-shadow: 0 4px 12px rgba(237, 28, 36, 0.2);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
 /* Category Filter Section */
@@ -256,7 +256,7 @@ const styles = `
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at center, rgba(237, 28, 36, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -268,21 +268,21 @@ const styles = `
 .cat-card-premium:hover {
   transform: translateY(-3px);
   border-color: var(--red);
-  box-shadow: 0 8px 20px rgba(237, 28, 36, 0.05);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.05);
 }
 
 .cat-card-premium-active {
   background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%) !important;
   border-color: var(--red) !important;
   color: #fff !important;
-  box-shadow: 0 8px 20px rgba(237, 28, 36, 0.3) !important;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3) !important;
 }
 
 .cat-card-icon-wrap {
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  background: rgba(237, 28, 36, 0.06);
+  background: rgba(37, 99, 235, 0.06);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -445,7 +445,7 @@ const styles = `
 .course-category-badge {
   font-size: 0.75rem;
   color: var(--red);
-  background: rgba(237, 28, 36, 0.08);
+  background: rgba(37, 99, 235, 0.08);
   padding: 4px 10px;
   border-radius: 6px;
   font-weight: 700;

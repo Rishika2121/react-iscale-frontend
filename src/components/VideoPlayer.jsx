@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const VideoPlayer = ({ videoId }) => {
-  const [videoData, setVideoData] = useState({ otp: '', playbackInfo: '' });
+  const [videoUrl, setVideoUrl] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -16,9 +16,7 @@ const VideoPlayer = ({ videoId }) => {
         };
         
         if (token) {
-          // Some backends expect 'Bearer ' prefix, others don't. We use standard Bearer.
           headers['Authorization'] = `Bearer ${token}`;
-          // Also adding a fallback token header just in case this specific API requires it:
           headers['x-auth-token'] = token;
         }
 
@@ -26,8 +24,7 @@ const VideoPlayer = ({ videoId }) => {
         const response = await fetch('https://iscale-backend.onrender.com/api/video/play_video', {
           method: 'POST',
           headers: headers,
-          // If a videoId is required by backend, we pass it. Otherwise, backend might have a default or take it from another param.
-          body: JSON.stringify({ videoId: videoId || "sample_video_id" }),
+          body: JSON.stringify({ videoId: videoId }), // Passed from EnrollCourseDetailsList
         });
 
         if (!response.ok) {
@@ -35,18 +32,12 @@ const VideoPlayer = ({ videoId }) => {
         }
 
         const data = await response.json();
+        console.log("API RESPONSE:", data); // Helpful for debugging
         
-        // Handle common API response structures for otp and playbackInfo
-        if (data.otp && data.playbackInfo) {
-          setVideoData({ otp: data.otp, playbackInfo: data.playbackInfo });
-        } else if (data.data && data.data.otp && data.data.playbackInfo) {
-           setVideoData({ otp: data.data.otp, playbackInfo: data.data.playbackInfo });
+        if (data.status && data.src) {
+           setVideoUrl(data.src);
         } else {
-           // Fallback mechanism
-           setVideoData({ 
-             otp: data.otp || (data.data && data.data.otp), 
-             playbackInfo: data.playbackInfo || (data.data && data.data.playbackInfo) 
-           });
+           throw new Error('Video URL not found in response');
         }
       } catch (err) {
         console.error('Error fetching video:', err);
@@ -67,14 +58,14 @@ const VideoPlayer = ({ videoId }) => {
     return <div style={{ padding: '40px', textAlign: 'center', color: '#ef4444' }}>Error loading video: {error}</div>;
   }
 
-  if (!videoData.otp || !videoData.playbackInfo) {
+  if (!videoUrl) {
     return <div style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Video details not available. Please check the backend response.</div>;
   }
 
   return (
     <div style={{ width: '100%', aspectRatio: '16/9', backgroundColor: '#000', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
       <iframe
-        src={`https://player.vdocipher.com/v2/?otp=${videoData.otp}&playbackInfo=${videoData.playbackInfo}`}
+        src={videoUrl}
         style={{ border: 0, width: '100%', height: '100%' }}
         allow="encrypted-media"
         allowFullScreen

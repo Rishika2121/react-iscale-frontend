@@ -247,7 +247,7 @@ const CertificateVerificationPage = ({ setCurrentPage }) => {
             marginBottom: 32,
             padding: 0
           }}
-          onMouseEnter={e => e.currentTarget.style.color = '#ED1C24'}
+          onMouseEnter={e => e.currentTarget.style.color = '#2563eb'}
           onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}
         >
           <ArrowLeft size={16} /> Back to Home
@@ -262,10 +262,10 @@ const CertificateVerificationPage = ({ setCurrentPage }) => {
             width: 72,
             height: 72,
             borderRadius: '50%',
-            background: 'rgba(237, 28, 36, 0.08)',
-            color: '#ED1C24',
+            background: 'rgba(37, 99, 235, 0.08)',
+            color: '#2563eb',
             marginBottom: 16,
-            boxShadow: '0 8px 24px rgba(237, 28, 36, 0.15)'
+            boxShadow: '0 8px 24px rgba(37, 99, 235, 0.15)'
           }}>
             <ShieldCheck size={36} />
           </div>
@@ -313,7 +313,7 @@ const CertificateVerificationPage = ({ setCurrentPage }) => {
               disabled={loading}
               className="btn-shine"
               style={{
-                background: 'linear-gradient(135deg, #ED1C24 0%, #b5151b 100%)',
+                background: 'linear-gradient(135deg, #2563eb 0%, #b5151b 100%)',
                 color: '#fff',
                 padding: '14px 28px',
                 borderRadius: 12,
@@ -324,7 +324,7 @@ const CertificateVerificationPage = ({ setCurrentPage }) => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 8,
-                boxShadow: '0 4px 14px rgba(237, 28, 36, 0.25)',
+                boxShadow: '0 4px 14px rgba(37, 99, 235, 0.25)',
                 minWidth: 140,
                 justifyContent: 'center'
               }}
@@ -343,7 +343,7 @@ const CertificateVerificationPage = ({ setCurrentPage }) => {
           <div style={{ animation: 'fadeUp 0.4s ease' }}>
             {loading ? (
               <div style={{ textAlign: 'center', padding: '60px 0' }}>
-                <div style={{ width: 44, height: 44, border: '3px solid rgba(237,28,36,0.1)', borderTop: '3px solid #ED1C24', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 16px' }} />
+                <div style={{ width: 44, height: 44, border: '3px solid rgba(37,99,235,0.1)', borderTop: '3px solid #2563eb', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 16px' }} />
                 <p style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Securing verification records...</p>
               </div>
             ) : searchResult ? (
@@ -386,7 +386,7 @@ const CertificateVerificationPage = ({ setCurrentPage }) => {
                 <div style={{ padding: '32px 32px 24px', display: 'flex', flexDirection: 'column', gap: 20 }}>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 24 }}>
                     <div style={{ display: 'flex', gap: 12 }}>
-                      <User size={18} style={{ color: '#ED1C24', marginTop: 3 }} />
+                      <User size={18} style={{ color: '#2563eb', marginTop: 3 }} />
                       <div>
                         <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}>Student Name</div>
                         <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginTop: 2 }}>{searchResult.studentName}</div>
@@ -394,7 +394,7 @@ const CertificateVerificationPage = ({ setCurrentPage }) => {
                     </div>
 
                     <div style={{ display: 'flex', gap: 12 }}>
-                      <BookOpen size={18} style={{ color: '#ED1C24', marginTop: 3 }} />
+                      <BookOpen size={18} style={{ color: '#2563eb', marginTop: 3 }} />
                       <div>
                         <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}>Course Program</div>
                         <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginTop: 2 }}>{searchResult.courseName}</div>
@@ -402,7 +402,7 @@ const CertificateVerificationPage = ({ setCurrentPage }) => {
                     </div>
 
                     <div style={{ display: 'flex', gap: 12 }}>
-                      <Calendar size={18} style={{ color: '#ED1C24', marginTop: 3 }} />
+                      <Calendar size={18} style={{ color: '#2563eb', marginTop: 3 }} />
                       <div>
                         <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}>Date of Issue</div>
                         <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginTop: 2 }}>{searchResult.date}</div>
@@ -410,7 +410,7 @@ const CertificateVerificationPage = ({ setCurrentPage }) => {
                     </div>
 
                     <div style={{ display: 'flex', gap: 12 }}>
-                      <Award size={18} style={{ color: '#ED1C24', marginTop: 3 }} />
+                      <Award size={18} style={{ color: '#2563eb', marginTop: 3 }} />
                       <div>
                         <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}>Academic Grade</div>
                         <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginTop: 2 }}>{searchResult.grade}</div>
@@ -423,7 +423,7 @@ const CertificateVerificationPage = ({ setCurrentPage }) => {
                   {/* HTML/CSS Certificate representation */}
                   <div style={{
                     border: '8px double #d4af37',
-                    background: '#fff',
+                    background: 'var(--card-bg)',
                     borderRadius: 16,
                     padding: '24px 20px',
                     textAlign: 'center',

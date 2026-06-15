@@ -107,8 +107,8 @@ const styles = `
 
 .field-input:focus {
   background: #ffffff;
-  border-color: #ED1C24;
-  box-shadow: 0 0 0 4px rgba(237, 28, 36, 0.1);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
 }
 
 .field-textarea {
@@ -151,12 +151,12 @@ const styles = `
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ED1C24, #b91c1c);
+  background: linear-gradient(135deg, #2563eb, #b91c1c);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 16px;
-  box-shadow: 0 8px 20px rgba(237, 28, 36, 0.25);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
   transition: transform 0.3s ease;
 }
 
@@ -193,9 +193,9 @@ const styles = `
 }
 
 .avatar-upload-btn:hover {
-  background: #ED1C24;
+  background: #2563eb;
   color: #fff;
-  border-color: #ED1C24;
+  border-color: #2563eb;
 }
 
 .account-info-card {
@@ -273,14 +273,14 @@ const styles = `
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #ED1C24, #c50e15);
+  background: linear-gradient(135deg, #2563eb, #c50e15);
   color: white;
-  box-shadow: 0 4px 15px rgba(237, 28, 36, 0.2);
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(237, 28, 36, 0.35);
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
   background: linear-gradient(135deg, #f72a32, #d1131a);
 }
 

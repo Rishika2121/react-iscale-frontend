@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CheckCircle, Calendar, Clock, User } from 'lucide-react';
 
 const colors = [
-  { bg: 'linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%)', border: '#fecdd3', badgeBg: '#f43f5e', badgeText: '#fff', accent: '#e11d48' }, // Light Pink
+  { bg: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)', border: '#bfdbfe', badgeBg: '#3b82f6', badgeText: '#fff', accent: '#2563eb' }, // Light Pink
   { bg: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)', border: '#bbf7d0', badgeBg: '#10b981', badgeText: '#fff', accent: '#16a34a' }, // Light Green (Mint)
   { bg: 'linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)', border: '#e9d5ff', badgeBg: '#a855f7', badgeText: '#fff', accent: '#8b5cf6' }, // Lavender
   { bg: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', border: '#bae6fd', badgeBg: '#0284c7', badgeText: '#fff', accent: '#0369a1' }, // Light Blue (Sky)
@@ -181,7 +181,7 @@ const EnrolledEvents = () => {
                       onClick={() => alert('Redirecting to live class Zoom/Meet link...')}
                       className="live-btn"
                     >
-                      <span style={{ width: 8, height: 8, background: '#fff', borderRadius: '50%', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
+                      <span style={{ width: 8, height: 8, background: 'var(--card-bg)', borderRadius: '50%', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
                       Join Live Now
                     </button>
                   ) : event.status === 'Registered' ? (

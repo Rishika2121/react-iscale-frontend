@@ -19,13 +19,13 @@ import {
 const ShieldLogo = ({ onClick }) => (
   <div onClick={onClick} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
     <svg width="38" height="42" viewBox="0 0 100 110" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M50 0L10 20V55C10 77.2 27.2 97.4 50 105C72.8 97.4 90 77.2 90 55V20L50 0Z" fill="#ED1C24" />
-      <path d="M50 8L18 24V55C18 73.2 31.8 89.8 50 96.5C68.2 89.8 82 73.2 82 55V24L50 8Z" fill="#ED1C24" stroke="white" strokeWidth="4" />
+      <path d="M50 0L10 20V55C10 77.2 27.2 97.4 50 105C72.8 97.4 90 77.2 90 55V20L50 0Z" fill="#2563eb" />
+      <path d="M50 8L18 24V55C18 73.2 31.8 89.8 50 96.5C68.2 89.8 82 73.2 82 55V24L50 8Z" fill="#2563eb" stroke="white" strokeWidth="4" />
       <text x="50" y="68" fill="white" fontSize="45" fontWeight="900" textAnchor="middle" fontFamily="sans-serif">I</text>
     </svg>
     <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
       <span style={{ fontSize: 9, textTransform: 'uppercase', color: '#666', letterSpacing: 1.5, fontWeight: 700 }}>The</span>
-      <span style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 900, fontSize: 22, color: '#ED1C24', letterSpacing: '-0.5px' }}>iSCALE</span>
+      <span style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 900, fontSize: 22, color: '#2563eb', letterSpacing: '-0.5px' }}>iSCALE</span>
     </div>
   </div>
 );
@@ -143,14 +143,14 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
           gap: 4px;
         }
         .db-nav-link:hover {
-          color: #ED1C24;
+          color: #2563eb;
         }
         .db-nav-link.active {
-          color: #ED1C24;
+          color: #2563eb;
           font-weight: 600;
         }
         .cohort-badge {
-          background: #ED1C24;
+          background: #2563eb;
           color: #fff;
           font-size: 9px;
           font-weight: 700;
@@ -249,8 +249,8 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
           transform: translateX(4px);
         }
         .sidebar-btn.active {
-          background: rgba(237, 28, 36, 0.1);
-          color: #ED1C24;
+          background: rgba(37, 99, 235, 0.1);
+          color: #2563eb;
           font-weight: 600;
           border-radius: 8px;
         }
@@ -352,7 +352,7 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
           transition: color 0.2s;
         }
         .footer-link-btn:hover {
-          color: #ED1C24;
+          color: #2563eb;
         }
         .social-icons-row {
           display: flex;
@@ -374,7 +374,7 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
           font-size: 14px;
         }
         .social-circle-btn:hover {
-          background: #ED1C24;
+          background: #2563eb;
           transform: translateY(-2px);
         }
         
@@ -460,7 +460,7 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
           <nav className="db-nav-center">
             <button onClick={() => setCurrentPage('home')} className="db-nav-link">Home</button>
             <button onClick={() => navigateToTab('explore-courses')} className={`db-nav-link ${activeTab === 'explore-courses' ? 'active' : ''}`}>Explore Courses</button>
-            <button onClick={() => setCurrentPage('cohort-courses')} className="db-nav-link" style={{ color: '#ED1C24' }}>
+            <button onClick={() => setCurrentPage('cohort-courses')} className="db-nav-link" style={{ color: '#2563eb' }}>
               Cohort Courses
               <span className="cohort-badge">New</span>
             </button>
@@ -488,17 +488,17 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
             <div style={{ position: 'relative' }}>
               <button onClick={() => setNotificationsOpen(!notificationsOpen)} style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', cursor: 'pointer', transition: 'all 0.2s' }}>
                 <Bell size={18} />
-                {notifications.some(n => !n.read) && <span style={{ position: 'absolute', top: 2, right: 2, width: 8, height: 8, background: '#ED1C24', borderRadius: '50%' }} />}
+                {notifications.some(n => !n.read) && <span style={{ position: 'absolute', top: 2, right: 2, width: 8, height: 8, background: '#2563eb', borderRadius: '50%' }} />}
               </button>
               {notificationsOpen && (
                 <div className="dropdown-menu" style={{ top: '100%', right: 0, width: 280, marginTop: 8, padding: 12 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, borderBottom: '1px solid var(--border-color)', paddingBottom: 6 }}>
                     <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--text-primary)' }}>Notifications</span>
-                    <button onClick={markAllNotificationsRead} style={{ background: 'none', border: 'none', color: '#ED1C24', fontSize: 11, fontWeight: 500, cursor: 'pointer' }}>Mark read</button>
+                    <button onClick={markAllNotificationsRead} style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: 11, fontWeight: 500, cursor: 'pointer' }}>Mark read</button>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 220, overflowY: 'auto' }}>
                     {notifications.map(n => (
-                      <div key={n.id} style={{ padding: 6, borderRadius: 6, background: n.read ? 'var(--card-bg)' : 'rgba(237,28,36,0.08)', borderLeft: n.read ? '2px solid var(--border-color)' : '2px solid #ED1C24' }}>
+                      <div key={n.id} style={{ padding: 6, borderRadius: 6, background: n.read ? 'var(--card-bg)' : 'rgba(37,99,235,0.08)', borderLeft: n.read ? '2px solid var(--border-color)' : '2px solid #2563eb' }}>
                         <div style={{ fontWeight: 600, fontSize: 12, color: 'var(--text-primary)' }}>{n.title}</div>
                         <div style={{ fontSize: 11, color: 'var(--text-secondary)', margin: '2px 0 4px' }}>{n.message}</div>
                         <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>{n.time}</div>
@@ -618,10 +618,10 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
           <div>
             <h3 className="footer-heading">Reach Us Out</h3>
             <ul className="footer-links-list" style={{ gap: 16 }}>
-              <li style={{ fontSize: 14, display: 'flex', gap: 8 }}><span style={{ color: '#ED1C24' }}>Phone:</span> +91 7880113112</li>
-              <li style={{ fontSize: 14, display: 'flex', gap: 8 }}><span style={{ color: '#ED1C24' }}>Whatsapp:</span> +91 7880113112</li>
-              <li style={{ fontSize: 14, display: 'flex', gap: 8 }}><span style={{ color: '#ED1C24' }}>E-mail:</span> contact@theiscale.com | info@theiscale.com</li>
-              <li style={{ fontSize: 14, display: 'flex', gap: 8, lineHeight: 1.5 }}><span style={{ color: '#ED1C24' }}>Working Location:</span> Bangalore || Chhattisgarh</li>
+              <li style={{ fontSize: 14, display: 'flex', gap: 8 }}><span style={{ color: '#2563eb' }}>Phone:</span> +91 7880113112</li>
+              <li style={{ fontSize: 14, display: 'flex', gap: 8 }}><span style={{ color: '#2563eb' }}>Whatsapp:</span> +91 7880113112</li>
+              <li style={{ fontSize: 14, display: 'flex', gap: 8 }}><span style={{ color: '#2563eb' }}>E-mail:</span> contact@theiscale.com | info@theiscale.com</li>
+              <li style={{ fontSize: 14, display: 'flex', gap: 8, lineHeight: 1.5 }}><span style={{ color: '#2563eb' }}>Working Location:</span> Bangalore || Chhattisgarh</li>
             </ul>
           </div>
         </div>

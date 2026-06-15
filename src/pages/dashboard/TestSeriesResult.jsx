@@ -95,7 +95,7 @@ const TestSeriesResult = () => {
                   <tr key={result.id} className="table-row" style={{ borderBottom: idx < results.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
                     <td style={{ padding: '24px 24px', fontSize: 15, fontWeight: 700, color: '#0f172a' }}>{result.testName}</td>
                     <td style={{ padding: '24px 24px', fontSize: 14, color: '#64748b', fontWeight: 500 }}>{result.date}</td>
-                    <td style={{ padding: '24px 24px', fontSize: 16, fontWeight: 800, color: '#ED1C24' }}>{result.score}</td>
+                    <td style={{ padding: '24px 24px', fontSize: 16, fontWeight: 800, color: '#2563eb' }}>{result.score}</td>
                     <td style={{ padding: '24px 24px', fontSize: 14, color: '#475569', fontWeight: 600 }}>{result.accuracy}</td>
                     <td style={{ padding: '24px 24px', fontSize: 15, fontWeight: 800, color: '#0f172a' }}>{result.rank}</td>
                     <td style={{ padding: '24px 24px' }}>

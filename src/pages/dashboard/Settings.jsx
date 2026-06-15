@@ -94,12 +94,12 @@ const Settings = () => {
         }
         .settings-input:focus {
           background: #ffffff;
-          border-color: #ED1C24;
-          box-shadow: 0 0 0 4px rgba(237, 28, 36, 0.1);
+          border-color: #2563eb;
+          box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
         }
         .settings-btn {
           padding: 14px 28px;
-          background: linear-gradient(135deg, #ED1C24, #c50e15);
+          background: linear-gradient(135deg, #2563eb, #c50e15);
           color: #fff;
           border-radius: 12px;
           border: none;
@@ -107,13 +107,13 @@ const Settings = () => {
           font-weight: 700;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-          box-shadow: 0 4px 15px rgba(237, 28, 36, 0.2);
+          box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
           width: 100%;
         }
         .settings-btn:hover {
           background: linear-gradient(135deg, #f72a32, #d1131a);
           transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(237, 28, 36, 0.35);
+          box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
         }
         .settings-tab {
           background: none;
@@ -184,8 +184,8 @@ const Settings = () => {
             className="settings-tab"
             onClick={() => setActiveTab("Profile")}
             style={{ 
-              color: activeTab === "Profile" ? "#ED1C24" : "#64748b",
-              borderBottomColor: activeTab === "Profile" ? "#ED1C24" : "transparent",
+              color: activeTab === "Profile" ? "#2563eb" : "#64748b",
+              borderBottomColor: activeTab === "Profile" ? "#2563eb" : "transparent",
             }}
           >
             Profile
@@ -194,8 +194,8 @@ const Settings = () => {
             className="settings-tab"
             onClick={() => setActiveTab("Password")}
             style={{ 
-              color: activeTab === "Password" ? "#ED1C24" : "#64748b",
-              borderBottomColor: activeTab === "Password" ? "#ED1C24" : "transparent",
+              color: activeTab === "Password" ? "#2563eb" : "#64748b",
+              borderBottomColor: activeTab === "Password" ? "#2563eb" : "transparent",
             }}
           >
             Password
@@ -253,13 +253,13 @@ const Settings = () => {
                 <label className="settings-label">Gender</label>
                 <div className="gender-options" style={{ display: "flex", gap: 30, padding: '8px 0' }}>
                   <label style={{ fontSize: 14, color: "#1e293b", display: "flex", alignItems: "center", gap: 8, fontWeight: 500, cursor: 'pointer' }}>
-                    <input type="radio" name="gender" value="Male" checked={formData.gender === "Male"} onChange={handleInputChange} style={{ accentColor: '#ED1C24', width: 16, height: 16 }} /> Male
+                    <input type="radio" name="gender" value="Male" checked={formData.gender === "Male"} onChange={handleInputChange} style={{ accentColor: '#2563eb', width: 16, height: 16 }} /> Male
                   </label>
                   <label style={{ fontSize: 14, color: "#1e293b", display: "flex", alignItems: "center", gap: 8, fontWeight: 500, cursor: 'pointer' }}>
-                    <input type="radio" name="gender" value="Female" checked={formData.gender === "Female"} onChange={handleInputChange} style={{ accentColor: '#ED1C24', width: 16, height: 16 }} /> Female
+                    <input type="radio" name="gender" value="Female" checked={formData.gender === "Female"} onChange={handleInputChange} style={{ accentColor: '#2563eb', width: 16, height: 16 }} /> Female
                   </label>
                   <label style={{ fontSize: 14, color: "#1e293b", display: "flex", alignItems: "center", gap: 8, fontWeight: 500, cursor: 'pointer' }}>
-                    <input type="radio" name="gender" value="Others" checked={formData.gender === "Others"} onChange={handleInputChange} style={{ accentColor: '#ED1C24', width: 16, height: 16 }} /> Others
+                    <input type="radio" name="gender" value="Others" checked={formData.gender === "Others"} onChange={handleInputChange} style={{ accentColor: '#2563eb', width: 16, height: 16 }} /> Others
                   </label>
                 </div>
               </div>

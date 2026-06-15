@@ -77,19 +77,21 @@ const MegaDropdown = ({ type, isOpen, onClose, setCurrentPage }) => {
         </div>
       </div>
 
-      <div className="container mega-dropdown-content">
-        {/* Left Column: Categories List */}
-        <div className="mega-dropdown-categories">
-          {activeCategories.map(cat => (
-            <div
-              key={cat}
-              onMouseEnter={() => setActiveCategory(cat)}
-              className={`category-item ${activeCategory === cat ? 'active' : ''}`}
-            >
-              {cat}
-            </div>
-          ))}
-        </div>
+      <div className={`${type === 'cohort' ? 'container-fluid mega-grid-cohort' : 'container mega-grid-all'} mega-dropdown-content`}>
+        {/* Left Column: Categories List (Only for All Courses) */}
+        {type !== 'cohort' && (
+          <div className="mega-dropdown-categories">
+            {activeCategories.map(cat => (
+              <div
+                key={cat}
+                onMouseEnter={() => setActiveCategory(cat)}
+                className={`category-item ${activeCategory === cat ? 'active' : ''}`}
+              >
+                {cat}
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Middle Column: Course Cards Grid */}
         <div className="mega-dropdown-courses">
@@ -207,7 +209,7 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
           to { opacity: 1; transform: translateY(0); }
         }
         .highlights-ribbon {
-          background: linear-gradient(90deg, var(--red) 0%, var(--red-dark) 100%);
+          background: linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%);
           color: #fff;
           padding: 8px 0;
           font-size: 11px;
@@ -232,10 +234,15 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
         }
         .mega-dropdown-content {
           display: grid;
-          grid-template-columns: 240px 1fr 280px;
           min-height: 380px;
-          padding: 24px 0;
-          gap: 24px;
+          padding: 32px 24px;
+          gap: 32px;
+        }
+        .mega-grid-all {
+          grid-template-columns: 240px 1fr 280px;
+        }
+        .mega-grid-cohort {
+          grid-template-columns: 1fr 320px;
         }
         .mega-dropdown-categories {
           border-right: 1px solid var(--border-color);
@@ -327,7 +334,7 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
           text-align: left;
         }
         .promo-card span {
-          color: #ff4d54;
+          color: #60a5fa;
           font-size: 10px;
           font-weight: 800;
           letter-spacing: 1px;
@@ -563,7 +570,7 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
                 style={{
                   padding: '10px 22px', background: 'var(--red)', color: '#fff',
                   borderRadius: 8, fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 14,
-                  transition: 'all 0.2s', boxShadow: '0 4px 15px rgba(237, 28, 36, 0.2)'
+                  transition: 'all 0.2s', boxShadow: '0 4px 15px rgba(37, 99, 235, 0.2)'
                 }}
               >
                 Dashboard
@@ -574,7 +581,7 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
                 style={{
                   padding: '10px 22px', background: 'var(--red)', color: '#fff',
                   borderRadius: 8, fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 14,
-                  transition: 'all 0.2s', boxShadow: '0 4px 15px rgba(237, 28, 36, 0.2)'
+                  transition: 'all 0.2s', boxShadow: '0 4px 15px rgba(37, 99, 235, 0.2)'
                 }}
               >
                 Login/Register

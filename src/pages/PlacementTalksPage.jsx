@@ -81,7 +81,7 @@ const PlacementTalksPage = ({ setCurrentPage }) => {
               <input type="text" placeholder="Search for HR experts, companies, or industries..." style={{ border: 'none', background: 'transparent', color: 'var(--text-primary)', outline: 'none', width: '100%', fontSize: 16 }} />
             </div>
             <div style={{ display: 'flex', gap: 12 }}>
-              <button className="hover-glow" style={{ padding: '14px 28px', background: 'linear-gradient(135deg, var(--red) 0%, #a91111 100%)', color: '#fff', border: 'none', borderRadius: 12, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, fontSize: 15, boxShadow: '0 4px 15px rgba(237, 28, 36, 0.3)' }}>
+              <button className="hover-glow" style={{ padding: '14px 28px', background: 'linear-gradient(135deg, var(--red) 0%, #a91111 100%)', color: '#fff', border: 'none', borderRadius: 12, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, fontSize: 15, boxShadow: '0 4px 15px rgba(37, 99, 235, 0.3)' }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
                 </svg>

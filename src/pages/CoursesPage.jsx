@@ -114,117 +114,56 @@ const CoursesPage = ({ setCurrentPage }) => {
         .public-courses-input:focus {
           border-color: var(--red);
           background: var(--bg-primary);
-          box-shadow: 0 0 0 3px rgba(237, 28, 36, 0.1);
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
-        .public-tab-btn {
-          padding: 10px 24px;
-          border-radius: 100px;
-          border: 1px solid var(--border-color);
+        .courses-layout {
+          display: flex;
+          gap: 32px;
+          align-items: flex-start;
+          padding: 40px 24px;
+        }
+        .courses-sidebar {
+          width: 280px;
+          flex-shrink: 0;
           background: var(--card-bg);
-          color: var(--text-secondary);
-          font-weight: 600;
-          font-size: 14px;
-          cursor: pointer;
-          transition: all 0.25s;
-          white-space: nowrap;
-        }
-        .public-tab-btn:hover {
-          border-color: var(--red);
-          color: var(--red);
-        }
-        .public-tab-btn.active {
-          background: var(--red);
-          color: #fff;
-          border-color: var(--red);
-          box-shadow: 0 4px 12px rgba(237, 28, 36, 0.2);
+          border-radius: 16px;
+          padding: 24px;
+          border: 1px solid var(--border-color);
+          position: sticky;
+          top: 100px;
+          box-shadow: var(--card-shadow);
         }
         .public-course-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
-          gap: 30px;
+          grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+          gap: 24px;
+          flex: 1;
+          min-width: 0;
         }
         .public-card {
-          background: #ffffff;
+          background: var(--card-bg);
           border-radius: 16px;
           overflow: hidden;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+          box-shadow: var(--card-shadow);
           cursor: pointer;
-          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
           text-align: left;
           position: relative;
-          border: 1px solid rgba(0,0,0,0.05);
+          border: 1px solid var(--border-color);
           display: flex;
           flex-direction: column;
           height: 100%;
         }
         .public-card:hover {
-          transform: translateY(-8px) scale(1.02);
-          box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-        }
-        .public-card-thumb {
-          height: 180px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          position: relative;
-          padding: 20px;
-          overflow: hidden;
+          transform: translateY(-6px);
+          border-color: var(--red);
+          box-shadow: 0 15px 35px rgba(37, 99, 235, 0.15);
         }
         .public-card-info {
           padding: 20px;
           display: flex;
           flex-direction: column;
-          gap: 8px;
-        }
-        .public-card-tag {
-          position: absolute;
-          top: 12px;
-          left: 12px;
-          background: var(--red);
-          color: #fff;
-          padding: 3px 10px;
-          border-radius: 100px;
-          font-size: 10px;
-          font-weight: 800;
-          letter-spacing: 0.5px;
-          z-index: 10;
-        }
-        .public-card-duration {
-          position: absolute;
-          top: 12px;
-          right: 12px;
-          background: rgba(0,0,0,0.65);
-          color: #fff;
-          padding: 3px 8px;
-          border-radius: 6px;
-          font-size: 10px;
-          font-weight: 700;
-          z-index: 10;
-        }
-        .public-card-title {
-          font-size: 1.1rem;
-          font-weight: 800;
-          color: var(--text-primary);
-          line-height: 1.4;
-          font-family: var(--font-display);
-        }
-        .public-card-subtitle {
-          color: var(--text-secondary);
-          font-size: 13px;
-          line-height: 1.5;
-        }
-        .public-card-rating {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-        }
-        .public-card-footer {
-          margin-top: 8px;
-          padding-top: 16px;
-          border-top: 1px solid var(--border-color);
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
+          flex: 1;
         }
         .public-enroll-btn {
           padding: 8px 16px;
@@ -232,20 +171,23 @@ const CoursesPage = ({ setCurrentPage }) => {
           color: #fff;
           border-radius: 8px;
           font-weight: 700;
-          font-size: 12px;
+          font-size: 13px;
           display: flex;
           align-items: center;
-          gap: 4px;
+          gap: 6px;
           transition: all 0.2s;
         }
         .public-card:hover .public-enroll-btn {
           background: var(--red-dark);
         }
-        @media (max-width: 600px) {
-          .courses-filter-row {
+        @media (max-width: 900px) {
+          .courses-layout {
             flex-direction: column;
-            align-items: stretch !important;
-            gap: 16px;
+          }
+          .courses-sidebar {
+            width: 100%;
+            position: relative;
+            top: 0;
           }
         }
       `}} />
@@ -254,7 +196,7 @@ const CoursesPage = ({ setCurrentPage }) => {
       <div className="public-courses-hero">
         <div className="container">
           <h1 style={{ fontSize: 44, fontWeight: 900 }}>
-            <span className="animated-text-gradient">Explore</span> <span className="text-gradient">Courses</span>
+            <span className="animated-text-gradient">Explore</span> <span className="text-gradient" style={{ background: 'linear-gradient(135deg, var(--red) 0%, var(--red-light) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Courses</span>
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: 16, marginTop: 8 }}>
             Upskill under leading domain experts with curated practical curriculum.
@@ -272,91 +214,107 @@ const CoursesPage = ({ setCurrentPage }) => {
         </div>
       </div>
 
-      <div className="container" style={{ padding: '40px 24px' }}>
-        {/* Filter Categories and Row */}
-        <div className="courses-filter-row" style={{ display: 'flex', gap: 12, marginBottom: 32, overflowX: 'auto', paddingBottom: 8, flexWrap: 'nowrap', WebkitOverflowScrolling: 'touch', alignItems: 'center' }}>
-          {categories.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`public-tab-btn ${activeCategory === cat ? 'active' : ''}`}
-            >
-              {cat === 'All' ? 'All Courses' : cat}
-            </button>
-          ))}
-          <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap' }}>
-            {filtered.length} courses found
-          </span>
+      <div className="container courses-layout">
+        {/* Left Sidebar Filter */}
+        <div className="courses-sidebar">
+          <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Filter size={18} color="var(--red)" /> Filters
+          </h3>
+          
+          <div style={{ marginBottom: '24px' }}>
+            <h4 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '14px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Categories</h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {categories.map(cat => (
+                <label key={cat} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '14px', color: activeCategory === cat ? 'var(--red)' : 'var(--text-secondary)', fontWeight: activeCategory === cat ? 700 : 500, transition: 'all 0.2s' }}>
+                  <input 
+                    type="radio" 
+                    name="category" 
+                    checked={activeCategory === cat} 
+                    onChange={() => setActiveCategory(cat)} 
+                    style={{ accentColor: 'var(--red)', width: '16px', height: '16px', cursor: 'pointer' }}
+                  />
+                  {cat === 'All' ? 'All Categories' : cat}
+                </label>
+              ))}
+            </div>
+          </div>
+          
+          <button onClick={handleReset} style={{ width: '100%', padding: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }} onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--red)'} onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}>
+            <RotateCcw size={16} /> Reset Filters
+          </button>
         </div>
 
-        {/* Courses Listing Grid */}
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: '60px 0' }}>
-            <div style={{ width: 40, height: 40, border: '3px solid rgba(237,28,36,0.2)', borderTop: '3px solid var(--red)', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }} />
-            <h3 style={{ color: 'var(--text-secondary)' }}>Loading Courses...</h3>
+        {/* Right Content Area */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid var(--border-color)' }}>
+            <span style={{ color: 'var(--text-muted)', fontSize: 15, fontWeight: 600 }}>
+              Showing <span style={{ color: 'var(--text-primary)', fontWeight: 800 }}>{filtered.length}</span> programs
+            </span>
           </div>
-        ) : filtered.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '60px 20px', background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 16 }}>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: 16 }}>No courses found matching your criteria.</p>
-            <button className="public-tab-btn" onClick={handleReset} style={{ margin: '0 auto' }}>Reset Filters</button>
-          </div>
-        ) : (
-          <div className="public-course-grid">
-            {filtered.map((course, idx) => {
-              const cardColor = defaultColors[idx % defaultColors.length];
-              return (
-              <div 
-                key={idx} 
-                className="public-card hover-glow"
-                onClick={() => setCurrentPage(`course-details/${course.id}`)}
-                style={{
-                  borderTop: `6px solid transparent`,
-                  borderImage: `${cardColor} 1`,
-                  borderImageSlice: '1 0 0 0',
-                  color: '#333'
-                }}
-              >
-                <div style={{ padding: '16px 16px 0 16px', flex: 1 }}>
-                  <div style={{ borderRadius: 12, overflow: 'hidden', height: 160, marginBottom: 16, position: 'relative' }}>
-                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: cardColor, opacity: 0.1, zIndex: 1 }}></div>
-                    <img src={course.img} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'relative', zIndex: 0 }} />
-                  </div>
-                  
-                  <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 12, lineHeight: 1.3, color: '#0f172a' }}>
-                    {course.title}
-                  </h4>
 
-                  <div style={{ display: 'flex', gap: 16, marginBottom: 12, fontSize: 13, color: '#64748b', fontWeight: 500 }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <Eye size={14} color="#94a3b8" /> {course.views} Views
+          {/* Courses Listing Grid */}
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '60px 0' }}>
+              <div style={{ width: 40, height: 40, border: '3px solid rgba(37,99,235,0.2)', borderTop: '3px solid var(--red)', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }} />
+              <h3 style={{ color: 'var(--text-secondary)' }}>Loading Courses...</h3>
+            </div>
+          ) : filtered.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '60px 20px', background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 16 }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: 16 }}>No courses found matching your criteria.</p>
+              <button onClick={handleReset} style={{ padding: '10px 24px', background: 'var(--red)', color: '#fff', borderRadius: 8, border: 'none', fontWeight: 700, cursor: 'pointer' }}>Reset Search</button>
+            </div>
+          ) : (
+            <div className="public-course-grid">
+              {filtered.map((course, idx) => {
+                const cardColor = defaultColors[idx % defaultColors.length];
+                return (
+                <div 
+                  key={idx} 
+                  className="public-card hover-glow"
+                  onClick={() => setCurrentPage(`course-details/${course.id}`)}
+                >
+                  <div style={{ padding: '16px 16px 0 16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ borderRadius: 12, overflow: 'hidden', height: 160, marginBottom: 16, position: 'relative', border: '1px solid var(--border-color)' }}>
+                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: cardColor, opacity: 0.15, zIndex: 1 }}></div>
+                      <img src={course.img} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'relative', zIndex: 0 }} />
+                    </div>
+                    
+                    <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 12, lineHeight: 1.3, color: 'var(--text-primary)' }}>
+                      {course.title}
+                    </h4>
+
+                    <div style={{ display: 'flex', gap: 16, marginBottom: 12, fontSize: 13, color: 'var(--text-muted)', fontWeight: 600 }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <Eye size={14} /> {course.views} Views
+                      </span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <BookOpen size={14} /> {course.chapters} Chapters
+                      </span>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--text-muted)', fontWeight: 600, marginBottom: 12 }}>
+                      <Calendar size={14} /> {course.duration}
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--text-muted)', fontWeight: 600, marginBottom: 16 }}>
+                      <Zap size={14} color="var(--red)" /> {course.category}
+                    </div>
+                  </div>
+
+                  <div style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', marginTop: 'auto' }}>
+                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, color: 'var(--text-primary)' }}>
+                      {course.price}
                     </span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <BookOpen size={14} color="#94a3b8" /> {course.chapters} Chapters
+                    <span className="public-enroll-btn">
+                      Learn More <ArrowRight size={14} />
                     </span>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#64748b', fontWeight: 500, marginBottom: 12 }}>
-                    <Calendar size={14} color="#94a3b8" /> {course.duration}
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#64748b', fontWeight: 500, marginBottom: 16 }}>
-                    <Zap size={14} color="#94a3b8" /> Category : {course.category}
                   </div>
                 </div>
-
-                <div style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(0,0,0,0.02)', borderTop: '1px solid rgba(0,0,0,0.04)', marginTop: 'auto' }}>
-                  <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, color: '#0f172a' }}>
-                    {course.price}
-                  </span>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: '#fff', background: cardColor, padding: '8px 16px', borderRadius: '100px', display: 'flex', alignItems: 'center', gap: 6, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-                    Learn More <ArrowRight size={14} />
-                  </span>
-                </div>
-              </div>
-              );
-            })}
-          </div>
-        )}
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

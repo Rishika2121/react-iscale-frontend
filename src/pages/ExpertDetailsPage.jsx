@@ -15,7 +15,7 @@ const ExpertDetailsPage = () => {
           </div>
           
           <div style={{ flex: 1 }}>
-            <div style={{ display: 'inline-block', background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 13, fontWeight: 700, marginBottom: 16 }}>Motivational Speaker</div>
+            <div style={{ display: 'inline-block', background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 13, fontWeight: 700, marginBottom: 16 }}>Motivational Speaker</div>
             <h1 style={{ fontSize: 36, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 12 }}>Dr. Vivek Bindra</h1>
             <h3 style={{ fontSize: 20, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 30 }}>Founder & CEO at Bada Business</h3>
             
@@ -30,7 +30,7 @@ const ExpertDetailsPage = () => {
               ))}
             </div>
             
-            <button className="btn-shine" style={{ marginTop: 40, padding: '14px 32px', background: 'var(--red)', color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none', cursor: 'pointer', transition: 'all 0.3s', boxShadow: '0 10px 20px rgba(237, 28, 36, 0.2)' }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform = 'none'}>
+            <button className="btn-shine" style={{ marginTop: 40, padding: '14px 32px', background: 'var(--red)', color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none', cursor: 'pointer', transition: 'all 0.3s', boxShadow: '0 10px 20px rgba(37, 99, 235, 0.2)' }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform = 'none'}>
               View Mentor Sessions
             </button>
           </div>

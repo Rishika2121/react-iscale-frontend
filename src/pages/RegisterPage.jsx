@@ -139,11 +139,11 @@ const RegisterPage = ({ setCurrentPage }) => {
             {/* Design circle bg */}
             <div style={{
               position: 'absolute', width: 200, height: 200,
-              background: 'rgba(237, 28, 36, 0.04)', borderRadius: '50%',
+              background: 'rgba(37, 99, 235, 0.04)', borderRadius: '50%',
               top: '-50px', right: '-50px', pointerEvents: 'none'
             }} />
 
-            <div style={{ display: 'inline-flex', padding: 8, background: 'rgba(237,28,36,0.08)', borderRadius: 12, color: 'var(--red)', marginBottom: 20 }}>
+            <div style={{ display: 'inline-flex', padding: 8, background: 'rgba(37,99,235,0.08)', borderRadius: 12, color: 'var(--red)', marginBottom: 20 }}>
               <ShieldCheck size={28} />
             </div>
 
@@ -164,7 +164,7 @@ const RegisterPage = ({ setCurrentPage }) => {
                 <div key={stepObj.s} style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
                   <div style={{
                     width: 32, height: 32, borderRadius: '50%',
-                    background: step === stepObj.s ? 'var(--red)' : step > stepObj.s ? 'rgba(237,28,36,0.1)' : 'var(--bg-secondary)',
+                    background: step === stepObj.s ? 'var(--red)' : step > stepObj.s ? 'rgba(37,99,235,0.1)' : 'var(--bg-secondary)',
                     border: '1px solid ' + (step >= stepObj.s ? 'var(--red)' : 'var(--border-color)'),
                     color: step === stepObj.s ? '#fff' : step > stepObj.s ? 'var(--red)' : 'var(--text-muted)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800
@@ -256,7 +256,7 @@ const RegisterPage = ({ setCurrentPage }) => {
                   style={{
                     width: '100%', padding: '16px', background: 'linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%)',
                     color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 16px rgba(237,28,36,0.2)'
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 16px rgba(37,99,235,0.2)'
                   }}
                 >
                   {verifyingOtp ? 'Verifying...' : 'Verify OTP & Next'} <ArrowRight size={18} />
@@ -329,7 +329,7 @@ const RegisterPage = ({ setCurrentPage }) => {
                       onClick={() => setForm({ ...form, gender: g.toLowerCase() })}
                       style={{
                         flex: 1, padding: '10px', borderRadius: 8, border: '1.5px solid ' + (form.gender === g.toLowerCase() ? 'var(--red)' : 'var(--border-color)'),
-                        background: form.gender === g.toLowerCase() ? 'rgba(237,28,36,0.04)' : 'transparent',
+                        background: form.gender === g.toLowerCase() ? 'rgba(37,99,235,0.04)' : 'transparent',
                         color: form.gender === g.toLowerCase() ? 'var(--red)' : 'var(--text-primary)', fontSize: 13, fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s'
                       }}
                     >
@@ -398,7 +398,7 @@ const RegisterPage = ({ setCurrentPage }) => {
                         style={{
                           border: '1.5px solid ' + (isActive ? 'var(--red)' : 'var(--border-color)'),
                           borderRadius: 14, padding: '16px 14px', cursor: 'pointer',
-                          background: isActive ? 'rgba(237,28,36,0.03)' : 'var(--bg-secondary)',
+                          background: isActive ? 'rgba(37,99,235,0.03)' : 'var(--bg-secondary)',
                           transition: 'all 0.25s ease',
                           display: 'flex', flexDirection: 'column', gap: 6, position: 'relative'
                         }}
@@ -436,7 +436,7 @@ const RegisterPage = ({ setCurrentPage }) => {
                         style={{
                           border: '1.5px solid ' + (isActive ? 'var(--red)' : 'var(--border-color)'),
                           borderRadius: 12, padding: '14px 18px', cursor: 'pointer',
-                          background: isActive ? 'rgba(237,28,36,0.03)' : 'var(--bg-secondary)',
+                          background: isActive ? 'rgba(37,99,235,0.03)' : 'var(--bg-secondary)',
                           transition: 'all 0.25s ease',
                           display: 'flex', alignItems: 'center', justifyContent: 'space-between'
                         }}
@@ -451,7 +451,7 @@ const RegisterPage = ({ setCurrentPage }) => {
                           background: isActive ? 'var(--red)' : 'transparent',
                           display: 'flex', alignItems: 'center', justifyContent: 'center'
                         }}>
-                          {isActive && <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#fff' }} />}
+                          {isActive && <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--card-bg)' }} />}
                         </div>
                       </div>
                     );
@@ -479,7 +479,7 @@ const RegisterPage = ({ setCurrentPage }) => {
                     color: '#fff', border: 'none', borderRadius: 12, fontWeight: 700, fontSize: 15,
                     cursor: (!survey.objective || !survey.experience || loading) ? 'not-allowed' : 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                    boxShadow: (!survey.objective || !survey.experience || loading) ? 'none' : '0 4px 16px rgba(237,28,36,0.25)'
+                    boxShadow: (!survey.objective || !survey.experience || loading) ? 'none' : '0 4px 16px rgba(37,99,235,0.25)'
                   }}
                 >
                   {loading ? 'Registering...' : 'Complete Registration'} <Check size={18} />

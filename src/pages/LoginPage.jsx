@@ -179,7 +179,7 @@ const LoginPage = ({ setCurrentPage }) => {
                     background: 'linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%)',
                     color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                    boxShadow: '0 4px 16px rgba(237,28,36,0.2)', cursor: 'pointer'
+                    boxShadow: '0 4px 16px rgba(37,99,235,0.2)', cursor: 'pointer'
                   }}
                 >
                   Password <ArrowRight size={18} />
@@ -300,7 +300,7 @@ const LoginPage = ({ setCurrentPage }) => {
                   background: loading ? 'var(--border-color)' : 'linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%)',
                   color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                  boxShadow: loading ? 'none' : '0 4px 16px rgba(237,28,36,0.2)', cursor: loading ? 'not-allowed' : 'pointer'
+                  boxShadow: loading ? 'none' : '0 4px 16px rgba(37,99,235,0.2)', cursor: loading ? 'not-allowed' : 'pointer'
                 }}
               >
                 {loading ? (
@@ -357,7 +357,7 @@ const LoginPage = ({ setCurrentPage }) => {
                   background: verifyingOtp ? 'var(--border-color)' : 'linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%)',
                   color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                  boxShadow: verifyingOtp ? 'none' : '0 4px 16px rgba(237,28,36,0.2)', cursor: verifyingOtp ? 'not-allowed' : 'pointer'
+                  boxShadow: verifyingOtp ? 'none' : '0 4px 16px rgba(37,99,235,0.2)', cursor: verifyingOtp ? 'not-allowed' : 'pointer'
                 }}
               >
                 {verifyingOtp ? (

@@ -114,7 +114,7 @@ const Footer = ({ setCurrentPage }) => {
         .seo-tag:hover {
           border-color: var(--red);
           color: var(--red);
-          background: rgba(237,28,36,0.05);
+          background: rgba(37,99,235,0.05);
         }
         .footer-header {
           font-family: var(--font-display);

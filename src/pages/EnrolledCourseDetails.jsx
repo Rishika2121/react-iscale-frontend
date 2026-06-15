@@ -18,7 +18,7 @@ const EnrolledCourseDetails = () => {
         }
         .gradient-top-strip {
           height: 12px;
-          background: linear-gradient(to right, #93c5fd, #c4b5fd, #fbcfe8);
+          background: linear-gradient(to right, #93c5fd, #c4b5fd, #c7d2fe);
           width: 100%;
         }
         .action-button-dark {

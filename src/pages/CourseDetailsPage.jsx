@@ -569,7 +569,7 @@ const TabButton = ({ active, label, onClick }) => (
       cursor: 'pointer',
       whiteSpace: 'nowrap',
       transition: 'all 0.2s',
-      boxShadow: active ? '0 4px 15px rgba(237, 28, 36, 0.3)' : 'none'
+      boxShadow: active ? '0 4px 15px rgba(37, 99, 235, 0.3)' : 'none'
     }}
   >
     {label}
@@ -1242,7 +1242,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
           linkedin: i.m_linkedin_profile || '',
           img: i.m_instructor_profile
                  ? getImageUrl(i.m_instructor_profile)
-                 : `https://ui-avatars.com/api/?name=${encodeURIComponent(i.m_instructor_name || 'I')}&background=ED1C24&color=fff&bold=true&size=200`
+                 : `https://ui-avatars.com/api/?name=${encodeURIComponent(i.m_instructor_name || 'I')}&background=2563eb&color=fff&bold=true&size=200`
         }))
     : [];
   const reviewsData = reviewsList && reviewsList.length > 0
@@ -1477,7 +1477,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
               <button 
                 onClick={handleEnrollClick}
                 className="btn-shine"
-                style={{ width: '100%', padding: '16px', background: 'var(--red)', color: '#fff', borderRadius: 8, fontWeight: 700, fontSize: 16, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'all 0.2s', boxShadow: '0 4px 15px rgba(237, 28, 36, 0.3)' }}
+                style={{ width: '100%', padding: '16px', background: 'var(--red)', color: '#fff', borderRadius: 8, fontWeight: 700, fontSize: 16, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'all 0.2s', boxShadow: '0 4px 15px rgba(37, 99, 235, 0.3)' }}
               >
                 Enroll Now <ArrowRight size={20} />
               </button>
@@ -1510,7 +1510,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
               <button 
                 onClick={handleEnrollClick}
                 className="btn-shine"
-                style={{ padding: '10px 24px', background: isEnrolled ? '#22c55e' : 'var(--red)', color: '#fff', borderRadius: 8, fontWeight: 700, fontSize: 14, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap', boxShadow: isEnrolled ? '0 4px 15px rgba(34, 197, 94, 0.3)' : '0 4px 15px rgba(237, 28, 36, 0.3)' }}
+                style={{ padding: '10px 24px', background: isEnrolled ? '#22c55e' : 'var(--red)', color: '#fff', borderRadius: 8, fontWeight: 700, fontSize: 14, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap', boxShadow: isEnrolled ? '0 4px 15px rgba(34, 197, 94, 0.3)' : '0 4px 15px rgba(37, 99, 235, 0.3)' }}
               >
                 {isEnrolled ? (
                   <>Resume Course <Check size={16} /></>
@@ -1578,7 +1578,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                   <div style={{ marginTop: 32, paddingTop: 32, borderTop: '1px solid var(--border-color)' }}>
                     <button
                       onClick={() => alert('Syllabus PDF download not yet configured by admin.')}
-                      style={{ background: 'var(--red)', color: '#fff', border: 'none', padding: '14px 32px', borderRadius: 8, fontSize: 16, fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12, boxShadow: '0 4px 15px rgba(237, 28, 36, 0.3)' }}
+                      style={{ background: 'var(--red)', color: '#fff', border: 'none', padding: '14px 32px', borderRadius: 8, fontSize: 16, fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12, boxShadow: '0 4px 15px rgba(37, 99, 235, 0.3)' }}
                     >
                       <Download size={20} />
                       Download Complete Syllabus
@@ -1601,7 +1601,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
               <button 
                 onClick={handleEnrollClick}
                 className="btn-shine"
-                style={{ padding: '16px 40px', background: isEnrolled ? '#22c55e' : 'var(--red)', color: '#fff', borderRadius: 12, fontWeight: 800, fontSize: 16, border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 10, transition: 'all 0.3s', boxShadow: isEnrolled ? '0 4px 20px rgba(34, 197, 94, 0.4)' : '0 4px 20px rgba(237, 28, 36, 0.4)' }}
+                style={{ padding: '16px 40px', background: isEnrolled ? '#22c55e' : 'var(--red)', color: '#fff', borderRadius: 12, fontWeight: 800, fontSize: 16, border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 10, transition: 'all 0.3s', boxShadow: isEnrolled ? '0 4px 20px rgba(34, 197, 94, 0.4)' : '0 4px 20px rgba(37, 99, 235, 0.4)' }}
               >
                 {isEnrolled ? (
                   <>Start Learning Now <Check size={20} /></>
@@ -2056,7 +2056,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                         src={inst.img}
                         alt={inst.name}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        onError={e => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(inst.name)}&background=ED1C24&color=fff&bold=true&size=200`; }}
+                        onError={e => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(inst.name)}&background=2563eb&color=fff&bold=true&size=200`; }}
                       />
                     </div>
 
@@ -2065,7 +2065,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
 
                     {/* Experience badge */}
                     {inst.experience && (
-                      <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--red)', background: 'rgba(237,28,36,0.08)', padding: '4px 14px', borderRadius: 100, border: '1px solid rgba(237,28,36,0.15)' }}>{inst.experience}</span>
+                      <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--red)', background: 'rgba(37,99,235,0.08)', padding: '4px 14px', borderRadius: 100, border: '1px solid rgba(37,99,235,0.15)' }}>{inst.experience}</span>
                     )}
 
                     {/* Bio */}
@@ -2187,7 +2187,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                     ))}
                   </ul>
 
-                  <button onClick={handleEnrollClick} style={{ width: '100%', background: 'var(--red)', color: '#fff', border: 'none', padding: '14px', borderRadius: 10, fontWeight: 700, fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 15px rgba(237, 28, 36, 0.3)' }}>
+                  <button onClick={handleEnrollClick} style={{ width: '100%', background: 'var(--red)', color: '#fff', border: 'none', padding: '14px', borderRadius: 10, fontWeight: 700, fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 15px rgba(37, 99, 235, 0.3)' }}>
                     Enroll & Start Learning <ArrowRight size={18} />
                   </button>
                 </div>
@@ -2241,7 +2241,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                       <th style={{ padding: 24, borderBottom: '2px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
                         <div style={{ color: '#2dd4bf', fontSize: 18, fontWeight: 800 }}>★ BASIC</div>
                       </th>
-                      <th style={{ padding: 24, borderBottom: '2px solid var(--border-color)', borderLeft: '1px solid var(--border-color)', background: 'rgba(237, 28, 36, 0.03)', position: 'relative' }}>
+                      <th style={{ padding: 24, borderBottom: '2px solid var(--border-color)', borderLeft: '1px solid var(--border-color)', background: 'rgba(37, 99, 235, 0.03)', position: 'relative' }}>
                         <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', background: 'var(--red)', color: '#fff', padding: '4px 12px', borderRadius: '0 0 12px 12px', fontSize: 10, fontWeight: 800, whiteSpace: 'nowrap' }}>RECOMMENDED</div>
                         <div style={{ color: 'var(--red)', fontSize: 18, fontWeight: 800, marginTop: 12 }}>👑 PREMIUM</div>
                       </th>
@@ -2259,7 +2259,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                         <td style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
                           {typeof feat.basic === 'boolean' ? (feat.basic ? <CheckCircle color="#2dd4bf" size={20} /> : <XCircle color="#cbd5e1" size={20} />) : <span style={{ color: '#2dd4bf', fontWeight: 700 }}>{feat.basic}</span>}
                         </td>
-                        <td style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)', background: 'rgba(237, 28, 36, 0.02)' }}>
+                        <td style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)', background: 'rgba(37, 99, 235, 0.02)' }}>
                           {typeof feat.premium === 'boolean' ? (feat.premium ? <CheckCircle color="var(--red)" size={20} /> : <XCircle color="#cbd5e1" size={20} />) : <span style={{ color: 'var(--red)', fontWeight: 700 }}>{feat.premium}</span>}
                         </td>
                         <td style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
@@ -2273,9 +2273,9 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                         <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)' }}>{feesData.basic.price}</div>
                         <button onClick={handleEnrollClick} style={{ background: 'var(--card-bg)', border: '1px solid #2dd4bf', color: '#2dd4bf', padding: '8px 24px', borderRadius: 8, fontWeight: 700, marginTop: 12, cursor: 'pointer', width: '100%' }}>Get Started</button>
                       </td>
-                      <td style={{ padding: 24, borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)', background: 'rgba(237, 28, 36, 0.03)' }}>
+                      <td style={{ padding: 24, borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)', background: 'rgba(37, 99, 235, 0.03)' }}>
                         <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)' }}>{feesData.premium.price}</div>
-                        <button onClick={handleEnrollClick} style={{ background: 'var(--red)', border: 'none', color: '#fff', padding: '8px 24px', borderRadius: 8, fontWeight: 700, marginTop: 12, cursor: 'pointer', width: '100%', boxShadow: '0 4px 12px rgba(237,28,36,0.2)' }}>Go Premium</button>
+                        <button onClick={handleEnrollClick} style={{ background: 'var(--red)', border: 'none', color: '#fff', padding: '8px 24px', borderRadius: 8, fontWeight: 700, marginTop: 12, cursor: 'pointer', width: '100%', boxShadow: '0 4px 12px rgba(37,99,235,0.2)' }}>Go Premium</button>
                       </td>
                       <td style={{ padding: 24, borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
                         <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)' }}>{feesData.pro.price}</div>

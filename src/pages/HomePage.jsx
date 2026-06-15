@@ -44,7 +44,7 @@ const marketingSlides = [
     title: 'Super Cohort 2.0',
     desc: 'Our flagship Data Science & Generative AI program is starting soon. Complete training with live mentor support and placement guarantees.',
     highlight: '20% Early Bird Discount',
-    gradient: 'linear-gradient(135deg, #1e1b4b 0%, #311015 100%)'
+    gradient: 'linear-gradient(135deg, #0f172a 0%, #1d4ed8 45%, #0f172a 100%)'
   },
   {
     id: 2,
@@ -52,15 +52,15 @@ const marketingSlides = [
     title: 'Industry Placements',
     desc: 'iScale alumni are coding at top-tier companies including Google, Amazon, Microsoft, and tech startups. Average hike of 150%.',
     highlight: '500+ Hiring MNC Partners',
-    gradient: 'linear-gradient(135deg, #090d16 0%, #1e1b4b 100%)'
+    gradient: 'linear-gradient(135deg, #111827 0%, #2563eb 35%, #ef4444 100%)'
   },
   {
     id: 3,
     badge: 'ONLINE SANDBOX',
     title: 'Interactive Cloud Labs',
-    desc: 'Practice coding right inside your browser! Built-in terminals and templates for Python, SQL, Jupyter Notebooks, and Power BI.',
-    highlight: '100% Practical Exercises',
-    gradient: 'linear-gradient(135deg, #022c22 0%, #064e3b 100%)'
+    desc: 'Don\'t just watch videos. Code directly in your browser with our integrated cloud IDE and get instant feedback on your projects.',
+    highlight: 'Zero Local Setup',
+    gradient: 'linear-gradient(135deg, #0b1120 0%, #1d4ed8 40%, #0f172a 100%)'
   },
   {
     id: 4,
@@ -68,7 +68,7 @@ const marketingSlides = [
     title: '24/7 Mentorship Support',
     desc: 'Connect immediately with technical experts and TAs via live voice rooms and custom collaborative screen-sharing.',
     highlight: 'Live 1-on-1 Assistance',
-    gradient: 'linear-gradient(135deg, #451a03 0%, #3f160a 100%)'
+    gradient: 'linear-gradient(135deg, #111827 0%, #0f172a 35%, #ef4444 100%)'
   }
 ];
 
@@ -114,9 +114,9 @@ const MarketingCarousel = () => {
         width: '100%',
         height: 720,
         borderRadius: 48,
-        background: 'linear-gradient(145deg, #2b3044 0%, #0f121a 100%)', // Brighter metallic bezel
-        padding: 12, // Bezel width
-        boxShadow: '0 40px 80px -20px rgba(0,0,0,0.9), inset 0 3px 6px rgba(255,255,255,0.25), inset 0 -3px 6px rgba(0,0,0,0.8), 0 0 40px rgba(255,255,255,0.05)',
+        background: 'linear-gradient(145deg, var(--card-bg) 0%, #0f172a 55%, #1e293b 100%)',
+        padding: 12,
+        boxShadow: '0 0 80px rgba(37,99,235,0.16), 0 24px 48px -12px rgba(0,0,0,0.25), 0 0 0 2px rgba(37,99,235,0.14), inset 0 2px 4px rgba(255,255,255,0.12)',
         zIndex: 1
       }}>
         
@@ -132,8 +132,8 @@ const MarketingCarousel = () => {
           height: '100%',
           borderRadius: 36,
           overflow: 'hidden',
-          background: '#000',
-          boxShadow: 'inset 0 0 0 2px rgba(255,255,255,0.15), inset 0 20px 40px rgba(255,255,255,0.05)', // Stronger inner light
+          background: 'linear-gradient(135deg, rgba(37,99,235,0.16) 0%, rgba(15,23,42,0.06) 45%, rgba(239,68,68,0.14) 100%)',
+          boxShadow: 'inset 0 0 0 2px rgba(255,255,255,0.12), inset 0 20px 40px rgba(255,255,255,0.06)',
         }}>
 
           {/* Sweeping Glass Glare */}
@@ -176,7 +176,7 @@ const MarketingCarousel = () => {
             justifyContent: 'center',
             position: 'relative',
             textAlign: 'left',
-            color: '#fff'
+            color: 'var(--slide-text)'
           }}>
             {/* Soft decorative background shape */}
             <div style={{
@@ -194,7 +194,7 @@ const MarketingCarousel = () => {
             <div style={{
               display: 'inline-block',
               alignSelf: 'flex-start',
-              background: 'rgba(255,255,255,0.15)',
+              background: 'rgba(255,255,255,0.16)',
               backdropFilter: 'blur(8px)',
               padding: '6px 14px',
               borderRadius: 100,
@@ -202,7 +202,7 @@ const MarketingCarousel = () => {
               fontWeight: 800,
               letterSpacing: 1.5,
               marginBottom: 20,
-              border: '1px solid rgba(255,255,255,0.2)',
+              border: '1px solid rgba(255,255,255,0.22)',
               boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
             }}>
               {slide.badge}
@@ -210,22 +210,20 @@ const MarketingCarousel = () => {
 
             <h2 style={{
               fontFamily: 'var(--font-display)',
-              fontSize: 32,
+              fontSize: 34,
               fontWeight: 900,
-              lineHeight: 1.2,
+              lineHeight: 1.18,
               marginBottom: 16,
-              textShadow: '0 4px 20px rgba(0,0,0,0.3)',
-              background: 'linear-gradient(180deg, #fff, rgba(255,255,255,0.8))',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              textShadow: '0 4px 20px rgba(0,0,0,0.16)',
+              color: '#ffffff',
             }}>
               {slide.title}
             </h2>
 
             <p style={{
-              fontSize: 14,
-              lineHeight: 1.6,
-              opacity: 0.85,
+              fontSize: 15,
+              lineHeight: 1.65,
+              color: 'rgba(255,255,255,0.88)',
               marginBottom: 32
             }}>
               {slide.desc}
@@ -233,7 +231,7 @@ const MarketingCarousel = () => {
 
             <div style={{
               alignSelf: 'flex-start',
-              background: 'rgba(255,255,255,0.15)',
+              background: 'rgba(255,255,255,0.18)',
               padding: '10px 20px',
               borderRadius: 100,
               fontSize: 13,
@@ -241,42 +239,25 @@ const MarketingCarousel = () => {
               display: 'flex',
               alignItems: 'center',
               gap: 8,
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              border: '1px solid rgba(255,255,255,0.22)'
             }}>
               {slide.highlight}
             </div>
           </div>
         ))}
       </div>
-      {/* Navigation Left Arrow */}
-          <button onClick={prevSlide} style={{
-            position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)',
-            width: 44, height: 44, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(12px)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', border: '1px solid rgba(255,255,255,0.2)',
-            cursor: 'pointer', zIndex: 10, transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 8px 24px rgba(0,0,0,0.2)'
-          }} onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.25)'; e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)'; }} onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; }}>
-            <ChevronLeft size={24} />
-          </button>
 
-          {/* Navigation Right Arrow */}
-          <button onClick={nextSlide} style={{
-            position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)',
-            width: 44, height: 44, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(12px)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', border: '1px solid rgba(255,255,255,0.2)',
-            cursor: 'pointer', zIndex: 10, transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 8px 24px rgba(0,0,0,0.2)'
-          }} onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.25)'; e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)'; }} onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; }}>
-            <ChevronRight size={24} />
-          </button>
 
           {/* Slide Indicators / Dots */}
           <div style={{ position: 'absolute', bottom: 32, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 10, zIndex: 10 }}>
             {marketingSlides.map((_, idx) => (
-              <button key={idx} onClick={() => setCurrentSlide(idx)} style={{ width: currentSlide === idx ? 28 : 10, height: 10, borderRadius: 5, background: currentSlide === idx ? '#fff' : 'rgba(255,255,255,0.3)', border: 'none', cursor: 'pointer', transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)', padding: 0 }} />
+              <button key={idx} onClick={() => setCurrentSlide(idx)} style={{ width: currentSlide === idx ? 28 : 10, height: 10, borderRadius: 5, background: currentSlide === idx ? 'var(--slide-text)' : 'var(--slide-badge-border)', border: 'none', cursor: 'pointer', transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)', padding: 0 }} />
             ))}
           </div>
           
           {/* Device Home Bar */}
-          <div style={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', width: 140, height: 6, background: 'rgba(255,255,255,0.8)', borderRadius: 3, zIndex: 20, boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }} />
+          <div style={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', width: 140, height: 6, background: 'var(--slide-badge-border)', borderRadius: 3, zIndex: 20, boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} />
 
         </div>
       </div>
@@ -293,36 +274,41 @@ const Hero = ({ setCurrentPage }) => {
     alert('Thank you! We will contact you shortly for the FREE Live Class.');
   };
   return (
-    <section className="hero-section" style={{ background: 'var(--gradient-hero)', padding: '80px 0 60px', minHeight: '85vh', display: 'flex', alignItems: 'center', position: 'relative' }}>
+    <section className="hero-section" style={{ background: 'linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%)', padding: '20px 0 36px', minHeight: '72vh', display: 'flex', alignItems: 'center', position: 'relative' }}>
       <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
         <div className="bg-dots" style={{ position: 'absolute', inset: 0, opacity: 0.5 }} />
         <div className="abstract-grid" />
         <div className="abstract-lines" />
-        <div className="bg-shape" style={{ width: 500, height: 500, background: 'var(--glow-primary)', top: '-10%', left: '-5%', animationDelay: '0s' }} />
-        <div className="bg-shape" style={{ width: 400, height: 400, background: 'var(--glow-secondary)', bottom: '10%', right: '-5%', animationDelay: '2s', animationName: 'float-medium' }} />
+        <div className="bg-shape" style={{ width: 500, height: 500, background: 'rgba(37, 99, 235, 0.08)', top: '-10%', left: '-5%', animationDelay: '0s' }} />
+        <div className="bg-shape" style={{ width: 400, height: 400, background: 'rgba(15, 23, 42, 0.06)', bottom: '10%', right: '-5%', animationDelay: '2s', animationName: 'float-medium' }} />
       </div>
-      <div className="container mobile-col mobile-gap-fix" style={{ position: 'relative', zIndex: 1, display: 'flex', gap: 60, alignItems: 'center' }}>
+      <div className="container mobile-col mobile-gap-fix hero-shell" style={{ position: 'relative', zIndex: 1, gap: 20 }}>
         {/* Left content */}
-        <div style={{ flex: 1, animation: 'fadeUp 0.7s ease forwards', width: '100%' }}>
+        <div className="hero-text-column" style={{ animation: 'fadeUp 0.7s ease forwards', width: '100%' }}>
           <div className="glass-card hover-glow" style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
-            borderRadius: 100, padding: '8px 18px',
-            marginBottom: 24, border: '1px solid rgba(237, 28, 36, 0.3)',
-            boxShadow: '0 4px 20px rgba(237, 28, 36, 0.15)'
+            borderRadius: 100, padding: '7px 14px',
+            marginBottom: 18, border: '1px solid rgba(37, 99, 235, 0.22)',
+            boxShadow: '0 4px 14px rgba(37, 99, 235, 0.08)'
           }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--red)', boxShadow: '0 0 10px var(--red)' }} />
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'linear-gradient(135deg, #2563eb, #3b82f6)', boxShadow: '0 0 10px var(--red)' }} />
             <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: 0.5, color: 'var(--text-primary)' }}>
               <span className="text-gradient">iSCALE Upskilling</span>
             </span>
           </div>
 
-          <h1 style={{ fontSize: 'clamp(30px, 8vw, 56px)', fontWeight: 800, lineHeight: 1.15, marginBottom: 24, wordBreak: 'break-word', hyphens: 'auto', color: 'var(--text-primary)' }}>
-            <span className="hero-text-gradient">India's Trusted</span>{' '}
-            <span className="animated-text-gradient">Upskilling &<br />E-Learning</span>{' '}
-            <span className="future-readiness-text">Platform for<br />Future Readiness.</span>
+          <div className="hero-trust-inline">
+            <span style={{ color: 'var(--red)', fontWeight: 800 }}>4.8/5 Rated</span>
+            <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>by 100K+ learners across India</span>
+          </div>
+
+          <h1 style={{ fontSize: 'clamp(30px, 8vw, 56px)', fontWeight: 800, lineHeight: 1.12, marginBottom: 16, wordBreak: 'break-word', hyphens: 'auto', color: 'var(--text-primary)' }}>
+            <span style={{ color: 'var(--text-primary)' }}>India's Trusted</span>{' '}
+            <span style={{ color: 'var(--red)' }}>Upskilling &<br />E-Learning</span>{' '}
+            <span style={{ color: 'var(--text-secondary)' }}>Platform for<br />Future Readiness.</span>
           </h1>
 
-          <p style={{ color: 'var(--text-secondary)', fontSize: 16, lineHeight: 1.6, marginBottom: 36, maxWidth: 520 }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 16, lineHeight: 1.6, marginBottom: 24, maxWidth: 560 }}>
             In India, millions of professionals and college graduates lack affordable access to industry-aligned education. iScale aims to democratize it, blending quality with affordability to create a widespread impact.
           </p>
 
@@ -332,30 +318,30 @@ const Hero = ({ setCurrentPage }) => {
               onClick={() => setCurrentPage('courses')}
               style={{
                 display: 'flex', alignItems: 'center', gap: 8,
-                padding: '14px 28px', background: 'var(--red)', color: '#fff',
+                padding: '14px 28px', background: 'linear-gradient(135deg, #2563eb, #3b82f6)', color: '#fff',
                 borderRadius: 10, fontWeight: 600, fontSize: 16,
-                boxShadow: '0 4px 20px rgba(192,0,12,0.35)',
+                boxShadow: '0 4px 20px rgba(37, 99, 235, 0.35)',
                 transition: 'all 0.3s'
               }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(192,0,12,0.4)'; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(192,0,12,0.35)'; }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(37, 99, 235, 0.4)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(37, 99, 235, 0.35)'; }}
             >
               View Courses <ArrowRight size={18} />
             </button>
           </div>
 
           {/* Stats */}
-          <div className="stats-container">
+          <div className="hero-stats-grid">
             {[
               { icon: <Users size={20} />, val: '100K+', label: 'Community Members' },
               { icon: <BookOpen size={20} />, val: '50+', label: 'Courses Available' },
               { icon: <Award size={20} />, val: '95%', label: 'Placement Rate' },
             ].map(stat => (
-              <div key={stat.label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ color: 'var(--red)' }}>{stat.icon}</div>
+              <div key={stat.label} className="hero-stat-card">
+                <div className="hero-stat-icon">{stat.icon}</div>
                 <div>
-                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20 }}>{stat.val}</div>
-                  <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>{stat.label}</div>
+                  <div className="hero-stat-value">{stat.val}</div>
+                  <div className="hero-stat-label">{stat.label}</div>
                 </div>
               </div>
             ))}
@@ -363,7 +349,7 @@ const Hero = ({ setCurrentPage }) => {
         </div>
 
         {/* Right form replaced by marketing slides carousel */}
-        <div style={{ width: '100%', maxWidth: 420, animation: 'fadeUp 0.7s 0.2s ease both' }}>
+        <div className="hero-phone-column" style={{ width: '100%', maxWidth: 460, animation: 'fadeUp 0.7s 0.2s ease both', position: 'relative' }}>
           <MarketingCarousel />
         </div>
       </div>
@@ -373,8 +359,8 @@ const Hero = ({ setCurrentPage }) => {
 
 /* ── About iScale Learning ── */
 const AboutSection = ({ setCurrentPage }) => (
-  <section className="reveal" style={{ padding: '50px 0', background: 'var(--bg-primary)' }}>
-    <div className="container about-grid">
+  <section className="reveal" style={{ padding: '56px 0 48px', background: 'var(--bg-primary)', borderTop: '1px solid var(--border-color)' }}>
+    <div className="container-fluid about-grid">
       {/* Video card */}
       <div className="glow-border animate-float" style={{
         background: 'var(--bg-primary)', borderRadius: 24, overflow: 'hidden',
@@ -404,20 +390,17 @@ const AboutSection = ({ setCurrentPage }) => (
         <div className="features-grid">
           {[
             { 
-              accent: '#fbc02d', 
-              icon: <div style={{ background: '#fbc02d', color: '#fff', width: 44, height: 44, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}><Star size={22} fill="currentColor" /></div>, 
+              icon: <div style={{ background: '#111827', color: '#fff', width: 44, height: 44, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}><Star size={22} fill="currentColor" /></div>, 
               title: 'Realtime Projects', 
               desc: 'Dive into Industry-Oriented Projects, where learning meets real-world impact' 
             },
             { 
-              accent: '#1e88e5', 
-              icon: <div style={{ background: '#1e88e5', color: '#fff', width: 44, height: 44, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}><Play size={22} fill="currentColor" /></div>, 
+              icon: <div style={{ background: '#4b5563', color: '#fff', width: 44, height: 44, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}><Play size={22} fill="currentColor" /></div>, 
               title: 'LIVE Class', 
               desc: 'Never face challenges alone, our instant Doubt support is always available.' 
             },
             { 
-              accent: '#e91e63', 
-              icon: <div style={{ background: '#e91e63', color: '#fff', width: 44, height: 44, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}><Play size={22} fill="currentColor" /></div>, 
+              icon: <div style={{ background: 'linear-gradient(135deg, #2563eb, #3b82f6)', color: '#fff', width: 44, height: 44, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}><Play size={22} fill="currentColor" /></div>, 
               title: 'Outcome Driven', 
               desc: 'Elevate your learning journey with Outcome-Driven magic.' 
             },
@@ -472,8 +455,8 @@ const TestimonialVideoCard = ({ item }) => {
   
   const playBtnStyle = {
     position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-    background: 'var(--red)', color: '#fff', width: 48, height: 48, borderRadius: '50%',
-    display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(237, 28, 36, 0.4)'
+    background: 'linear-gradient(135deg, #2563eb, #3b82f6)', color: '#fff', width: 48, height: 48, borderRadius: '50%',
+    display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(37, 99, 235, 0.4)'
   };
 
   if (item.m_st_url) {
@@ -532,10 +515,10 @@ const TestimonialsSection = ({ setCurrentPage }) => {
   }, []);
 
   return (
-    <section className="reveal" style={{ padding: '50px 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', overflow: 'hidden', color: 'var(--text-primary)' }}>
-      <div className="container" style={{ position: 'relative' }}>
+    <section className="reveal" style={{ padding: 'clamp(30px, 6vw, 50px) 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', overflow: 'hidden', color: 'var(--text-primary)' }}>
+      <div className="container-fluid" style={{ position: 'relative' }}>
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
-          <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '4px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700 }}>THE ISCALE</span>
+          <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '4px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700 }}>THE ISCALE</span>
         </div>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 800, textAlign: 'center', marginBottom: 24, color: 'var(--text-primary)' }}>Students Testimonials</h2>
 
@@ -559,12 +542,12 @@ const TestimonialsSection = ({ setCurrentPage }) => {
             onClick={() => setCurrentPage('student-testimonials')}
             className="hover-glow"
             style={{
-              padding: '14px 36px', background: 'rgba(237, 28, 36, 0.06)', color: 'var(--red)', 
+              padding: '14px 36px', background: 'rgba(37, 99, 235, 0.06)', color: 'var(--red)', 
               borderRadius: 10, fontWeight: 700, fontSize: 15, border: '1px solid var(--border-color)', 
               cursor: 'pointer', transition: 'all 0.3s', boxShadow: 'var(--card-shadow)'
             }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.background = 'rgba(237, 28, 36, 0.15)'; e.currentTarget.style.boxShadow = '0 0 20px rgba(237, 28, 36, 0.4)'; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.background = 'rgba(237, 28, 36, 0.06)'; e.currentTarget.style.boxShadow = 'var(--card-shadow)'; }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.background = 'rgba(37, 99, 235, 0.15)'; e.currentTarget.style.boxShadow = '0 0 20px rgba(37, 99, 235, 0.4)'; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.background = 'rgba(37, 99, 235, 0.06)'; e.currentTarget.style.boxShadow = 'var(--card-shadow)'; }}
           >
             View All Testimonials
           </button>
@@ -587,7 +570,7 @@ const LatestUpdates = ({ setCurrentPage }) => {
         const response = await fetch('https://iscale-backend.onrender.com/api/comp-requirement/user-get-all-jobs?page=1&limit=1000');
         const data = await response.json();
         if (data && Array.isArray(data.data)) {
-          setJobs(data.data.slice(0, 9));
+          setJobs(data.data.slice(0, 6));
         }
       } catch (err) {
         console.error('Jobs API Error:', err);
@@ -599,18 +582,18 @@ const LatestUpdates = ({ setCurrentPage }) => {
   }, []);
 
   return (
-    <section className="reveal" style={{ padding: '80px 0', background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)', position: 'relative' }}>
+    <section className="reveal" style={{ padding: '56px 0 48px', background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)', position: 'relative' }}>
       <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
         <div className="bg-dots" style={{ position: 'absolute', inset: 0, opacity: 0.3 }} />
         <div className="abstract-grid" />
         <div className="abstract-lines" />
         <div className="bg-shape" style={{ width: 400, height: 400, background: 'var(--glow-primary)', bottom: '-20%', right: '-10%', animationDelay: '-2s' }} />
       </div>
-      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+      <div className="container-fluid" style={{ position: 'relative', zIndex: 1 }}>
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
-          <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700 }}>EXPLORE OPPORTUNITIES</span>
+          <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700 }}>EXPLORE OPPORTUNITIES</span>
         </div>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 800, textAlign: 'center', marginBottom: 24, color: 'var(--text-primary)' }}>Latest <span className="animated-text-gradient">Updates</span></h2>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 800, textAlign: 'center', marginBottom: 16, color: 'var(--text-primary)' }}>Latest <span className="animated-text-gradient">Updates</span></h2>
 
         {loading ? (
           <div style={{ textAlign: 'center', padding: '40px 0' }}>Loading...</div>
@@ -627,8 +610,8 @@ const LatestUpdates = ({ setCurrentPage }) => {
                   className="premium-card hover-glow"
                   style={{
                     width: 340, maxWidth: '90vw', minHeight: 240, height: 'auto', borderRadius: 12, padding: '32px 24px', 
-                    background: isRed ? 'linear-gradient(135deg, #b91c1c, #7f1d1d)' : '#0f0f0f',
-                    color: '#ffffff',
+                    background: isRed ? 'linear-gradient(135deg, var(--card-bg) 0%, var(--bg-secondary) 100%)' : 'var(--card-bg)',
+                    color: 'var(--text-primary)',
                     boxShadow: 'var(--card-shadow)',
                     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                     position: 'relative', flexShrink: 0, border: '1px solid var(--border-color)', cursor: 'pointer'
@@ -657,14 +640,13 @@ const LatestUpdates = ({ setCurrentPage }) => {
                   )}
                   <h4 style={{ 
                     fontSize: 18, fontWeight: 800, marginBottom: 4, textAlign: 'center', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
-                    ...(isRed ? {} : { background: 'linear-gradient(90deg, #ff4d4d, #f9cb28)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' })
+                    color: 'var(--text-primary)'
                   }}>{job.job_title}</h4>
                   <div style={{ fontSize: 13, opacity: 0.8, marginBottom: 12, textAlign: 'center' }}>{job.company_name}</div>
                   <p style={{ 
                     fontSize: 13, textAlign: 'center', padding: '4px 14px', borderRadius: 100,
-                    ...(isRed ? { opacity: 0.9, background: 'rgba(0,0,0,0.2)', border: 'none' } : { background: 'rgba(237, 28, 36, 0.1)', color: 'var(--red)', border: '1px solid rgba(237, 28, 36, 0.2)', fontWeight: 700 })
+                    ...(isRed ? { opacity: 0.9, background: 'rgba(37, 99, 235, 0.08)', border: '1px solid rgba(37, 99, 235, 0.2)' } : { background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', border: '1px solid rgba(37, 99, 235, 0.2)', fontWeight: 700 })
                   }}>₹{job.salary?.min} - ₹{job.salary?.max}</p>
-                  {isRed && <div style={{ position: 'absolute', top: 16, right: 24, fontSize: 40, color: 'rgba(255,255,255,0.2)', fontFamily: 'serif', lineHeight: 1 }}>"</div>}
                 </div>
               );
             }}
@@ -675,9 +657,9 @@ const LatestUpdates = ({ setCurrentPage }) => {
         <div style={{ textAlign: 'center', marginTop: 20 }}>
           <button 
             onClick={() => setCurrentPage('job-updates')}
-            style={{ padding: '12px 32px', background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', borderRadius: 8, fontWeight: 700, fontSize: 15, border: '1px solid var(--border-color)', cursor: 'pointer', transition: 'all 0.3s' }}
-            onMouseEnter={e => e.target.style.background = 'rgba(237, 28, 36, 0.15)'}
-            onMouseLeave={e => e.target.style.background = 'rgba(237, 28, 36, 0.08)'}
+            style={{ padding: '12px 32px', background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', borderRadius: 8, fontWeight: 700, fontSize: 15, border: '1px solid var(--border-color)', cursor: 'pointer', transition: 'all 0.3s' }}
+            onMouseEnter={e => e.target.style.background = 'rgba(37, 99, 235, 0.15)'}
+            onMouseLeave={e => e.target.style.background = 'rgba(37, 99, 235, 0.08)'}
           >
             View All
           </button>
@@ -700,13 +682,13 @@ const PopularCourses = ({ setCurrentPage }) => {
         const arr = data.data?.docs || data.data || [];
         if (Array.isArray(arr) && arr.length > 0) {
           const defaultColors = [
-            'linear-gradient(135deg, #1e3a8a 0%, #0d1b3e 100%)',
-            'linear-gradient(135deg, #065f46 0%, #022c22 100%)',
-            'linear-gradient(135deg, #5b21b6 0%, #2e1065 100%)',
-            'linear-gradient(135deg, #881337 0%, #4c0519 100%)'
+            'linear-gradient(135deg, var(--card-bg) 0%, var(--bg-secondary) 100%)',
+            'linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, var(--card-bg) 100%)',
+            'linear-gradient(135deg, rgba(0,0,0,0.04) 0%, var(--bg-secondary) 100%)',
+            'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, var(--card-bg) 100%)'
           ];
 
-          const mapped = arr.slice(0, 4).map((c, i) => {
+          const mapped = arr.slice(0, 3).map((c, i) => {
             const price = c.offer_price !== 'N/A' && c.offer_price ? parseInt(c.offer_price) : (c.course_type === 'Free' ? 0 : null);
             const originalPrice = c.price !== 'N/A' && c.price ? parseInt(c.price) : null;
             let imgUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(c.title)}&background=random`;
@@ -744,15 +726,15 @@ const PopularCourses = ({ setCurrentPage }) => {
   }, []);
 
   return (
-  <section className="reveal" style={{ padding: '60px 0', background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
-    <div className="container">
+  <section className="reveal" style={{ padding: '56px 0 48px', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
+    <div className="container-fluid">
       <div style={{ textAlign: 'center', marginBottom: 12 }}>
-        <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700, letterSpacing: 0.5 }}>EXPLORE UP-TO-DATE PROGRAMS</span>
+        <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700, letterSpacing: 0.5 }}>EXPLORE UP-TO-DATE PROGRAMS</span>
       </div>
       <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 800, textAlign: 'center', marginBottom: 12, color: 'var(--text-primary)' }}>
         Most Popular <span style={{ color: 'var(--red)' }}>Courses</span>
       </h2>
-      <p style={{ color: 'var(--text-secondary)', textAlign: 'center', marginBottom: 32, maxWidth: 600, margin: '0 auto 32px' }}>
+      <p style={{ color: 'var(--text-secondary)', textAlign: 'center', marginBottom: 28, maxWidth: 620, margin: '0 auto 28px' }}>
         Learn from top industry veterans, build practical experience through real-world projects, and jumpstart your technical career.
       </p>
 
@@ -763,11 +745,11 @@ const PopularCourses = ({ setCurrentPage }) => {
           <div className="courses-grid">
             {coursesData.map((course, i) => {
               const colors = [
-                'linear-gradient(135deg, #1e3a8a 0%, #0d1b3e 100%)',
-                'linear-gradient(135deg, #065f46 0%, #022c22 100%)',
-                'linear-gradient(135deg, #5b21b6 0%, #2e1065 100%)',
-                'linear-gradient(135deg, #881337 0%, #4c0519 100%)',
-                'linear-gradient(135deg, #7c2d12 0%, #431407 100%)'
+                'linear-gradient(135deg, var(--card-bg) 0%, var(--bg-secondary) 100%)',
+                'linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, var(--card-bg) 100%)',
+                'linear-gradient(135deg, rgba(0,0,0,0.04) 0%, var(--bg-secondary) 100%)',
+                'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, var(--card-bg) 100%)',
+                'linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, var(--bg-secondary) 100%)'
               ];
               const cardColor = colors[i % colors.length];
               return (
@@ -779,10 +761,8 @@ const PopularCourses = ({ setCurrentPage }) => {
                   borderRadius: 16,
                   overflow: 'hidden',
                   background: 'var(--card-bg)',
-                  border: '1px solid rgba(255,255,255,0.05)',
-                  borderTop: `6px solid transparent`,
-                  borderImage: `${cardColor} 1`,
-                  borderImageSlice: '1 0 0 0',
+                  border: '1px solid var(--border-color)',
+                  borderTop: '4px solid var(--red)',
                   boxShadow: 'var(--card-shadow)',
                   cursor: 'pointer',
                   display: 'flex',
@@ -833,9 +813,9 @@ const PopularCourses = ({ setCurrentPage }) => {
       <div style={{ textAlign: 'center', marginTop: 48 }}>
         <button
           onClick={() => setCurrentPage('courses')}
-          style={{ padding: '14px 36px', background: 'rgba(237, 28, 36, 0.06)', color: 'var(--red)', borderRadius: 10, fontWeight: 700, fontSize: 15, border: '1px solid var(--border-color)', cursor: 'pointer', transition: 'all 0.3s', boxShadow: 'var(--card-shadow)' }}
-          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.03)'; e.currentTarget.style.background = 'rgba(237, 28, 36, 0.12)'; }}
-          onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.background = 'rgba(237, 28, 36, 0.06)'; }}
+          style={{ padding: '14px 36px', background: 'rgba(37, 99, 235, 0.06)', color: 'var(--red)', borderRadius: 10, fontWeight: 700, fontSize: 15, border: '1px solid var(--border-color)', cursor: 'pointer', transition: 'all 0.3s', boxShadow: 'var(--card-shadow)' }}
+          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.03)'; e.currentTarget.style.background = 'rgba(37, 99, 235, 0.12)'; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.background = 'rgba(37, 99, 235, 0.06)'; }}
         >
           View All Programs
         </button>
@@ -888,16 +868,16 @@ const ExpertsSection = ({ setCurrentPage }) => {
   }, []);
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '50px 0' }}>Loading experts...</div>;
+    return <div style={{ textAlign: 'center', padding: 'clamp(30px, 6vw, 50px) 0' }}>Loading experts...</div>;
   }
 
   if (expertsList.length === 0) return null;
 
   return (
-    <section style={{ padding: '50px 0', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
-      <div className="container">
+    <section style={{ padding: 'clamp(30px, 6vw, 50px) 0', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+      <div className="container-fluid">
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
-          <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '4px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700 }}>LEADERS TALK</span>
+          <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '4px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700 }}>LEADERS TALK</span>
         </div>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 800, textAlign: 'center', marginBottom: 8, color: 'var(--text-primary)' }}>Talk With <span className="animated-text-gradient">Industry Experts</span></h2>
         <p style={{ color: 'var(--text-secondary)', textAlign: 'center', marginBottom: 24, maxWidth: 600, margin: '0 auto 48px' }}>
@@ -942,9 +922,9 @@ const ExpertsSection = ({ setCurrentPage }) => {
         <div style={{ textAlign: 'center', marginTop: 20 }}>
           <button 
             onClick={() => setCurrentPage('placement-talks')}
-            style={{ padding: '12px 32px', background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', border: '1px solid var(--border-color)', borderRadius: 8, fontWeight: 700, fontSize: 15, cursor: 'pointer', transition: 'all 0.3s', boxShadow: 'var(--card-shadow)' }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.background = 'rgba(237, 28, 36, 0.15)'; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.background = 'rgba(237, 28, 36, 0.08)'; }}
+            style={{ padding: '12px 32px', background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', border: '1px solid var(--border-color)', borderRadius: 8, fontWeight: 700, fontSize: 15, cursor: 'pointer', transition: 'all 0.3s', boxShadow: 'var(--card-shadow)' }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.background = 'rgba(37, 99, 235, 0.15)'; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.background = 'rgba(37, 99, 235, 0.08)'; }}
           >
             View All
           </button>
@@ -987,10 +967,10 @@ const CompanyMarquee = ({ setCurrentPage }) => {
   }, []);
 
   return (
-    <section style={{ padding: '60px 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', overflow: 'hidden', color: 'var(--text-primary)' }}>
-      <div className="container">
+    <section style={{ padding: 'clamp(30px, 6vw, 60px) 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', overflow: 'hidden', color: 'var(--text-primary)' }}>
+      <div className="container-fluid">
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
-          <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '4px 16px', borderRadius: 100, fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1 }}>TOP RECRUITERS</span>
+          <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '4px 16px', borderRadius: 100, fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1 }}>TOP RECRUITERS</span>
         </div>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 36, fontWeight: 800, textAlign: 'center', marginBottom: 40, color: 'var(--text-primary)' }}>
           For <span className="animated-text-gradient">Placement</span> Opportunities
@@ -1026,9 +1006,9 @@ const CompanyMarquee = ({ setCurrentPage }) => {
       <div style={{ textAlign: 'center', marginTop: 32 }}>
         <button 
           onClick={() => setCurrentPage('placement')}
-          style={{ padding: '12px 32px', background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', border: '1px solid var(--border-color)', borderRadius: 8, fontWeight: 700, fontSize: 15, cursor: 'pointer', transition: 'all 0.3s', boxShadow: 'var(--card-shadow)' }}
-          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.background = 'rgba(237, 28, 36, 0.15)'; }}
-          onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.background = 'rgba(237, 28, 36, 0.08)'; }}
+          style={{ padding: '12px 32px', background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', border: '1px solid var(--border-color)', borderRadius: 8, fontWeight: 700, fontSize: 15, cursor: 'pointer', transition: 'all 0.3s', boxShadow: 'var(--card-shadow)' }}
+          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.background = 'rgba(37, 99, 235, 0.15)'; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.background = 'rgba(37, 99, 235, 0.08)'; }}
         >View All Our Clients</button>
       </div>
     </section>
@@ -1082,8 +1062,8 @@ const SuccessStoryGridCard = ({ item }) => {
         {item.ytLink && (
           <div style={{
             position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-            background: 'var(--red)', color: '#fff', width: 56, height: 56, borderRadius: '50%',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 20px rgba(237, 28, 36, 0.5)'
+            background: 'linear-gradient(135deg, #2563eb, #3b82f6)', color: '#fff', width: 56, height: 56, borderRadius: '50%',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 20px rgba(37, 99, 235, 0.5)'
           }}>
             <Play size={22} fill="#fff" style={{ marginLeft: 3 }} />
           </div>
@@ -1164,15 +1144,15 @@ export const SuccessStories = ({ setCurrentPage }) => {
   if (loading || stories.length === 0) return null; // Hide if no data
 
   return (
-    <section style={{ padding: '60px 0', background: 'linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%)', position: 'relative', overflow: 'hidden' }}>
+    <section style={{ padding: 'clamp(30px, 6vw, 60px) 0', background: 'linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%)', position: 'relative', overflow: 'hidden' }}>
       {/* Decorative Glow Orbs */}
-      <div className="bg-shape" style={{ top: '-10%', left: '-10%', width: 400, height: 400, background: 'rgba(237, 28, 36, 0.05)', borderRadius: '50%', filter: 'blur(100px)', pointerEvents: 'none' }} />
+      <div className="bg-shape" style={{ top: '-10%', left: '-10%', width: 400, height: 400, background: 'rgba(37, 99, 235, 0.05)', borderRadius: '50%', filter: 'blur(100px)', pointerEvents: 'none' }} />
       <div className="bg-shape" style={{ bottom: '-10%', right: '-10%', width: 500, height: 500, background: 'rgba(124, 58, 237, 0.05)', borderRadius: '50%', filter: 'blur(120px)', pointerEvents: 'none' }} />
 
-      <div className="container">
+      <div className="container-fluid">
         {/* Header Section */}
         <div style={{ textAlign: 'center', marginBottom: 48, position: 'relative', zIndex: 1 }}>
-          <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1.5, display: 'inline-block', marginBottom: 16 }}>
+          <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1.5, display: 'inline-block', marginBottom: 16 }}>
             OUR PROUD ALUMNI
           </span>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(32px, 5vw, 44px)', fontWeight: 900, color: 'var(--text-primary)', marginBottom: 12 }}>
@@ -1204,7 +1184,7 @@ export const SuccessStories = ({ setCurrentPage }) => {
             onClick={() => setCurrentPage('success-story')}
             style={{ 
               padding: '14px 40px', 
-              background: 'var(--red)', 
+              background: 'linear-gradient(135deg, #2563eb, #3b82f6)', 
               color: '#fff', 
               borderRadius: 10, 
               fontWeight: 700, 
@@ -1212,10 +1192,10 @@ export const SuccessStories = ({ setCurrentPage }) => {
               border: 'none', 
               cursor: 'pointer', 
               transition: 'all 0.3s', 
-              boxShadow: '0 4px 15px rgba(237, 28, 36, 0.3)' 
+              boxShadow: '0 4px 15px rgba(37, 99, 235, 0.3)' 
             }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.boxShadow = '0 10px 25px rgba(237, 28, 36, 0.5)'; e.currentTarget.style.background = 'var(--red-dark)'; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(237, 28, 36, 0.3)'; e.currentTarget.style.background = 'var(--red)'; }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.boxShadow = '0 10px 25px rgba(37, 99, 235, 0.5)'; e.currentTarget.style.background = 'var(--red-dark)'; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(37, 99, 235, 0.3)'; e.currentTarget.style.background = 'var(--red)'; }}
           >
             Explore All Success Stories
           </button>
@@ -1234,7 +1214,7 @@ const communityStats = [
 ];
 
 const LearnersCommunity = () => (
-  <section style={{ padding: '50px 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
+  <section style={{ padding: 'clamp(30px, 6vw, 50px) 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
     <style>{`
       .community-stats {
         display: grid;
@@ -1281,13 +1261,13 @@ const LearnersCommunity = () => (
           <div key={idx} className="community-stat-item" style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             {/* Timeline Node */}
             <div style={{ width: 24, height: 24, borderRadius: '50%', border: '4px solid var(--red)', background: 'var(--bg-primary)', marginBottom: 24, position: 'relative' }}>
-               <div style={{ position: 'absolute', top: 24, left: '50%', transform: 'translateX(-50%)', width: 2, height: 40, background: 'var(--red)', zIndex: -1 }} />
+               <div style={{ position: 'absolute', top: 24, left: '50%', transform: 'translateX(-50%)', width: 2, height: 40, background: 'linear-gradient(135deg, #2563eb, #3b82f6)', zIndex: -1 }} />
             </div>
 
             {/* Stat Card */}
             <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 16, padding: '30px 20px', width: '100%', textAlign: 'center', boxShadow: 'var(--card-shadow)', borderBottom: '4px solid var(--red)', position: 'relative', overflow: 'hidden' }}>
               {/* Top semi-circle design */}
-              <div style={{ position: 'absolute', top: -50, left: '50%', transform: 'translateX(-50%)', width: 100, height: 100, borderRadius: '50%', border: '15px solid rgba(237, 28, 36, 0.05)' }} />
+              <div style={{ position: 'absolute', top: -50, left: '50%', transform: 'translateX(-50%)', width: 100, height: 100, borderRadius: '50%', border: '15px solid rgba(37, 99, 235, 0.05)' }} />
               
               <div style={{ width: 48, height: 48, background: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, margin: '0 auto 16px', position: 'relative', zIndex: 3, boxShadow: 'var(--card-shadow)' }}>
                 {stat.icon}
@@ -1352,10 +1332,10 @@ const NewsUpdates = ({ setCurrentPage }) => {
   };
 
   return (
-  <section style={{ padding: '80px 0', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
-    <div className="container" style={{ maxWidth: 1100, margin: '0 auto' }}>
+  <section style={{ padding: 'clamp(40px, 8vw, 80px) 0', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+    <div className="container-fluid" style={{ maxWidth: 1100, margin: '0 auto' }}>
       <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 36, fontWeight: 900, textAlign: 'center', marginBottom: 48, color: 'var(--text-primary)' }}>
-        Latest <span style={{ background: 'linear-gradient(135deg, var(--red) 0%, #ff4d54 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'inline-block' }}>News & Updates</span>
+        Latest <span style={{ background: 'linear-gradient(135deg, var(--red) 0%, #60a5fa 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'inline-block' }}>News & Updates</span>
       </h2>
 
       {loading ? (
@@ -1377,7 +1357,7 @@ const NewsUpdates = ({ setCurrentPage }) => {
                 {news.img ? (
                   <img src={news.img} alt={news.title} className="news-card-image" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', transition: 'transform 0.5s' }} onMouseEnter={e => e.target.style.transform = 'scale(1.05)'} onMouseLeave={e => e.target.style.transform = 'scale(1)'} />
                 ) : (
-                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, rgba(237, 28, 36, 0.05), rgba(59, 130, 246, 0.05))', color: 'var(--text-muted)' }}>
+                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(59, 130, 246, 0.05))', color: 'var(--text-muted)' }}>
                     <Calendar size={36} strokeWidth={1.5} />
                   </div>
                 )}
@@ -1415,12 +1395,12 @@ const NewsUpdates = ({ setCurrentPage }) => {
         <button 
           onClick={() => setCurrentPage('news')}
           style={{ 
-            padding: '14px 36px', background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', border: '1px solid var(--border-color)', 
+            padding: '14px 36px', background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', border: '1px solid var(--border-color)', 
             borderRadius: 10, fontWeight: 700, fontSize: 14, cursor: 'pointer',
             transition: 'all 0.3s'
           }}
           onMouseEnter={e => { e.currentTarget.style.background = 'var(--red)'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.transform = 'scale(1.05)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(237, 28, 36, 0.08)'; e.currentTarget.style.color = 'var(--red)'; e.currentTarget.style.transform = 'none'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(37, 99, 235, 0.08)'; e.currentTarget.style.color = 'var(--red)'; e.currentTarget.style.transform = 'none'; }}
         >
           View All News & Updates
         </button>
@@ -1469,15 +1449,15 @@ const InTheNews = () => {
   if (mentions.length === 0) return null;
 
   return (
-    <section style={{ padding: '80px 0', background: 'var(--gradient-hero)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
-      <div className="container">
+    <section style={{ padding: 'clamp(40px, 8vw, 80px) 0', background: 'var(--gradient-hero)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
+      <div className="container-fluid">
         <div style={{ textAlign: 'center', marginBottom: 16 }}>
-          <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 13, fontWeight: 700, letterSpacing: 1 }}>
+          <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 13, fontWeight: 700, letterSpacing: 1 }}>
             THE MEDIA LOVES US, AND MORE SO, OUR STUDENTS.
           </span>
         </div>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 900, textAlign: 'center', marginBottom: 40 }}>
-          <span style={{ background: 'linear-gradient(135deg, #ed1c24 0%, #ff007f 35%, #7f00ff 70%, #3b82f6 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'inline-block' }}>
+          <span style={{ background: 'linear-gradient(135deg, #2563eb 0%, #6366f1 35%, #7f00ff 70%, #3b82f6 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'inline-block' }}>
             We've been in the news!
           </span>
         </h2>
@@ -1519,7 +1499,7 @@ const InTheNews = () => {
                   target="_blank" 
                   rel="noopener noreferrer" 
                   style={{ 
-                    display: 'inline-block', background: 'var(--red)', color: '#fff', 
+                    display: 'inline-block', background: 'linear-gradient(135deg, #2563eb, #3b82f6)', color: '#fff', 
                     padding: '8px 18px', borderRadius: 8, fontWeight: 700, fontSize: 12, 
                     textDecoration: 'none', transition: 'all 0.3s', alignSelf: 'flex-start' 
                   }}
@@ -1540,10 +1520,10 @@ const InTheNews = () => {
 
 /* ── Talk To Team ── */
 const TalkToTeam = ({ setCurrentPage }) => (
-  <section style={{ padding: '50px 0', background: 'var(--bg-primary)' }}>
-    <div className="container mobile-col mobile-gap-fix talk-to-team-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--card-bg)', borderRadius: 24, border: '1px solid var(--border-color)', boxShadow: 'var(--card-shadow)', gap: 30 }}>
+  <section style={{ padding: 'clamp(30px, 6vw, 50px) 0', background: 'var(--bg-primary)' }}>
+    <div className="container-fluid mobile-col mobile-gap-fix talk-to-team-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--card-bg)', borderRadius: 24, border: '1px solid var(--border-color)', boxShadow: 'var(--card-shadow)', gap: 30 }}>
       <div style={{ flex: 1 }}>
-        <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', marginBottom: 20, display: 'inline-block' }}>
+        <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', marginBottom: 20, display: 'inline-block' }}>
           GOT MORE QUESTIONS ?
         </span>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(32px, 5vw, 44px)', fontWeight: 900, color: 'var(--text-primary)', marginBottom: 16 }}>
@@ -1553,7 +1533,7 @@ const TalkToTeam = ({ setCurrentPage }) => (
         
         <button 
           onClick={() => setCurrentPage('contact')}
-          style={{ padding: '14px 32px', background: 'var(--red)', color: '#fff', borderRadius: 8, fontWeight: 700, fontSize: 16, border: 'none', cursor: 'pointer', boxShadow: '0 4px 15px rgba(237, 28, 36, 0.3)', transition: 'background 0.2s' }}
+          style={{ padding: '14px 32px', background: 'linear-gradient(135deg, #2563eb, #3b82f6)', color: '#fff', borderRadius: 8, fontWeight: 700, fontSize: 16, border: 'none', cursor: 'pointer', boxShadow: '0 4px 15px rgba(37, 99, 235, 0.3)', transition: 'background 0.2s' }}
           onMouseEnter={e => e.target.style.background = 'var(--red-dark)'}
           onMouseLeave={e => e.target.style.background = 'var(--red)'}
         >
@@ -1599,10 +1579,10 @@ const AlliedCollegesSection = ({ setCurrentPage }) => {
   }, []);
 
   return (
-  <section className="reveal" style={{ padding: '60px 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
-    <div className="container">
+  <section className="reveal" style={{ padding: 'clamp(30px, 6vw, 60px) 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
+    <div className="container-fluid">
       <div style={{ textAlign: 'center', marginBottom: 12 }}>
-        <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 800, letterSpacing: 1 }}>ACADEMIC PARTNERS</span>
+        <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 800, letterSpacing: 1 }}>ACADEMIC PARTNERS</span>
       </div>
       <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 900, textAlign: 'center', marginBottom: 40, color: 'var(--text-primary)' }}>
         Our <span className="animated-text-gradient">Allied Colleges</span>
@@ -1647,9 +1627,9 @@ const AlliedCollegesSection = ({ setCurrentPage }) => {
       <div style={{ textAlign: 'center', marginTop: 48 }}>
         <button 
           onClick={() => setCurrentPage('allied-colleges')}
-          style={{ padding: '12px 32px', background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', border: '1px solid var(--border-color)', borderRadius: 8, fontWeight: 700, fontSize: 15, cursor: 'pointer', transition: 'all 0.3s', boxShadow: 'var(--card-shadow)' }}
-          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.background = 'rgba(237, 28, 36, 0.15)'; }}
-          onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.background = 'rgba(237, 28, 36, 0.08)'; }}
+          style={{ padding: '12px 32px', background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', border: '1px solid var(--border-color)', borderRadius: 8, fontWeight: 700, fontSize: 15, cursor: 'pointer', transition: 'all 0.3s', boxShadow: 'var(--card-shadow)' }}
+          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.background = 'rgba(37, 99, 235, 0.15)'; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.background = 'rgba(37, 99, 235, 0.08)'; }}
         >
           View All Colleges
         </button>
@@ -1664,11 +1644,11 @@ const AlliedCollegesSection = ({ setCurrentPage }) => {
 /* ── Main Home Page ── */
 const EnrolledCoursesSection = ({ enrolledCourses, userName, setCurrentPage }) => {
   return (
-    <section className="reveal active bg-dots" style={{ padding: '60px 0', background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)', position: 'relative' }}>
-      <div className="container">
+    <section className="reveal active bg-dots" style={{ padding: 'clamp(30px, 6vw, 60px) 0', background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)', position: 'relative' }}>
+      <div className="container-fluid">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32, flexWrap: 'wrap', gap: 16 }}>
           <div>
-            <span style={{ background: 'rgba(237, 28, 36, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700, letterSpacing: 0.5 }}>WELCOME BACK</span>
+            <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700, letterSpacing: 0.5 }}>WELCOME BACK</span>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)', marginTop: 8 }}>
               Resume Learning, <span style={{ color: 'var(--red)' }}>{userName}</span>
             </h2>
@@ -1701,7 +1681,7 @@ const EnrolledCoursesSection = ({ enrolledCourses, userName, setCurrentPage }) =
             >
               <div style={{ height: 160, overflow: 'hidden', position: 'relative' }}>
                 <img src={course.img || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80'} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                <span style={{ position: 'absolute', top: 12, right: 12, background: 'var(--red)', color: '#fff', fontSize: 9, fontWeight: 800, padding: '4px 8px', borderRadius: 4 }}>
+                <span style={{ position: 'absolute', top: 12, right: 12, background: 'linear-gradient(135deg, #2563eb, #3b82f6)', color: '#fff', fontSize: 9, fontWeight: 800, padding: '4px 8px', borderRadius: 4 }}>
                   ENROLLED
                 </span>
               </div>
@@ -1717,7 +1697,7 @@ const EnrolledCoursesSection = ({ enrolledCourses, userName, setCurrentPage }) =
                       <span style={{ color: 'var(--red)' }}>{course.progress || 0}%</span>
                     </div>
                     <div style={{ width: '100%', height: 6, background: 'var(--border-color)', borderRadius: 3, overflow: 'hidden' }}>
-                      <div style={{ width: `${course.progress || 0}%`, height: '100%', background: 'linear-gradient(90deg, var(--red), #ff4d54)', borderRadius: 3 }} />
+                      <div style={{ width: `${course.progress || 0}%`, height: '100%', background: 'linear-gradient(90deg, var(--red), #60a5fa)', borderRadius: 3 }} />
                     </div>
                   </div>
                 </div>
@@ -1742,7 +1722,7 @@ const EnrolledCoursesSection = ({ enrolledCourses, userName, setCurrentPage }) =
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: 8,
-                    boxShadow: '0 4px 14px rgba(237, 28, 36, 0.2)'
+                    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.2)'
                   }}
                 >
                   Resume Learning <ArrowRight size={14} />
@@ -1790,11 +1770,65 @@ const HomePage = ({ setCurrentPage }) => {
     <div style={{ overflowX: 'clip', position: 'relative' }}>
       <style dangerouslySetInnerHTML={{__html: `
         /* Home Page Responsive Classes */
-        .hero-grid {
+        .hero-shell {
           display: grid;
-          grid-template-columns: 1fr 420px;
-          gap: 60px;
+          grid-template-columns: minmax(0, 1.4fr) minmax(320px, 420px);
+          gap: clamp(24px, 3vw, 48px);
           align-items: center;
+        }
+        .hero-text-column {
+          max-width: 680px;
+        }
+        .hero-phone-column {
+          transform: translateX(-72px);
+        }
+        .hero-trust-inline {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 18px;
+          font-size: 14px;
+        }
+        .hero-stats-grid {
+          display: flex;
+          gap: 16px;
+          margin-top: 24px;
+          flex-wrap: wrap;
+        }
+        .hero-stat-card {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 14px 16px;
+          min-width: 170px;
+          border-radius: 16px;
+          background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(239,68,68,0.08));
+          border: 1px solid rgba(37,99,235,0.16);
+          border-left: 3px solid var(--red);
+          box-shadow: 0 10px 24px rgba(15,23,42,0.06);
+        }
+        .hero-stat-icon {
+          display: grid;
+          place-items: center;
+          width: 42px;
+          height: 42px;
+          border-radius: 12px;
+          background: rgba(239,68,68,0.12);
+          color: var(--red);
+        }
+        .hero-stat-value {
+          font-family: var(--font-display);
+          font-size: 32px;
+          font-weight: 700;
+          line-height: 1;
+          color: var(--text-primary);
+        }
+        .hero-stat-label {
+          color: var(--text-muted);
+          font-size: 12px;
+          margin-top: 2px;
+          font-weight: 600;
         }
         .about-grid {
           display: grid;
@@ -1823,25 +1857,7 @@ const HomePage = ({ setCurrentPage }) => {
           grid-template-columns: 1.2fr 1fr;
           gap: 24px;
         }
-        .community-stats {
-          display: flex;
-          justify-content: space-between;
-          padding: 0 20px;
-          flex-wrap: wrap;
-          gap: 20px;
-        }
-        .community-stat-item {
-          width: 22%;
-        }
-        .connecting-line {
-          position: absolute;
-          top: 12px;
-          left: 60px;
-          right: 60px;
-          height: 2px;
-          background: var(--red);
-          z-index: 1;
-        }
+
         .featured-success-card {
           flex-direction: row;
         }
@@ -1853,27 +1869,31 @@ const HomePage = ({ setCurrentPage }) => {
         }
         
         @media (max-width: 1024px) {
-          .hero-grid { grid-template-columns: 1fr 350px; gap: 40px; }
+          .hero-shell { grid-template-columns: minmax(0, 1fr) minmax(300px, 360px); gap: 40px; }
+          .hero-phone-column { transform: translateX(-40px); }
           .courses-grid { grid-template-columns: repeat(2, 1fr); }
           .success-grid { grid-template-columns: 1fr; }
-          .community-stat-item { width: 45%; }
-          .connecting-line { display: none; }
+
           .featured-img-container { min-height: 280px; }
         }
         
         @media (max-width: 768px) {
-          .hero-grid { grid-template-columns: 1fr; text-align: center; }
-          .stats-container { justify-content: center; }
+          .hero-shell { grid-template-columns: 1fr; text-align: center; }
+          .hero-text-column { max-width: 100%; }
+          .hero-trust-row { justify-content: center; }
+          .hero-stats-grid { justify-content: center; }
+          .hero-phone-column { max-width: 420px; margin: 0 auto; transform: translateX(0); }
+          .hero-floating-card { left: 16px; top: 16px; }
           .about-grid { grid-template-columns: 1fr; gap: 40px; }
           .features-grid { grid-template-columns: 1fr; }
           .courses-grid { grid-template-columns: 1fr; }
-          .community-stat-item { width: 100%; }
+
           .featured-success-card { flex-direction: column !important; }
           .featured-img-container { flex: 0 0 100% !important; max-width: 100% !important; min-height: auto !important; aspect-ratio: 16/9; }
         }
       `}} />
       {/* Ambient Background Glows */}
-      <div style={{ position: 'absolute', top: '5%', left: '-10%', width: '50vw', height: '50vw', minWidth: 600, minHeight: 600, background: 'radial-gradient(circle, rgba(237,28,36,0.06) 0%, rgba(237,28,36,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
+      <div style={{ position: 'absolute', top: '5%', left: '-10%', width: '50vw', height: '50vw', minWidth: 600, minHeight: 600, background: 'radial-gradient(circle, rgba(37,99,235,0.06) 0%, rgba(37,99,235,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
       <div style={{ position: 'absolute', top: '25%', right: '-15%', width: '60vw', height: '60vw', minWidth: 800, minHeight: 800, background: 'radial-gradient(circle, rgba(59,130,246,0.05) 0%, rgba(59,130,246,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
       <div style={{ position: 'absolute', top: '55%', left: '-5%', width: '55vw', height: '55vw', minWidth: 700, minHeight: 700, background: 'radial-gradient(circle, rgba(16,185,129,0.04) 0%, rgba(16,185,129,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
       <div style={{ position: 'absolute', top: '80%', right: '-5%', width: '50vw', height: '50vw', minWidth: 600, minHeight: 600, background: 'radial-gradient(circle, rgba(217,70,239,0.04) 0%, rgba(217,70,239,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
