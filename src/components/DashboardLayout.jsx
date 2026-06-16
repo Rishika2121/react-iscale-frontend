@@ -12,7 +12,9 @@ import {
   Search,
   Bell,
   Menu,
-  X
+  X,
+  FileText,
+  Heart
 } from 'lucide-react';
 
 // Custom SVG Logo matching the screenshot
@@ -568,6 +570,18 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
           </button>
           <button onClick={() => navigateToTab('test-series-result')} className={`sidebar-btn no-border ${activeTab === 'test-series-result' ? 'active' : ''}`}>
             <Award size={20} /><span>Test Series Result</span>
+          </button>
+          
+          <div className="sidebar-section-title">Tests & Notes</div>
+          
+          <button onClick={() => navigateToTab('test-packages')} className={`sidebar-btn ${activeTab === 'test-packages' ? 'active' : ''}`}>
+            <BookOpen size={20} /><span>Test Packages</span>
+          </button>
+          <button onClick={() => navigateToTab('my-notes')} className={`sidebar-btn ${activeTab === 'my-notes' ? 'active' : ''}`}>
+            <FileText size={20} /><span>My Notes</span>
+          </button>
+          <button onClick={() => navigateToTab('wishlist')} className={`sidebar-btn ${activeTab === 'wishlist' ? 'active' : ''}`}>
+            <Heart size={20} /><span>My Wishlist</span>
           </button>
           
           <div className="sidebar-section-title">User</div>

@@ -44,9 +44,10 @@ const AuthPage = ({ setCurrentPage }) => {
       return;
     }
     setLoading(true);
-    // Simulate Check for now since no check API
+    // Simulate API Check
     setTimeout(() => {
       setLoading(false);
+      // Mock logic: If identifier ends with '1', user exists. Else new user.
       if (identifier.endsWith('1')) {
         setAuthMode('login_selection');
       } else {
@@ -66,189 +67,87 @@ const AuthPage = ({ setCurrentPage }) => {
     }, 1000);
   };
 
-  const handleVerifyOtp = async (nextState) => {
+  const handleVerifyOtp = (nextState) => {
     if (!otp) {
       alert("Please enter the OTP.");
       return;
     }
-    setVerifyingOtp(true);
-    
-    // Mock check for testing
-    if (otp === generatedOtp || otp === '123456') {
-      setVerifyingOtp(false);
-      setShowNotification(false);
-      if (nextState === 'success') handleSuccess("Welcome back! Verified via secure OTP...");
-      else setAuthMode(nextState);
+    if (otp !== generatedOtp && otp !== '123456') {
+      alert("Invalid OTP! Please check your simulated notification.");
       return;
     }
-
-    // Real API Check
-    try {
-      const response = await fetch("https://iscale-backend.onrender.com/api/auth/verify-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: identifier, otp })
-      });
-      const data = await response.json();
-      if (data.status || data.success) {
-        setShowNotification(false);
-        if (nextState === 'success') {
-          if (data.token) localStorage.setItem("token", data.token);
-          if (data.user) localStorage.setItem("user", JSON.stringify(data.user));
-          handleSuccess("Welcome back! Verified via secure OTP...");
-        } else {
-          setAuthMode(nextState);
-        }
-      } else {
-        alert(data.message || "Invalid OTP");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Server Error. Unable to verify OTP.");
-    } finally {
+    setVerifyingOtp(true);
+    setTimeout(() => {
       setVerifyingOtp(false);
-    }
+      setShowNotification(false);
+      
+      if (nextState === 'success') {
+        handleSuccess("Welcome back! Verified via secure OTP...");
+      } else {
+        setAuthMode(nextState);
+      }
+    }, 800);
   };
 
-  const handlePasswordLogin = async () => {
+  const handlePasswordLogin = () => {
     if (!password) {
       alert("Please enter your password.");
       return;
     }
     setLoading(true);
-    try {
-      const response = await fetch("https://iscale-backend.onrender.com/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: identifier, password })
-      });
-      const data = await response.json();
-      if (data.status || data.token) {
-        localStorage.setItem("token", data.token);
-        if (data.user) localStorage.setItem("user", JSON.stringify(data.user));
-        handleSuccess("Welcome back! Preparing your customized dashboard...");
-      } else {
-        alert(data.message || "Login failed");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Server Error. Unable to login.");
-    } finally {
+    setTimeout(() => {
       setLoading(false);
-    }
+      handleSuccess("Welcome back! Preparing your customized dashboard...");
+    }, 1000);
   };
 
-  const handleFinalRegister = async () => {
+  const handleFinalRegister = () => {
     setLoading(true);
-    try {
-      const response = await fetch("https://iscale-backend.onrender.com/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fname: regForm.firstName,
-          lname: regForm.lastName,
-          email: regForm.email,
-          password: password,
-          contact: Number(identifier.replace(/\D/g, '')) || 0,
-          whatsapp: Number(identifier.replace(/\D/g, '')) || 0,
-          gender: regForm.gender,
-          c_current_state: "000000000000000000000000",
-          c_current_city: "000000000000000000000000",
-          c_user_refer_by: "000000000000000000000000"
-        })
-      });
-      const data = await response.json();
-      if (data.status || data.token) {
-        localStorage.setItem("user_survey", JSON.stringify(survey));
-        if (data.token) localStorage.setItem("token", data.token);
-        if (data.user) localStorage.setItem("user", JSON.stringify(data.user));
-        handleSuccess("Your account has been created successfully. Redirecting you to dashboard...");
-      } else {
-        alert(data.message || "Registration failed");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Server Error. Unable to register.");
-    } finally {
+    setTimeout(() => {
       setLoading(false);
-    }
+      handleSuccess("Your account has been created successfully. Redirecting you to dashboard...");
+    }, 1500);
   };
 
-  // --- FORGOT PASSWORD FLOW ---
-  const handleSendForgotOtp = async () => {
+  // --- FORGOT PASSWORD FLOW (MOCKED) ---
+  const handleSendForgotOtp = () => {
     const emailToUse = forgotEmail || identifier;
     if (!emailToUse) {
       alert("Please enter your email.");
       return;
     }
     setSendingOtp(true);
-    try {
-      const response = await fetch("https://iscale-backend.onrender.com/api/auth/send-forgot-password-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: emailToUse })
-      });
-      const data = await response.json();
-      if (data.status || data.success) {
-        setAuthMode("forgot_password_otp");
-      } else {
-        alert(data.message || "Failed to send OTP");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Server Error.");
-    } finally {
+    setTimeout(() => {
       setSendingOtp(false);
-    }
+      setAuthMode("forgot_password_otp");
+      const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+      setGeneratedOtp(newOtp);
+      setShowNotification(true);
+    }, 1000);
   };
 
-  const handleVerifyForgotOtp = async () => {
+  const handleVerifyForgotOtp = () => {
     if (!forgotOtp) return alert("Enter OTP");
-    setVerifyingOtp(true);
-    try {
-      const emailToUse = forgotEmail || identifier;
-      const response = await fetch("https://iscale-backend.onrender.com/api/auth/verify-forgot-password-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: emailToUse, otp: forgotOtp })
-      });
-      const data = await response.json();
-      if (data.status || data.success) {
-        setAuthMode("forgot_password_reset");
-      } else {
-        alert(data.message || "Invalid OTP");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Server Error.");
-    } finally {
-      setVerifyingOtp(false);
+    if (forgotOtp !== generatedOtp && forgotOtp !== '123456') {
+      alert("Invalid OTP! Please check your simulated notification.");
+      return;
     }
+    setVerifyingOtp(true);
+    setTimeout(() => {
+      setVerifyingOtp(false);
+      setShowNotification(false);
+      setAuthMode("forgot_password_reset");
+    }, 800);
   };
 
-  const handleResetPassword = async () => {
+  const handleResetPassword = () => {
     if (!newPassword) return alert("Enter new password");
     setLoading(true);
-    try {
-      const emailToUse = forgotEmail || identifier;
-      const response = await fetch("https://iscale-backend.onrender.com/api/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: emailToUse, otp: forgotOtp, newPassword })
-      });
-      const data = await response.json();
-      if (data.status || data.success) {
-        alert("Password reset successfully! Please login with your new password.");
-        setAuthMode("login_password");
-      } else {
-        alert(data.message || "Failed to reset password");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Server Error.");
-    } finally {
+    setTimeout(() => {
       setLoading(false);
-    }
+      alert("Password reset successfully! Please login with your new password.");
+      setAuthMode("login_password");
+    }, 1000);
   };
 
   const handleSuccess = (msg) => {
@@ -269,7 +168,7 @@ const AuthPage = ({ setCurrentPage }) => {
     <div className="bg-dots" style={{ minHeight: "90vh", background: "var(--gradient-hero)", display: "flex", alignItems: "center", padding: "60px 0", color: "var(--text-primary)" }}>
       <MockOTPNotification 
         isVisible={showNotification} 
-        contact={identifier} 
+        contact={identifier || forgotEmail} 
         otp={generatedOtp} 
         onClose={() => setShowNotification(false)} 
       />

@@ -6,6 +6,8 @@ import Footer from './components/Footer';
 import EnrollmentPopup from './components/EnrollmentPopup';
 import DashboardLayout from './components/DashboardLayout';
 import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import AuthPage from './pages/AuthPage';
 import CoursesPage from './pages/CoursesPage';
 import EventsPage from './pages/EventsPage';
@@ -15,13 +17,18 @@ import JobDetailsPage from './pages/JobDetailsPage';
 import PlacementTalksPage from './pages/PlacementTalksPage';
 import CourseDetailsPage from './pages/CourseDetailsPage';
 import CohortPage from './pages/CohortPage';
-import DashboardPage from "./pages/dashboard/DashboardPage";
-import MyProfile from "./pages/dashboard/MyProfile";
-import EnrolledCourses from "./pages/dashboard/EnrolledCourses";
+import DashboardPage from './pages/dashboard/DashboardPage';
+import MyProfile from './pages/dashboard/MyProfile';
+import EnrolledCourses from './pages/dashboard/EnrolledCourses';
 import ExploreCourses from "./pages/dashboard/ExploreCourses";
-import EnrolledEvents from "./pages/dashboard/EnrolledEvents";
-import Settings from "./pages/dashboard/Settings";
+import EnrolledEvents from './pages/dashboard/EnrolledEvents';
+import Settings from './pages/dashboard/Settings';
 import TestSeriesResult from "./pages/dashboard/TestSeriesResult";
+import MyTestPackages from './pages/dashboard/MyTestPackages';
+import TestPackageDetails from './pages/dashboard/TestPackageDetails';
+import MyNotes from './pages/dashboard/MyNotes';
+import NoteDetails from './pages/dashboard/NoteDetails';
+import MyWishlist from './pages/dashboard/MyWishlist';
 
 // Newly added detailed pages
 import AboutPage from './pages/AboutPage';
@@ -69,7 +76,7 @@ const AppContent = () => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  const privatePages = ['dashboard', 'my-profile', 'enrolled-courses', 'enrolled-events', 'settings', 'test-series-result'];
+  const privatePages = ['dashboard', 'my-profile', 'enrolled-courses', 'enrolled-events', 'settings', 'test-series-result', 'test-packages', 'test-package-details', 'my-notes', 'note-details', 'wishlist'];
   
   const token = localStorage.getItem('token');
   const isDashboard = !!token && privatePages.includes(currentPage);
@@ -105,15 +112,21 @@ const AppContent = () => {
               <Route path="/my-profile" element={<MyProfile />} />
               <Route path="/enrolled-courses" element={<EnrolledCourses />} />
               <Route path="/enrolled-events" element={<EnrolledEvents />} />
-              <Route path="/settings" element={<Settings />} />
+              <Route path="/explore-courses" element={<ExploreCourses setCurrentPage={handleNavigate} />} />
               <Route path="/test-series-result" element={<TestSeriesResult />} />
+              <Route path="/test-packages" element={<MyTestPackages setCurrentPage={handleNavigate} />} />
+              <Route path="/test-package-details/:id" element={<TestPackageDetails />} />
+              <Route path="/my-notes" element={<MyNotes />} />
+              <Route path="/note-details/:id" element={<NoteDetails />} />
+              <Route path="/wishlist" element={<MyWishlist setCurrentPage={handleNavigate} />} />
+              <Route path="/settings" element={<Settings />} />
             </Routes>
           </DashboardLayout>
         ) : (
           <Routes>
             <Route path="/" element={<HomePage setCurrentPage={handleNavigate} />} />
-            <Route path="/login" element={<AuthPage setCurrentPage={handleNavigate} />} />
-            <Route path="/register" element={<AuthPage setCurrentPage={handleNavigate} />} />
+            <Route path="/login" element={<LoginPage setCurrentPage={handleNavigate} />} />
+            <Route path="/register" element={<RegisterPage setCurrentPage={handleNavigate} />} />
             <Route path="/auth" element={<AuthPage setCurrentPage={handleNavigate} />} />
             <Route path="/courses" element={<CoursesPage setCurrentPage={handleNavigate} />} />
             <Route path="/explore-courses" element={<ExploreCourses setCurrentPage={handleNavigate} />} />

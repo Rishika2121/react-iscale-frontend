@@ -85,6 +85,32 @@ const EventsPage = ({ setCurrentPage }) => {
       .finally(() => setLoading(false));
   }, [search, category, page, limit, status]);
 
+  const handleRegister = async (eventId) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please login to register for this event.');
+        return;
+      }
+      const res = await fetch('https://iscale-backend.onrender.com/api/enrolled-events/enroll-event', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ event_id: eventId })
+      });
+      const data = await res.json();
+      if (data.status) {
+        alert('Successfully registered for the event!');
+      } else {
+        alert(data.message || 'Failed to register.');
+      }
+    } catch (err) {
+      alert('Error connecting to server.');
+    }
+  };
+
   return (
     <div className="events-page-container">
       {/* Banner Section */}
@@ -175,7 +201,12 @@ const EventsPage = ({ setCurrentPage }) => {
                       <div className="event-enrolled">
                         <span><Users size={16} style={{ display: 'inline', color: 'var(--red)', marginRight: '4px' }} /> <strong>{evt.enrolled}</strong> People Enrolled</span>
                       </div>
-                      <button className="event-btn">
+                      <button 
+                        className="event-btn" 
+                        onClick={() => evt.status === 'active' && handleRegister(evt.id)}
+                        disabled={evt.status !== 'active'}
+                        style={{ cursor: evt.status === 'active' ? 'pointer' : 'not-allowed', opacity: evt.status === 'active' ? 1 : 0.6 }}
+                      >
                         {evt.status === 'active' ? 'Register' : 'Expired'} <ArrowRight size={16} />
                       </button>
                     </div>

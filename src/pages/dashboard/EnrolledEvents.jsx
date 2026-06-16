@@ -19,28 +19,45 @@ const EnrolledEvents = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch('https://iscale-backend.onrender.com/api/event/public-get-events?status=active&limit=100');
-        const data = await response.json();
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setLoading(false);
+          return;
+        }
         
-        if (data.status && Array.isArray(data.data)) {
-          const mapped = data.data.map(evt => {
-            let d = new Date();
-            if (evt.m_event_date_start) {
-              d = new Date(evt.m_event_date_start);
-            }
-            const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-            
-            return {
-              id: evt._id,
-              title: evt.m_event_title || 'Event',
-              type: evt.m_event_type || 'Webinar',
-              date: dateStr,
-              time: evt.m_event_time_start || '10:00 AM',
-              instructor: evt.m_event_speaker || 'iScale Experts',
-              status: evt.m_event_status === 'active' ? 'Registered' : 'Register'
-            };
-          });
-          setEvents(mapped);
+        const response = await fetch('https://iscale-backend.onrender.com/api/enrolled-events/my-enrolled-events', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.status && Array.isArray(data.data)) {
+            const mapped = data.data.map(evt => {
+              // The backend might nest the event details inside an object, e.g., evt.eventId or just return the event details directly.
+              const actualEvt = evt.eventId || evt;
+              
+              let d = new Date();
+              if (actualEvt.m_event_date_start) {
+                d = new Date(actualEvt.m_event_date_start);
+              } else if (actualEvt.date) {
+                d = new Date(actualEvt.date);
+              }
+              const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+              
+              return {
+                id: actualEvt._id || actualEvt.id,
+                title: actualEvt.m_event_title || actualEvt.title || 'Event',
+                type: actualEvt.m_event_type || actualEvt.type || 'Webinar',
+                date: dateStr,
+                time: actualEvt.m_event_time_start || actualEvt.time || '10:00 AM',
+                instructor: actualEvt.m_event_speaker || actualEvt.speaker || 'iScale Experts',
+                status: 'Registered'
+              };
+            });
+            setEvents(mapped);
+          } else {
+            setEvents([]);
+          }
         } else {
           setEvents([]);
         }

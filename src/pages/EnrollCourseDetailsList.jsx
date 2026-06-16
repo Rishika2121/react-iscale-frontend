@@ -1,23 +1,80 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
-import { Download, Award } from 'lucide-react';
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
+import { Download, Award, PlayCircle, FileText, CheckCircle, Video } from 'lucide-react';
 import VideoPlayer from '../components/VideoPlayer';
 
 const EnrollCourseDetailsList = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [courseTitle, setCourseTitle] = useState('Course Title Loading...');
-  const [category, setCategory] = useState('Foundation Courses');
-  const [isCertificateApproved, setIsCertificateApproved] = useState(false); // TODO: Fetch from API
+  const [courseTitle, setCourseTitle] = useState('Course Topics');
+  const [category, setCategory] = useState('Enrolled Course');
+  const [isCertificateApproved, setIsCertificateApproved] = useState(false);
+  
+  const [topics, setTopics] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [activeTopic, setActiveTopic] = useState(null);
   
   useEffect(() => {
-    // We would fetch course details here from API
-    if (id) {
-      // Create a readable title from the slug ID for now
-      const formattedTitle = id.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-      setCourseTitle(formattedTitle);
-    }
-  }, [id]);
+    const resolveSlugAndFetch = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        if (!token) {
+           navigate('/login');
+           return;
+        }
+
+        let realCourseId = id;
+        // If id is not a 24-char hex string (MongoDB ID), it's likely a slug
+        if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+          try {
+            const allRes = await fetch('https://iscale-backend.onrender.com/api/course/public-all-courses?page=1&limit=1000');
+            const allData = await allRes.json();
+            if (allData.status && Array.isArray(allData.data)) {
+              const matchedCourse = allData.data.find(c => c.slug === id || c._id === id);
+              if (matchedCourse) {
+                realCourseId = matchedCourse._id;
+              }
+            }
+          } catch (err) {
+            console.error("Resolve slug error:", err);
+          }
+        }
+
+        const response = await fetch(`https://iscale-backend.onrender.com/api/topics/private/${realCourseId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.status === 401) {
+           localStorage.removeItem('token');
+           navigate('/login');
+           return;
+        }
+
+        const result = await response.json();
+        
+        if (result.status && Array.isArray(result.data)) {
+          setTopics(result.data);
+          if (result.data.length > 0) {
+             setActiveTopic(result.data[0]);
+          }
+        } else {
+          setError(result.message || 'No topics found for this module.');
+        }
+      } catch (err) {
+        console.error('Failed to fetch topics:', err);
+        setError('An error occurred while fetching topics.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    resolveSlugAndFetch();
+  }, [id, navigate]);
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#ffffff', fontFamily: '"Inter", sans-serif', animation: 'fadeSlideUp 0.4s ease-out' }}>
@@ -68,8 +125,9 @@ const EnrollCourseDetailsList = () => {
           height: 100%;
           background-color: #1e293b;
           border-radius: 10px;
-          width: 3%;
+          width: 0%;
           position: relative;
+          transition: width 0.3s ease;
         }
         .progress-knob {
           position: absolute;
@@ -110,6 +168,63 @@ const EnrollCourseDetailsList = () => {
           box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
           width: auto;
         }
+        
+        .topic-list-container {
+          display: grid;
+          grid-template-columns: 350px 1fr;
+          gap: 30px;
+          padding: 40px 5%;
+          max-width: 1400px;
+          margin: 0 auto;
+          align-items: start;
+        }
+        .topics-sidebar {
+          background: var(--card-bg);
+          border: 1px solid var(--border-color);
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: var(--card-shadow);
+        }
+        .topics-sidebar-header {
+          padding: 20px;
+          border-bottom: 1px solid var(--border-color);
+          background: rgba(0,0,0,0.02);
+        }
+        .topic-item {
+          padding: 16px 20px;
+          border-bottom: 1px solid var(--border-color);
+          cursor: pointer;
+          transition: all 0.2s;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .topic-item:hover {
+          background: rgba(37, 99, 235, 0.05);
+        }
+        .topic-item.active {
+          background: rgba(37, 99, 235, 0.1);
+          border-left: 4px solid var(--blue);
+        }
+        .topic-item-title {
+          font-size: 15px;
+          font-weight: 600;
+          color: var(--text-primary);
+          flex: 1;
+        }
+        
+        @media (max-width: 992px) {
+          .topic-list-container {
+            display: flex;
+            flex-direction: column-reverse;
+          }
+          .topics-sidebar {
+            width: 100%;
+          }
+          .video-player-area {
+            width: 100%;
+          }
+        }
         @media (max-width: 768px) {
           .study-hero {
             padding: 40px 20px;
@@ -120,6 +235,9 @@ const EnrollCourseDetailsList = () => {
           .certificate-btn {
             width: 100%;
             justify-content: center;
+          }
+          .video-player-area {
+            padding: 16px !important;
           }
         }
         @media (min-width: 1400px) {
@@ -142,22 +260,18 @@ const EnrollCourseDetailsList = () => {
         </div>
         
         <h1 className="study-title">
-          {courseTitle}
+          {activeTopic ? activeTopic.title : courseTitle}
         </h1>
         
         <div className="study-meta">
-          <strong>Subject:</strong> null
-        </div>
-        
-        <div className="study-meta" style={{ color: '#64748b' }}>
-          Topic: Workflow Prepare
+          <strong>Module Topics:</strong> {topics.length} Available
         </div>
         
         <div className="hero-actions">
           <div className="progress-container progress-wrapper">
             <div className="progress-bar-bg">
-              <div className="progress-bar-fill" style={{ width: '3%' }}>
-                <div className="progress-knob">3%</div>
+              <div className="progress-bar-fill" style={{ width: '0%' }}>
+                <div className="progress-knob">0%</div>
               </div>
             </div>
           </div>
@@ -173,17 +287,111 @@ const EnrollCourseDetailsList = () => {
         </div>
       </div>
       
-      {/* Video Player Section */}
-      <div style={{ padding: '40px 5%', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ 
+      {/* Topics and Video Section */}
+      <div className="topic-list-container">
+        
+        {/* Sidebar Topics List */}
+        <div className="topics-sidebar">
+          <div className="topics-sidebar-header">
+            <h3 style={{ margin: 0, fontSize: '18px', color: 'var(--text-primary)' }}>Topics</h3>
+          </div>
+          <div style={{ maxHeight: '600px', overflowY: 'auto' }}>
+            {loading ? (
+              <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-secondary)' }}>Loading topics...</div>
+            ) : error ? (
+              <div style={{ padding: '20px', textAlign: 'center', color: 'var(--red)' }}>{error}</div>
+            ) : topics.length === 0 ? (
+              <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-secondary)' }}>No topics available.</div>
+            ) : (
+              topics.map((topic, index) => (
+                <div 
+                  key={topic._id || index} 
+                  className={`topic-item ${activeTopic?._id === topic._id ? 'active' : ''}`}
+                  onClick={() => setActiveTopic(topic)}
+                >
+                  {topic.video_url ? <PlayCircle size={20} color={activeTopic?._id === topic._id ? 'var(--blue)' : 'var(--text-secondary)'} /> : <FileText size={20} color="var(--text-secondary)" />}
+                  <span className="topic-item-title">{topic.title || `Topic ${index + 1}`}</span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Video Player Area */}
+        <div className="video-player-area" style={{ 
           backgroundColor: 'var(--card-bg)', 
           border: '1px solid var(--border-color)', 
           borderRadius: '12px', 
           padding: '30px', 
         }}>
-          <h2 style={{ marginBottom: '24px', textAlign: 'center', color: 'var(--text-primary)' }}>Course Video</h2>
-          <VideoPlayer videoId={id} />
+          {activeTopic ? (
+            <>
+              <h2 style={{ marginBottom: '24px', color: 'var(--text-primary)' }}>{activeTopic.title}</h2>
+              {activeTopic.description && (
+                <p style={{ marginBottom: '24px', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+                  {activeTopic.description}
+                </p>
+              )}
+
+              <div className="video-player-wrapper" style={{ width: '100%', aspectRatio: '16/9', backgroundColor: '#1e293b', borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                {activeTopic.video_url ? (
+                  activeTopic.video_url.includes('http') || activeTopic.video_url.includes('youtube.com') || activeTopic.video_url.includes('vimeo.com') ? (
+                    <iframe 
+                      src={activeTopic.video_url} 
+                      style={{ width: '100%', height: '100%', border: 'none' }} 
+                      allowFullScreen 
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    ></iframe>
+                  ) : (
+                    <VideoPlayer videoId={activeTopic.video_url} />
+                  )
+                ) : (
+                  <div style={{ padding: '60px 20px', textAlign: 'center', background: 'rgba(0,0,0,0.02)', borderRadius: '12px', border: '1px dashed var(--border-color)' }}>
+                    <Video size={48} color="var(--text-secondary)" style={{ marginBottom: '16px', opacity: 0.5 }} />
+                    <h3 style={{ color: 'var(--text-secondary)', marginBottom: '8px' }}>No Video Available</h3>
+                    <p style={{ color: 'var(--text-secondary)' }}>This topic does not have a video attached.</p>
+                  </div>
+                )}
+              </div>
+              
+              <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border-color)', display: 'flex', gap: '16px' }}>
+                {activeTopic.pdf_url && (
+                  <a href={activeTopic.pdf_url} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '12px 24px', background: 'var(--blue)', color: 'white', borderRadius: '8px', textDecoration: 'none', fontWeight: '600' }}>
+                    <Download size={18} /> Download Material
+                  </a>
+                )}
+                <button 
+                  onClick={async () => {
+                    try {
+                      const token = localStorage.getItem('token');
+                      const res = await fetch('https://iscale-backend.onrender.com/api/lecture-progress/mark-complete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({ lecture_id: activeTopic._id || activeTopic.id })
+                      });
+                      const data = await res.json();
+                      if (data.status) {
+                        alert('Lecture marked as completed!');
+                      } else {
+                        alert(data.message || 'Error marking lecture complete');
+                      }
+                    } catch(e) {
+                      alert('Server Error');
+                    }
+                  }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '12px 24px', background: 'var(--red)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600' }}
+                >
+                  <CheckCircle size={18} /> Mark as Complete
+                </button>
+              </div>
+            </>
+          ) : (
+            <div style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+              Select a topic from the list to view its contents.
+            </div>
+          )}
         </div>
+
       </div>
     </div>
   );

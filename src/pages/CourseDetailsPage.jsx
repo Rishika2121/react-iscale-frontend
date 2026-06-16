@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Download, Eye, Calendar, Globe, ChevronDown, ChevronUp, ChevronRight, FileText, CheckCircle, XCircle, CreditCard, Video, ArrowRight, User, BookOpen, Award, Sparkles, Star, Search, Lock, Check, ShieldCheck, Printer, PlayCircle } from 'lucide-react';
+import { Play, Download, Eye, Calendar, Globe, ChevronDown, ChevronUp, ChevronRight, FileText, CheckCircle, XCircle, CreditCard, Video, ArrowRight, User, BookOpen, Award, Sparkles, Star, Search, Lock, Check, ShieldCheck, Printer, PlayCircle, Heart } from 'lucide-react';
 
 
 const coursesDatabase = {
@@ -765,17 +765,20 @@ const CourseDetailsPage = ({ courseId, setCurrentPage }) => {
         return;
       }
 
-      try {
-        const res = await fetch(`https://iscale-backend.onrender.com/api/course/public-course/${realCourseId}`);
-        const result = await res.json();
-        if (result.status && result.data) {
-          setApiData(result.data);
+      if (!matchedCourse) {
+        try {
+          const res = await fetch(`https://iscale-backend.onrender.com/api/course/public-course/${realCourseId}`);
+          if (res.ok) {
+            const result = await res.json();
+            if (result.status && result.data) {
+              setApiData(result.data);
+            }
+          }
+        } catch (err) {
+          console.error("Fetch course details error:", err);
         }
-      } catch (err) {
-        console.error("Fetch course details error:", err);
-      } finally {
-        setLoading(false);
       }
+      setLoading(false);
 
       setSubjectsLoading(true);
       try {
@@ -998,8 +1001,8 @@ useEffect(() => {
     setIsEnrolled(false);
   }
   try {
-    const stored = localStorage.getItem(`completed_lectures_${data.id}`);
-    setCompletedLectures(stored ? JSON.parse(stored) : []);
+    // Rely completely on API backend data loaded into curriculumData instead of dummy local cache.
+    setCompletedLectures([]);
   } catch (e) {
     setCompletedLectures([]);
   }
@@ -1092,7 +1095,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ course_id: courseId })
+        body: JSON.stringify({ course_id: apiData?._id || courseId })
       });
       const resData = await res.json();
 
@@ -1117,6 +1120,33 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
     } catch (e) {
       console.error(e);
       alert('Error enrolling. Please try again later.');
+    }
+  };
+
+  const handleAddToWishlist = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please log in to add to wishlist.');
+        return;
+      }
+      
+      const res = await fetch('https://iscale-backend.onrender.com/api/user-wishlist/course/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ course_id: apiData?._id || courseId })
+      });
+      const data = await res.json();
+      if (data.status) {
+        alert('Added to Wishlist!');
+      } else {
+        alert(data.message || 'Failed to add to wishlist.');
+      }
+    } catch (e) {
+      alert('Error connecting to server.');
     }
   };
 
@@ -1314,15 +1344,13 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                       if (rData.status) {
                         const newCompleted = [...completedLectures, activeCohortLecture.id];
                         setCompletedLectures(newCompleted);
-                        localStorage.setItem(`completed_lectures_${data.id}`, JSON.stringify(newCompleted));
                         alert('Lecture marked as completed!');
                         // Also automatically update enrolled course progress if possible
                         try {
-                          const enrolled = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
-                          const cIndex = enrolled.findIndex(c => c.id === data.id);
-                          if(cIndex > -1) {
-                            enrolled[cIndex].progress = rData.data.progress || 100;
-                            localStorage.setItem('enrolled_courses', JSON.stringify(enrolled));
+                          const token = localStorage.getItem('token');
+                          if (token) {
+                            // Hit the debug or progress endpoint quietly to sync if needed,
+                            // though just modifying state is fine since backend is marked.
                           }
                         } catch(e){}
                       } else {
@@ -1482,6 +1510,12 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                 Enroll Now <ArrowRight size={20} />
               </button>
             )}
+            <button 
+              onClick={handleAddToWishlist}
+              style={{ width: '100%', padding: '16px', marginTop: '12px', background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-color)', borderRadius: 8, fontWeight: 700, fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'all 0.2s' }}
+            >
+              <Heart size={20} color="#ec4899" /> Add to Wishlist
+            </button>
           </div>
         </div>
       </section>

@@ -304,52 +304,57 @@ const DashboardPage = ({ setCurrentPage }) => {
           setPremiumCount(dashboardStats.premiumCourses || 0);
         }
 
-        // Keep local enrolled list for the visual course cards
-        const storedEnrolled = localStorage.getItem('enrolled_courses');
+        // Fetch enrolled courses from API instead of dummy slugs
         let enrolledList = [];
-        if (storedEnrolled && storedEnrolled !== 'undefined') {
-          try {
-            enrolledList = JSON.parse(storedEnrolled);
-          } catch(e) {}
-        }
-        
-        if (!enrolledList || enrolledList.length === 0) {
-          // Prepopulate default course
-          enrolledList = [
-            { 
-              id: 'ai-engineer-advance-program', 
-              title: 'AI Engineer Advance Program', 
-              category: 'AI Courses', 
-              progress: 0, 
-              bgGradient: 'linear-gradient(135deg, #e0f2fe, #bae6fd)',
-              img: 'https://www.theiscale.com/myadmin/uploads/courses/Your_paragraph_text_(10).jpg'
+        try {
+          const [premiumRes, freeRes] = await Promise.all([
+            fetch('https://iscale-backend.onrender.com/api/enrolled-courses/premium-courses', {
+              headers: { 'Authorization': `Bearer ${token}` }
+            }),
+            fetch('https://iscale-backend.onrender.com/api/enrolled-courses/free-courses', {
+              headers: { 'Authorization': `Bearer ${token}` }
+            })
+          ]);
+          
+          if (premiumRes.ok) {
+            const data = await premiumRes.json();
+            if (data.status && Array.isArray(data.data)) {
+              enrolledList = [...enrolledList, ...data.data];
             }
-          ];
-          localStorage.setItem('enrolled_courses', JSON.stringify(enrolledList));
-        }
+          }
+          if (freeRes.ok) {
+            const data = await freeRes.json();
+            if (data.status && Array.isArray(data.data)) {
+              enrolledList = [...enrolledList, ...data.data];
+            }
+          }
+        } catch(e) { console.error(e); }
 
         // Fetch true progress from the server for all enrolled courses
-        enrolledList = await Promise.all(enrolledList.map(async (c) => {
-          try {
-            const progRes = await fetch(`https://iscale-backend.onrender.com/api/lecture-progress/course/${c.id}`, {
-              headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (progRes.ok) {
-              const progData = await progRes.json();
-              if (progData.status && progData.data) {
-                c.progress = progData.data.progress || 0;
-              }
-            }
-          } catch(e) {}
-          return c;
-        }));
-        
-        // Save the synced list back to local storage
-        localStorage.setItem('enrolled_courses', JSON.stringify(enrolledList));
-
         if (enrolledList.length > 0) {
-          setActiveCourseId(enrolledList[0].id);
+          enrolledList = await Promise.all(enrolledList.map(async (c) => {
+            try {
+              const courseId = c._id || c.id || c.courseId;
+              if (courseId) {
+                const progRes = await fetch(`https://iscale-backend.onrender.com/api/lecture-progress/course/${courseId}`, {
+                  headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (progRes.ok) {
+                  const progData = await progRes.json();
+                  if (progData.status && progData.data) {
+                    c.progress = progData.data.progress || 0;
+                  }
+                }
+              }
+            } catch(e) {}
+            return c;
+          }));
+          
+          setActiveCourseId(enrolledList[0]._id || enrolledList[0].id);
         }
+        
+        // Save the synced list back to local storage just in case other old components rely on it
+        localStorage.setItem('enrolled_courses', JSON.stringify(enrolledList));
 
         // Calculate average progress for the visual cards
         let totalProg = 0;

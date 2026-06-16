@@ -10,32 +10,44 @@ const EnrolledCourses = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        let stored = localStorage.getItem('enrolled_courses');
-        let enrolledList = [];
-        if (stored) {
-          enrolledList = JSON.parse(stored);
-        } else {
-          // Pre-populate with default course if none exists
-          enrolledList = [
-            { 
-              id: 'ai-engineer-advance-program', 
-              title: 'AI Engineer Advance Program', 
-              category: 'AI Courses', 
-              progress: 0, 
-              bgGradient: 'linear-gradient(135deg, #e0f2fe, #bae6fd)',
-              img: 'https://www.theiscale.com/myadmin/uploads/courses/Your_paragraph_text_(10).jpg'
-            }
-          ];
-          localStorage.setItem('enrolled_courses', JSON.stringify(enrolledList));
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setLoading(false);
+          return;
         }
 
-        // Fetch true progress from the server
-        const token = localStorage.getItem('token');
-        if (token && enrolledList.length > 0) {
+        // Fetch courses from API instead of dummy data
+        let enrolledList = [];
+        try {
+          const [premiumRes, freeRes] = await Promise.all([
+            fetch('https://iscale-backend.onrender.com/api/enrolled-courses/premium-courses', {
+              headers: { 'Authorization': `Bearer ${token}` }
+            }),
+            fetch('https://iscale-backend.onrender.com/api/enrolled-courses/free-courses', {
+              headers: { 'Authorization': `Bearer ${token}` }
+            })
+          ]);
+          
+          if (premiumRes.ok) {
+            const data = await premiumRes.json();
+            if (data.status && Array.isArray(data.data)) {
+              enrolledList = [...enrolledList, ...data.data];
+            }
+          }
+          if (freeRes.ok) {
+            const data = await freeRes.json();
+            if (data.status && Array.isArray(data.data)) {
+              enrolledList = [...enrolledList, ...data.data];
+            }
+          }
+        } catch(e) { console.error(e); }
+
+        // Fetch true progress from the server for each course
+        if (enrolledList.length > 0) {
           enrolledList = await Promise.all(enrolledList.map(async (c) => {
             try {
-              
-              const progRes = await fetch(`https://iscale-backend.onrender.com/api/lecture-progress/course/${c.id}`, {
+              const courseId = c._id || c.id || c.courseId;
+              const progRes = await fetch(`https://iscale-backend.onrender.com/api/lecture-progress/course/${courseId}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
               });
               if (progRes.ok) {
@@ -47,7 +59,6 @@ const EnrolledCourses = () => {
             } catch(e) {}
             return c;
           }));
-          localStorage.setItem('enrolled_courses', JSON.stringify(enrolledList));
         }
         
         setCourses(enrolledList);
@@ -60,6 +71,19 @@ const EnrolledCourses = () => {
 
     fetchCourses();
   }, []);
+
+  const handleDebugClick = async (courseId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`https://iscale-backend.onrender.com/api/lecture-progress/debug/course/${courseId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      alert(`Debug Info:\n\n${JSON.stringify(data, null, 2)}`);
+    } catch(e) {
+      alert('Failed to fetch debug info');
+    }
+  };
 
   if (loading) {
     return (
@@ -169,12 +193,36 @@ const EnrolledCourses = () => {
                   </div>
                 </div>
 
-                <button 
-                  onClick={() => navigate(`/enrolled-course-details/${course.id}`)}
-                  className="compact-resume-btn"
-                >
-                  Resume Player <ArrowRight size={13} />
-                </button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button 
+                    onClick={() => handleDebugClick(course._id || course.id)}
+                    style={{
+                      flex: 0.3,
+                      padding: '10px',
+                      background: 'var(--bg-secondary)',
+                      color: 'var(--text-secondary)',
+                      border: '1.5px solid var(--border-color)',
+                      borderRadius: '8px',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'all 0.2s ease'
+                    }}
+                    title="Detailed Progress (Debug)"
+                  >
+                    Debug
+                  </button>
+                  <button 
+                    onClick={() => navigate(`/enrolled-course-details/${course.id || course._id}`)}
+                    className="compact-resume-btn"
+                    style={{ flex: 1 }}
+                  >
+                    Resume Player <ArrowRight size={13} />
+                  </button>
+                </div>
               </div>
             </div>
           ))}

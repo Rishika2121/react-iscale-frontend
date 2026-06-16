@@ -1755,14 +1755,41 @@ const HomePage = ({ setCurrentPage }) => {
         }
       } catch (e) {}
 
-      // Get Enrolled Courses from local storage
-      const stored = localStorage.getItem('enrolled_courses');
-      if (stored) {
-        setEnrolledCourses(JSON.parse(stored));
-      } else {
-        // Do not pre-populate with any dummy data, wait for actual API/backend enrollments.
-        // setEnrolledCourses([]);
-      }
+      // Fetch Enrolled Courses from API
+      const fetchEnrolledCourses = async () => {
+        try {
+          const token = localStorage.getItem('token');
+          if (!token) return;
+          const [premiumRes, freeRes] = await Promise.all([
+            fetch('https://iscale-backend.onrender.com/api/enrolled-courses/premium-courses', {
+              headers: { 'Authorization': `Bearer ${token}` }
+            }),
+            fetch('https://iscale-backend.onrender.com/api/enrolled-courses/free-courses', {
+              headers: { 'Authorization': `Bearer ${token}` }
+            })
+          ]);
+          
+          let combined = [];
+          if (premiumRes.ok) {
+            const data = await premiumRes.json();
+            if (data.status && Array.isArray(data.data)) {
+              combined = [...combined, ...data.data];
+            }
+          }
+          if (freeRes.ok) {
+            const data = await freeRes.json();
+            if (data.status && Array.isArray(data.data)) {
+              combined = [...combined, ...data.data];
+            }
+          }
+          
+          setEnrolledCourses(combined);
+          localStorage.setItem('enrolled_courses', JSON.stringify(combined));
+        } catch (e) {
+          console.error("Failed to fetch enrolled courses", e);
+        }
+      };
+      fetchEnrolledCourses();
     }
   }, [isLoggedIn]);
 
