@@ -433,20 +433,12 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
               {coursesDropdownOpen && (
                 <div className="dropdown-menu" style={{ top: '100%', left: 0, minWidth: 220, marginTop: 8 }}>
                   {['Data Science & ML', 'Full Stack Developer', 'Generative AI', 'Business Analytics', 'Digital Marketing'].map((course, idx) => {
-                    const coursePathMap = {
-                      'Data Science & ML': 'course-details/data-science-with-generative-ai-course',
-                      'Generative AI': 'course-details/ai-cohort-course',
-                      'Business Analytics': 'course-details/master-of-data-analytics-program',
-                      'Full Stack Developer': 'explore-courses',
-                      'Digital Marketing': 'explore-courses'
-                    };
                     return (
                       <button
                         key={idx}
                         onClick={() => {
                           setCoursesDropdownOpen(false);
-                          const path = coursePathMap[course] || 'explore-courses';
-                          navigateToTab(path);
+                          navigateToTab('explore-courses');
                         }}
                         className="dropdown-item"
                       >

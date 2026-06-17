@@ -85,8 +85,8 @@ const styles = `
 /* Controls Wrapper */
 .explore-controls-wrapper {
   max-width: 1200px;
-  margin: -25px auto 30px;
-  padding: 0 24px;
+  margin: -22px auto 24px;
+  padding: 0 18px;
   position: relative;
   z-index: 10;
 }
@@ -195,8 +195,8 @@ const styles = `
 /* Category Filter Section */
 .filter-title-section {
   max-width: 1200px;
-  margin: 0 auto 12px;
-  padding: 0 24px;
+  margin: 0 auto 10px;
+  padding: 0 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -234,8 +234,8 @@ const styles = `
 .cat-card-premium {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 14px 10px;
+  border-radius: 16px;
+  padding: 18px 14px;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -279,9 +279,9 @@ const styles = `
 }
 
 .cat-card-icon-wrap {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   background: rgba(37, 99, 235, 0.06);
   display: flex;
   align-items: center;
@@ -296,7 +296,7 @@ const styles = `
 }
 
 .cat-card-title {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-primary);
   transition: color 0.3s;
@@ -308,7 +308,7 @@ const styles = `
 }
 
 .cat-card-count {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
   padding: 2px 6px;
   border-radius: 20px;
@@ -360,8 +360,8 @@ const styles = `
 
 .courses-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+  gap: 34px;
 }
 
 .courses-list {
@@ -373,7 +373,7 @@ const styles = `
 /* Card Styling */
 .course-card-premium {
   background: var(--card-bg);
-  border-radius: 16px;
+  border-radius: 22px;
   border: 1px solid var(--border-color);
   box-shadow: var(--card-shadow);
   overflow: hidden;
@@ -387,7 +387,7 @@ const styles = `
 
 .course-card-premium:hover {
   transform: translateY(-8px);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.06);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
   border-color: var(--red);
 }
 
@@ -397,7 +397,7 @@ const styles = `
 }
 
 .course-thumb-container-premium {
-  height: 200px;
+  height: 190px;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -417,11 +417,11 @@ const styles = `
 }
 
 .course-title-premium {
-  font-size: 1.15rem;
+  font-size: 1.6rem;
   font-weight: 800;
   color: var(--text-primary);
-  line-height: 1.4;
-  margin-bottom: 8px;
+  line-height: 1.45;
+  margin-bottom: 12px;
   font-family: var(--font-display);
 }
 
@@ -430,29 +430,34 @@ const styles = `
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .course-meta-item-premium {
-  font-size: 0.8rem;
+  font-size: 1.25rem;
   color: var(--text-secondary);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   font-weight: 600;
 }
 
+.course-meta-item-premium svg {
+  flex-shrink: 0;
+}
+
 .course-category-badge {
-  font-size: 0.75rem;
+  font-size: 1.05rem;
   color: var(--red);
   background: rgba(37, 99, 235, 0.08);
-  padding: 4px 10px;
-  border-radius: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
   font-weight: 700;
   display: inline-block;
   align-self: flex-start;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
   text-transform: uppercase;
+  letter-spacing: 0.4px;
 }
 
 .course-footer-premium {
@@ -461,7 +466,7 @@ const styles = `
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid var(--border-color);
-  padding-top: 16px;
+  padding-top: 18px;
 }
 
 .price-wrap-premium {
@@ -471,13 +476,13 @@ const styles = `
 }
 
 .price-current-premium {
-  font-size: 1.3rem;
+  font-size: 1.6rem;
   font-weight: 800;
   color: var(--text-primary);
 }
 
 .price-original-premium {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--text-muted);
   text-decoration: line-through;
   font-weight: 500;
@@ -486,13 +491,13 @@ const styles = `
 .learn-more-premium {
   background: var(--red);
   color: #fff;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 0.85rem;
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-size: 1.25rem;
   font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   transition: all 0.2s;
 }
 
@@ -508,7 +513,29 @@ const styles = `
   
   .courses-list .course-thumb-container-premium {
     width: 100%;
-    height: 200px;
+    height: 220px;
+  }
+}
+
+@media (max-width: 768px) {
+  .courses-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .course-thumb-container-premium {
+    height: 210px;
+  }
+
+  .course-body-premium {
+    padding: 20px;
+  }
+
+  .course-footer-premium {
+    gap: 12px;
+  }
+
+  .learn-more-premium {
+    padding: 10px 16px;
   }
 }
 
@@ -545,7 +572,37 @@ const styles = `
     justify-content: center;
   }
 }
+
+.explore-layout {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 0 24px;
+}
+
+.explore-sidebar {
+  width: 320px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 100px;
+}
+
+@media (max-width: 768px) {
+  .explore-layout {
+    flex-direction: column-reverse;
+  }
+  .explore-sidebar {
+    width: 100%;
+    position: relative;
+    top: 0;
+    margin-bottom: 24px;
+  }
+}
 `;
+
+const normalizeCategory = (value) => String(value || '').trim().toLowerCase();
 
 const categories = [
   "All Category",
@@ -589,13 +646,13 @@ const CourseCard = ({ course, setCurrentPage }) => (
 
       <div className="course-meta-row-premium" style={{ minHeight: '16px' }}>
         <span className="course-meta-item-premium">
-          <Eye size={14} style={{ color: 'var(--red)' }} /> {course.views.toLocaleString()} Views
+          <Eye size={20} style={{ color: 'var(--red)' }} /> {course.views.toLocaleString()} Views
         </span>
         <span className="course-meta-item-premium">
-          <BookOpen size={14} style={{ color: 'var(--red)' }} /> {course.chapters} Chapters
+          <BookOpen size={20} style={{ color: 'var(--red)' }} /> {course.chapters} Chapters
         </span>
         <span className="course-meta-item-premium">
-          <Calendar size={14} style={{ color: 'var(--red)' }} /> {course.days} Days
+          <Calendar size={20} style={{ color: 'var(--red)' }} /> {course.days} Days
         </span>
       </div>
 
@@ -653,7 +710,7 @@ const ExploreCourses = ({ setCurrentPage }) => {
             const price = (c.offer_price !== 'N/A' && c.offer_price) ? parseInt(c.offer_price) : 
                           ((c.price !== 'N/A' && c.price) ? parseInt(c.price) : (c.course_type === 'Free' ? 0 : 0));
             const originalPrice = null;
-            let imgUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(c.title)}&background=random`;
+            let imgUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(c.title)}&background=random&font-size=0.33`;
             if (c.banner && c.banner !== 'N/A') {
               const cleanedPath = c.banner.replace(/\\/g, '/');
               imgUrl = cleanedPath.startsWith('http') ? cleanedPath : `https://iscale-backend.onrender.com/${cleanedPath.replace(/^src\//, '')}`;
@@ -666,7 +723,7 @@ const ExploreCourses = ({ setCurrentPage }) => {
               chapters: c.total_subjects || 0,
               lectures: c.total_lectures || 0,
               days: c.duration && c.duration !== 'N/A' ? (typeof c.duration === 'number' || !isNaN(c.duration) ? parseInt(c.duration) : 365) : 365,
-              category: (c.category !== 'N/A' && c.category) ? c.category :
+              category: (c.category !== 'N/A' && c.category) ? String(c.category).trim() :
                         (c.title.toLowerCase().includes('data science') ? 'Data Science Courses' :
                         (c.title.toLowerCase().includes('data analytics') || c.title.toLowerCase().includes('data analyst') ? 'Data Analyst Courses' :
                         (c.title.toLowerCase().includes('cohort') ? 'Cohort Courses' :
@@ -689,7 +746,7 @@ const ExploreCourses = ({ setCurrentPage }) => {
 
   const filtered = allCourses.filter((c) => {
     const matchSearch = c.title.toLowerCase().includes(search.toLowerCase());
-    const matchCat = category === "All Category" || c.category === category;
+    const matchCat = normalizeCategory(category) === normalizeCategory("All Category") || normalizeCategory(c.category) === normalizeCategory(category);
     return matchSearch && matchCat;
   });
 
@@ -709,93 +766,122 @@ const ExploreCourses = ({ setCurrentPage }) => {
               <span>›</span>
               <span className="bc-active">All Courses</span>
             </nav>
-            <h1 className="explore-title">Explore Our <span>Programs</span></h1>
+            <h1 className="explore-title" style={{ fontSize: '3.5rem' }}>Explore Our <span>Programs</span></h1>
             <p className="explore-subtitle">Empower your career with industry-tailored tracks, live mentorship, and complete certification programs.</p>
           </div>
         </div>
 
-        <div className="explore-controls-wrapper">
-          <div className="explore-controls">
-            <div className="view-toggle">
-              <button className={`view-btn ${view === "grid" ? "view-btn-active" : ""}`} onClick={() => setView("grid")}>
-                <Grid size={14} /> Grid
-              </button>
-              <button className={`view-btn ${view === "list" ? "view-btn-active" : ""}`} onClick={() => setView("list")}>
-                <List size={14} /> List
-              </button>
-            </div>
-
-            <div className="search-wrap">
-              <Search size={16} className="search-icon" />
-              <input
-                type="text"
-                className="search-input"
-                placeholder="Search for courses by name, tools, or topics..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-
-            <button className="reset-btn-control" onClick={handleReset}>
-              <RotateCcw size={14} /> Reset
-            </button>
-          </div>
-        </div>
-
-        {/* Category Cards Filter Grid (Replacing Tabs and Select) */}
-        <div className="filter-title-section">
-          <h2 className="filter-title">
-            <Filter size={18} style={{ color: 'var(--red)' }} /> Filter by Category
-          </h2>
-          <span className="filter-results-count">
-            {filtered.length} {filtered.length === 1 ? 'course' : 'courses'} found
-          </span>
-        </div>
-
-        <div className="premium-cats-grid">
-          {categories.map((cat) => {
-            const details = categoryDetails[cat] || { icon: BookOpen, label: cat };
-            const IconComponent = details.icon;
-            const count = cat === "All Category" ? allCourses.length : allCourses.filter(c => c.category === cat).length;
-            
-            return (
-              <div
-                key={cat}
-                onClick={() => setCategory(cat)}
-                className={`cat-card-premium ${category === cat ? "cat-card-premium-active" : ""}`}
-              >
-                <div className="cat-card-icon-wrap">
-                  <IconComponent size={22} />
-                </div>
-                <div className="cat-card-title">{details.label}</div>
-                <div className="cat-card-count">{count} {count === 1 ? 'Course' : 'Courses'}</div>
+        <div className="explore-layout">
+          
+          {/* Sidebar Column (Category Menu) */}
+          <div className="explore-sidebar">
+            <div style={{ 
+              background: 'rgba(255, 255, 255, 0.02)', 
+              backdropFilter: 'blur(16px)', 
+              border: '1px solid rgba(255, 255, 255, 0.05)', 
+              borderRadius: '16px', 
+              overflow: 'hidden', 
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)' 
+            }}>
+              {/* Highlight Ribbon */}
+              <div style={{ 
+                background: 'linear-gradient(135deg, var(--red) 0%, #991b1b 100%)', 
+                color: '#fff', 
+                padding: '20px 24px', 
+                fontWeight: 800, 
+                fontSize: '1.25rem', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '12px',
+                boxShadow: '0 4px 12px rgba(220, 38, 38, 0.2)'
+              }}>
+                <Filter size={22} /> Course Categories
               </div>
-            );
-          })}
-        </div>
-
-        {/* Elegant Design Divider */}
-        <div className="explore-divider">
-          <div className="explore-divider-line"></div>
-          <span className="explore-divider-badge">ALL CORRESPONDING PROGRAMS</span>
-          <div className="explore-divider-line"></div>
-        </div>
-
-        <div className="courses-grid-wrap">
-            {loading ? (
-              <div style={{ textAlign: 'center', padding: '40px 0', width: '100%' }}>Loading Courses...</div>
-            ) : filtered.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '60px 20px', background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 16 }}>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: 16 }}>No courses found matching your search criteria.</p>
-              <button className="reset-btn-control" onClick={handleReset} style={{ margin: '0 auto' }}>Reset Filters</button>
+              
+              {/* Menu Items */}
+              <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                {categories.map(cat => {
+                  const Icon = categoryDetails[cat]?.icon || Layers;
+                  const isActive = category === cat;
+                  return (
+                    <button 
+                      key={cat} 
+                      onClick={() => setCategory(cat)} 
+                      style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '14px', 
+                        cursor: 'pointer', 
+                        fontSize: '1.05rem', 
+                        padding: '16px 20px', 
+                        borderRadius: '12px', 
+                        background: isActive ? 'rgba(37, 99, 235, 0.08)' : 'transparent', 
+                        border: isActive ? '1px solid rgba(37, 99, 235, 0.15)' : '1px solid transparent', 
+                        transition: 'all 0.2s', 
+                        color: isActive ? 'var(--red)' : 'var(--text-primary)', 
+                        fontWeight: isActive ? 800 : 600,
+                        textAlign: 'left'
+                      }}
+                    >
+                      <Icon size={22} color={isActive ? 'var(--red)' : 'var(--text-muted)'} />
+                      <span style={{ flex: 1 }}>{categoryDetails[cat]?.label || cat}</span>
+                      {isActive && <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--red)', boxShadow: '0 0 8px var(--red)' }} />}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          ) : (
-            <div className={view === "grid" ? "courses-grid" : "courses-list"}>
-              {filtered.map((course) => (
-                <CourseCard key={course.id} course={course} setCurrentPage={setCurrentPage} />
-              ))}
+          </div>
+
+          {/* Main Column (Search & Courses) */}
+          <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '24px', width: '100%' }}>
+            {/* Top Controls */}
+            <div className="explore-controls" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '20px 24px', display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', boxShadow: 'var(--card-shadow)' }}>
+              <div className="search-wrap" style={{ flex: '1 1 360px', position: 'relative' }}>
+                <Search size={22} style={{ position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <input
+                  type="text"
+                  placeholder="Search for courses by name, tools, or topics..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  style={{ width: '100%', padding: '16px 20px 16px 56px', border: '1px solid var(--border-color)', borderRadius: '12px', fontSize: '1.1rem', background: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none', transition: '0.2s' }}
+                />
+              </div>
+              <button className="reset-btn-control" onClick={handleReset} style={{ whiteSpace: 'nowrap', fontSize: '1.1rem', padding: '14px 24px' }}>
+                <RotateCcw size={16} /> Reset All
+              </button>
+              <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                <div style={{ color: 'var(--text-primary)', fontSize: '1.1rem', fontWeight: 800, whiteSpace: 'nowrap' }}>Showing {filtered.length} courses</div>
+                <div className="view-toggle" style={{ display: 'flex', background: 'var(--bg-secondary)', borderRadius: '10px', padding: '4px', border: '1px solid var(--border-color)' }}>
+                  <button className={`view-btn ${view === "grid" ? "view-btn-active" : ""}`} onClick={() => setView("grid")} style={{ padding: '10px 18px', borderRadius: '8px', border: 'none', background: view === 'grid' ? 'var(--bg-primary)' : 'transparent', color: view === 'grid' ? 'var(--red)' : 'var(--text-secondary)', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: view === 'grid' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none', fontSize: '1rem' }}>
+                    <Grid size={18} /> Grid
+                  </button>
+                  <button className={`view-btn ${view === "list" ? "view-btn-active" : ""}`} onClick={() => setView("list")} style={{ padding: '10px 18px', borderRadius: '8px', border: 'none', background: view === 'list' ? 'var(--bg-primary)' : 'transparent', color: view === 'list' ? 'var(--red)' : 'var(--text-secondary)', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: view === 'list' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none', fontSize: '1rem' }}>
+                    <List size={18} /> List
+                  </button>
+                </div>
+              </div>
             </div>
-          )}
+
+            {/* Main Content Area */}
+            <div className="explore-main-area" style={{ width: '100%' }}>
+              {loading ? (
+                <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-secondary)', fontSize: '1.2rem', fontWeight: 600 }}>Loading cutting-edge programs...</div>
+              ) : filtered.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '80px 0', background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '16px' }}>
+                  <div style={{ fontSize: '4rem', marginBottom: '16px' }}>🔍</div>
+                  <h3 style={{ fontSize: '1.4rem', color: 'var(--text-primary)', fontWeight: 800, marginBottom: '8px' }}>No courses found</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>Try adjusting your filters or search query.</p>
+                </div>
+              ) : (
+                <div className={view === "grid" ? "courses-grid" : "courses-list"} style={view === "grid" ? { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' } : { display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                  {filtered.map((course, idx) => (
+                    <CourseCard key={course.id || idx} course={course} setCurrentPage={setCurrentPage} />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </>

@@ -633,82 +633,140 @@ const Accordion = ({ title, items, onPlay, completedLectures, isEnrolled, isCoho
   );
 };
 
-const CurriculumAccordion = ({ title, items, onPlay, completedLectures, isEnrolled, isCohort }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [showMore, setShowMore] = useState(false);
-  const displayItems = showMore ? items : items.slice(0, 5);
+const DualPaneCurriculum = ({ curriculumData, onPlay, completedLectures, isEnrolled, isCohort }) => {
+  const [activeSubjectIndex, setActiveSubjectIndex] = useState(0);
+  const [activeTopicIndex, setActiveTopicIndex] = useState(0);
+
+  useEffect(() => {
+    setActiveSubjectIndex(0);
+    setActiveTopicIndex(0);
+  }, [curriculumData]);
+
+  if (!curriculumData || curriculumData.length === 0) return null;
+
+  const activeSubject = curriculumData[activeSubjectIndex];
+  const activeTopic = activeSubject?.modules?.[activeTopicIndex];
 
   return (
-    <div style={{ borderBottom: '1px solid var(--border-color)', marginBottom: 16 }}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        style={{
-          width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          padding: '20px 0', background: 'none', border: 'none', cursor: 'pointer',
-          fontSize: 18, fontWeight: 800, color: 'var(--text-primary)'
-        }}
-      >
-        {title}
-        {isOpen ? <ChevronUp size={20} color="var(--red)" /> : <ChevronDown size={20} color="#64748b" />}
-      </button>
-      {isOpen && (
-        <div style={{ paddingBottom: 24, display: 'flex', flexDirection: 'column', gap: 16, paddingLeft: 16 }}>
-          {displayItems.map((topic, idx) => {
-            const isPlayable = isEnrolled || topic.isFree || (isCohort && idx < items.length / 2);
-            const isCompleted = topic.isCompleted || (topic.id && completedLectures?.includes(topic.id));
-            
+    <div style={{ border: '1px solid var(--border-color)', borderRadius: 12, overflow: 'hidden', background: 'var(--card-bg)', boxShadow: 'var(--card-shadow)', marginTop: 24 }}>
+      
+      {/* Top Subjects Tabs */}
+      {curriculumData.length > 1 && (
+        <div className="custom-scrollbar" style={{ display: 'flex', overflowX: 'auto', borderBottom: '1px solid var(--border-color)', background: 'var(--bg-secondary)' }}>
+          {curriculumData.map((subj, idx) => {
+            const isActive = activeSubjectIndex === idx;
             return (
-              <div key={idx} style={{ padding: '16px 24px', background: 'var(--bg-primary)', borderRadius: 12, borderLeft: '4px solid var(--red)', boxShadow: '0 4px 15px rgba(0,0,0,0.03)', color: 'var(--text-primary)', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontWeight: 700, fontSize: 16 }}>
-                    <FileText size={18} color="var(--red)" />
-                    <span style={{ textDecoration: isCompleted ? 'line-through' : 'none', opacity: isCompleted ? 0.6 : 1 }}>{topic.title}</span>
+              <button 
+                key={idx}
+                onClick={() => { setActiveSubjectIndex(idx); setActiveTopicIndex(0); }}
+                style={{ 
+                  padding: '16px 24px', 
+                  whiteSpace: 'nowrap', 
+                  background: isActive ? 'var(--red)' : 'transparent', 
+                  color: isActive ? '#fff' : 'var(--text-primary)', 
+                  border: 'none', 
+                  borderRight: '1px solid var(--border-color)',
+                  fontWeight: isActive ? 800 : 600, 
+                  cursor: 'pointer', 
+                  transition: 'all 0.2s',
+                  fontSize: 15
+                }}
+              >
+                {subj.title}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      <div style={{ display: 'flex', minHeight: 450 }}>
+        
+        {/* Left Pane: Modules */}
+        <div style={{ width: '35%', borderRight: '1px solid var(--border-color)', background: 'var(--bg-secondary)', display: 'flex', flexDirection: 'column' }}>
+          <div className="custom-scrollbar" style={{ overflowY: 'auto', flex: 1, maxHeight: 600 }}>
+            {activeSubject?.modules?.map((topic, idx) => {
+              const isActive = activeTopicIndex === idx;
+              return (
+                <button 
+                  key={idx}
+                  onClick={() => setActiveTopicIndex(idx)}
+                  style={{ 
+                    width: '100%', 
+                    textAlign: 'left', 
+                    padding: '20px 24px', 
+                    borderBottom: '1px solid var(--border-color)', 
+                    background: isActive ? 'var(--card-bg)' : 'transparent', 
+                    borderLeft: isActive ? '4px solid var(--red)' : '4px solid transparent', 
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginRight: isActive ? '-1px' : 0, // Cover the right border
+                    position: 'relative',
+                    zIndex: isActive ? 2 : 1
+                  }}
+                >
+                  <div>
+                    <div style={{ color: isActive ? 'var(--red)' : 'var(--text-secondary)', fontSize: 13, marginBottom: 6, fontWeight: 700 }}>
+                      Module {idx + 1}
+                    </div>
+                    <div style={{ fontWeight: 700, color: isActive ? 'var(--red)' : 'var(--text-primary)', fontSize: 16, lineHeight: 1.4 }}>
+                      {topic.title}
+                    </div>
                   </div>
-                  {topic.videoUrl && !topic.isDummy ? (
-                    isPlayable ? (
-                      <button onClick={() => onPlay(topic)} style={{ background: 'var(--red)', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <ChevronRight size={18} color={isActive ? "var(--red)" : "var(--text-muted)"} />
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Right Pane: Lectures */}
+        <div className="custom-scrollbar" style={{ width: '65%', padding: '32px', background: 'var(--card-bg)', overflowY: 'auto', maxHeight: 600 }}>
+          {activeTopic ? (
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              
+              {/* If there are subtopics, map them as lectures */}
+              {activeTopic.subtopics && activeTopic.subtopics.length > 0 ? (
+                activeTopic.subtopics.map((st, idx) => {
+                  return (
+                    <div key={idx} style={{ padding: '20px 0', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ fontSize: 16, color: 'var(--text-primary)', fontWeight: 600 }}>
+                        <span style={{ color: 'var(--text-secondary)' }}>Lecture {idx + 1} :</span> {st.title}
+                      </div>
+                      <Lock size={18} color="var(--text-muted)" style={{ opacity: 0.6 }} />
+                    </div>
+                  );
+                })
+              ) : (
+                /* Fallback if no subtopics exist but the topic itself is playable */
+                <div style={{ padding: '20px 0', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontSize: 16, color: 'var(--text-primary)', fontWeight: 600 }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Lecture 1 :</span> {activeTopic.title}
+                  </div>
+                  {activeTopic.videoUrl && !activeTopic.isDummy ? (
+                    (isEnrolled || activeTopic.isFree || isCohort) ? (
+                      <button onClick={() => onPlay(activeTopic)} style={{ background: 'var(--red)', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
                         <PlayCircle size={14} /> Play
                       </button>
                     ) : (
-                      <span style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text-secondary)', fontSize: 13, fontWeight: 700 }}><Lock size={14} /> Locked</span>
+                      <Lock size={18} color="var(--text-muted)" style={{ opacity: 0.6 }} />
                     )
-                  ) : null}
+                  ) : (
+                    <Lock size={18} color="var(--text-muted)" style={{ opacity: 0.6 }} />
+                  )}
                 </div>
-
-                {/* Subtopics */}
-                {topic.subtopics && topic.subtopics.length > 0 && (
-                  <div style={{ paddingLeft: 24, marginTop: 12, display: 'flex', flexDirection: 'column', gap: 12, borderLeft: '2px solid var(--border-color)' }}>
-                    {topic.subtopics.map((st, sidx) => (
-                      <div key={sidx} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>
-                          <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--text-muted)' }}></div>
-                          {st.title}
-                        </div>
-                        {/* Units */}
-                        {st.units && st.units.length > 0 && (
-                          <div style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
-                            {st.units.map((u, uidx) => (
-                              <div key={uidx} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14, color: 'var(--text-secondary)' }}>
-                                <ChevronRight size={14} color="var(--text-muted)" />
-                                {u.title}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-          {items.length > 5 && (
-            <button onClick={() => setShowMore(!showMore)} style={{ color: 'var(--red)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignSelf: 'flex-start', marginTop: 8 }}>
-              {showMore ? 'Show Less' : 'Show More'}
-            </button>
+              )}
+            </div>
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-muted)', fontWeight: 600 }}>
+              No modules available for this subject.
+            </div>
           )}
         </div>
-      )}
+
+      </div>
     </div>
   );
 };
@@ -1373,29 +1431,29 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
       {/* Hero Section */}
       <section style={{ 
         background: 'var(--gradient-hero)', 
-        padding: '60px 0',
+        padding: '20px 0 40px 0',
         position: 'relative',
         overflow: 'hidden'
       }}>
-        <div className="container mobile-col" style={{ display: 'flex', gap: 60, alignItems: 'center' }}>
+        <div className="container mobile-col" style={{ display: 'flex', gap: 40, alignItems: 'center' }}>
           
           {/* Left Content */}
           <div style={{ flex: 1 }}>
-            <div style={{ color: 'var(--text-secondary)', fontSize: 14, fontWeight: 600, marginBottom: 24 }}>
+            <div style={{ color: 'var(--text-secondary)', fontSize: 14, fontWeight: 600, marginBottom: 12 }}>
               <span style={{ cursor: 'pointer' }} onClick={() => setCurrentPage('home')}>Home</span> 
               <span style={{ margin: '0 8px' }}>&gt;</span> 
               <span style={{ color: 'var(--red)' }}>{data.category || 'Data Science Courses'}</span>
             </div>
             
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 48, fontWeight: 900, color: 'var(--text-primary)', lineHeight: 1.2, marginBottom: 24 }}>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 42, fontWeight: 900, color: 'var(--text-primary)', lineHeight: 1.2, marginBottom: 16 }}>
               {data.title}
             </h1>
             
-            <p style={{ color: 'var(--text-secondary)', fontSize: 16, lineHeight: 1.6, marginBottom: 32, maxWidth: 600 }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: 16, lineHeight: 1.6, marginBottom: 20, maxWidth: 600 }}>
               {data.description}
             </p>
             
-            <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 32 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 20 }}>
                 <div style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6', border: '1px solid rgba(59, 130, 246, 0.3)', padding: '6px 16px', borderRadius: 100, fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
                   Popular <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>({data.views} No Of Views)</span>
                 </div>
@@ -1464,7 +1522,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                   <div style={{ position: 'absolute', right: 0, top: 0, width: '60%', height: '100%', background: 'url(https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80) center/cover', opacity: 0.6, clipPath: 'polygon(20% 0, 100% 0, 100% 100%, 0 100%)' }} />
                 </div>
               ) : (
-                <img src={data.thumbnail} alt={data.title} style={{ width: '100%', display: 'block' }} />
+                <img src={data.thumbnail} alt={data.title} style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', display: 'block' }} />
               )}
               <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ position: 'relative', width: 80, height: 80, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: -20 }}>
@@ -1589,25 +1647,16 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
               {/* Curriculum from API */}
               {!subjectsLoading && curriculumData.length > 0 && (
                 <>
-                  {curriculumData.slice(0, curriculumShowMore ? curriculumData.length : 5).map((curr, idx) => (
-                    <CurriculumAccordion
-                      key={idx}
-                      title={curr.title}
-                      items={curr.modules || []}
-                      completedLectures={completedLectures}
-                      isEnrolled={isEnrolled}
-                      isCohort={apiData?.category?.toLowerCase().includes('cohort') || apiData?.title?.toLowerCase().includes('cohort') || courseId.includes('cohort')}
-                      onPlay={(lecture) => {
-                        setActiveCohortLecture(lecture);
-                        setVideoOpen(true);
-                      }}
-                    />
-                  ))}
-                  {curriculumData.length > 5 && (
-                    <button onClick={() => setCurriculumShowMore(!curriculumShowMore)} style={{ color: 'var(--red)', fontWeight: 800, background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, marginTop: 16 }}>
-                      {curriculumShowMore ? 'View Less Curriculum' : 'View Full Curriculum'}
-                    </button>
-                  )}
+                  <DualPaneCurriculum
+                    curriculumData={curriculumData}
+                    completedLectures={completedLectures}
+                    isEnrolled={isEnrolled}
+                    isCohort={apiData?.category?.toLowerCase().includes('cohort') || apiData?.title?.toLowerCase().includes('cohort') || courseId.includes('cohort')}
+                    onPlay={(lecture) => {
+                      setActiveCohortLecture(lecture);
+                      setVideoOpen(true);
+                    }}
+                  />
                   {/* Download Syllabus Button */}
                   <div style={{ marginTop: 32, paddingTop: 32, borderTop: '1px solid var(--border-color)' }}>
                     <button

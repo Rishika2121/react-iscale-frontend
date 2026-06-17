@@ -30,23 +30,8 @@ const Footer = ({ setCurrentPage }) => {
   };
 
   const handleCourseClick = (linkName) => {
-    const courseIdMap = {
-      'Data Science with GenAI': 'data-science-with-generative-ai-course',
-      'Data Analytics Program': 'master-of-data-analytics-program',
-      'Python with AI Tools': 'advance-python-with-ai-tools',
-      'Power BI & Tableau': 'power-bi-tableau-for-data-visualization',
-      'AI Cohort Course': 'ai-cohort-course',
-      'AI Engineer Advance': 'ai-engineer-advance-program',
-      'Free Data Science Course': 'free-data-science-course',
-      'Free Data Analytics Course': 'free-data-analytics-course'
-    };
-    
-    const id = courseIdMap[linkName];
-    if (id) {
-      setCurrentPage(`course-details/${id}`);
-    } else {
-      setCurrentPage('explore-courses');
-    }
+    // Dynamic courses don't have static slugs anymore, so redirect to explore
+    setCurrentPage('explore-courses');
   };
 
   const handleQuickLink = (link) => {

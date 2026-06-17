@@ -274,7 +274,7 @@ const Hero = ({ setCurrentPage }) => {
     alert('Thank you! We will contact you shortly for the FREE Live Class.');
   };
   return (
-    <section className="hero-section" style={{ background: 'linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%)', padding: '20px 0 36px', minHeight: '72vh', display: 'flex', alignItems: 'center', position: 'relative' }}>
+    <section className="hero-section" style={{ background: 'var(--bg-primary)', padding: '20px 0 40px', minHeight: '72vh', display: 'flex', alignItems: 'center', position: 'relative' }}>
       <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
         <div className="bg-dots" style={{ position: 'absolute', inset: 0, opacity: 0.5 }} />
         <div className="abstract-grid" />
@@ -359,7 +359,7 @@ const Hero = ({ setCurrentPage }) => {
 
 /* ── About iScale Learning ── */
 const AboutSection = ({ setCurrentPage }) => (
-  <section className="reveal" style={{ padding: '56px 0 48px', background: 'var(--bg-primary)', borderTop: '1px solid var(--border-color)' }}>
+  <section className="reveal" style={{ padding: '30px 0 40px', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)' }}>
     <div className="container-fluid about-grid">
       {/* Video card */}
       <div className="glow-border animate-float" style={{
@@ -515,7 +515,7 @@ const TestimonialsSection = ({ setCurrentPage }) => {
   }, []);
 
   return (
-    <section className="reveal" style={{ padding: 'clamp(30px, 6vw, 50px) 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', overflow: 'hidden', color: 'var(--text-primary)' }}>
+    <section className="reveal" style={{ padding: 'clamp(20px, 3vw, 40px) 0', background: 'var(--bg-primary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', overflow: 'hidden', color: 'var(--text-primary)' }}>
       <div className="container-fluid" style={{ position: 'relative' }}>
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
           <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '4px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700 }}>THE ISCALE</span>
@@ -582,7 +582,7 @@ const LatestUpdates = ({ setCurrentPage }) => {
   }, []);
 
   return (
-    <section className="reveal" style={{ padding: '56px 0 48px', background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)', position: 'relative' }}>
+    <section className="reveal" style={{ padding: '30px 0 40px', background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)', position: 'relative' }}>
       <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
         <div className="bg-dots" style={{ position: 'absolute', inset: 0, opacity: 0.3 }} />
         <div className="abstract-grid" />
@@ -726,7 +726,7 @@ const PopularCourses = ({ setCurrentPage }) => {
   }, []);
 
   return (
-  <section className="reveal" style={{ padding: '56px 0 48px', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
+  <section className="reveal" style={{ padding: '30px 0 40px', background: 'var(--bg-primary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
     <div className="container-fluid">
       <div style={{ textAlign: 'center', marginBottom: 12 }}>
         <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700, letterSpacing: 0.5 }}>EXPLORE UP-TO-DATE PROGRAMS</span>
@@ -868,13 +868,13 @@ const ExpertsSection = ({ setCurrentPage }) => {
   }, []);
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: 'clamp(30px, 6vw, 50px) 0' }}>Loading experts...</div>;
+    return <div style={{ textAlign: 'center', padding: 'clamp(20px, 3vw, 40px) 0' }}>Loading experts...</div>;
   }
 
   if (expertsList.length === 0) return null;
 
   return (
-    <section style={{ padding: 'clamp(30px, 6vw, 50px) 0', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+    <section style={{ padding: 'clamp(20px, 3vw, 40px) 0', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
       <div className="container-fluid">
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
           <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '4px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700 }}>LEADERS TALK</span>
@@ -967,7 +967,7 @@ const CompanyMarquee = ({ setCurrentPage }) => {
   }, []);
 
   return (
-    <section style={{ padding: 'clamp(30px, 6vw, 60px) 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', overflow: 'hidden', color: 'var(--text-primary)' }}>
+    <section style={{ padding: 'clamp(20px, 3vw, 40px) 0', background: 'var(--bg-primary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', overflow: 'hidden', color: 'var(--text-primary)' }}>
       <div className="container-fluid">
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
           <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '4px 16px', borderRadius: 100, fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1 }}>TOP RECRUITERS</span>
@@ -1144,7 +1144,7 @@ export const SuccessStories = ({ setCurrentPage }) => {
   if (loading || stories.length === 0) return null; // Hide if no data
 
   return (
-    <section style={{ padding: 'clamp(30px, 6vw, 60px) 0', background: 'linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%)', position: 'relative', overflow: 'hidden' }}>
+    <section style={{ padding: 'clamp(20px, 3vw, 40px) 0', background: 'var(--bg-secondary)', position: 'relative', overflow: 'hidden' }}>
       {/* Decorative Glow Orbs */}
       <div className="bg-shape" style={{ top: '-10%', left: '-10%', width: 400, height: 400, background: 'rgba(37, 99, 235, 0.05)', borderRadius: '50%', filter: 'blur(100px)', pointerEvents: 'none' }} />
       <div className="bg-shape" style={{ bottom: '-10%', right: '-10%', width: 500, height: 500, background: 'rgba(124, 58, 237, 0.05)', borderRadius: '50%', filter: 'blur(120px)', pointerEvents: 'none' }} />
@@ -1214,7 +1214,7 @@ const communityStats = [
 ];
 
 const LearnersCommunity = () => (
-  <section style={{ padding: 'clamp(30px, 6vw, 50px) 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
+  <section style={{ padding: 'clamp(20px, 3vw, 40px) 0', background: 'var(--bg-primary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
     <style>{`
       .community-stats {
         display: grid;
@@ -1332,7 +1332,7 @@ const NewsUpdates = ({ setCurrentPage }) => {
   };
 
   return (
-  <section style={{ padding: 'clamp(40px, 8vw, 80px) 0', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+  <section style={{ padding: 'clamp(30px, 4vw, 50px) 0', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
     <div className="container-fluid" style={{ maxWidth: 1100, margin: '0 auto' }}>
       <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 36, fontWeight: 900, textAlign: 'center', marginBottom: 48, color: 'var(--text-primary)' }}>
         Latest <span style={{ background: 'linear-gradient(135deg, var(--red) 0%, #60a5fa 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'inline-block' }}>News & Updates</span>
@@ -1449,7 +1449,7 @@ const InTheNews = () => {
   if (mentions.length === 0) return null;
 
   return (
-    <section style={{ padding: 'clamp(40px, 8vw, 80px) 0', background: 'var(--gradient-hero)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
+    <section style={{ padding: 'clamp(30px, 4vw, 50px) 0', background: 'var(--bg-primary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
       <div className="container-fluid">
         <div style={{ textAlign: 'center', marginBottom: 16 }}>
           <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 13, fontWeight: 700, letterSpacing: 1 }}>
@@ -1520,7 +1520,7 @@ const InTheNews = () => {
 
 /* ── Talk To Team ── */
 const TalkToTeam = ({ setCurrentPage }) => (
-  <section style={{ padding: 'clamp(30px, 6vw, 50px) 0', background: 'var(--bg-primary)' }}>
+  <section style={{ padding: 'clamp(20px, 3vw, 40px) 0', background: 'var(--bg-secondary)' }}>
     <div className="container-fluid mobile-col mobile-gap-fix talk-to-team-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--card-bg)', borderRadius: 24, border: '1px solid var(--border-color)', boxShadow: 'var(--card-shadow)', gap: 30 }}>
       <div style={{ flex: 1 }}>
         <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', marginBottom: 20, display: 'inline-block' }}>
@@ -1579,7 +1579,7 @@ const AlliedCollegesSection = ({ setCurrentPage }) => {
   }, []);
 
   return (
-  <section className="reveal" style={{ padding: 'clamp(30px, 6vw, 60px) 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
+  <section className="reveal" style={{ padding: 'clamp(20px, 3vw, 40px) 0', background: 'var(--bg-primary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
     <div className="container-fluid">
       <div style={{ textAlign: 'center', marginBottom: 12 }}>
         <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 800, letterSpacing: 1 }}>ACADEMIC PARTNERS</span>
@@ -1644,7 +1644,7 @@ const AlliedCollegesSection = ({ setCurrentPage }) => {
 /* ── Main Home Page ── */
 const EnrolledCoursesSection = ({ enrolledCourses, userName, setCurrentPage }) => {
   return (
-    <section className="reveal active bg-dots" style={{ padding: 'clamp(30px, 6vw, 60px) 0', background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)', position: 'relative' }}>
+    <section className="reveal active bg-dots" style={{ padding: 'clamp(20px, 3vw, 40px) 0', background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)', position: 'relative' }}>
       <div className="container-fluid">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32, flexWrap: 'wrap', gap: 16 }}>
           <div>

@@ -402,7 +402,7 @@ const DashboardPage = ({ setCurrentPage }) => {
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.08)', padding: '4px 12px', borderRadius: 100, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8, color: '#fca5a5' }}>
                 <Sparkles size={12} /> Student Account Unlocked
               </div>
-              <h1 style={{ fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: 850, letterSpacing: '-0.5px', margin: 0 }}>
+              <h1 style={{ fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: 850, letterSpacing: '-0.5px', margin: 0, color: '#ffffff' }}>
                 {greeting}, <span style={{ color: '#fca5a5' }}>{user.name.split(' ')[0]}</span>!
               </h1>
               <p style={{ color: '#94a3b8', fontSize: 14, margin: '6px 0 0 0', fontWeight: 500, maxWidth: 500, lineHeight: 1.5 }}>
@@ -436,57 +436,6 @@ const DashboardPage = ({ setCurrentPage }) => {
           </button>
         </div>
 
-        {/* Real Website Style Profile Section */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 20,
-          background: 'var(--card-bg)',
-          padding: '20px 24px',
-          borderRadius: 20,
-          border: '1.5px solid var(--border-color)',
-          marginBottom: 28,
-          boxShadow: '0 4px 15px rgba(0,0,0,0.01)'
-        }}>
-          {/* Logo Circle Badge */}
-          <div style={{
-            width: 84, height: 84,
-            borderRadius: '50%',
-            border: '2px solid var(--border-color)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 4,
-            background: 'var(--card-bg)',
-            flexShrink: 0
-          }}>
-            <div style={{
-              width: 52, height: 52,
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 4px 10px rgba(239, 68, 68, 0.15)'
-            }}>
-              <span style={{ color: '#ffffff', fontSize: 28, fontWeight: 950, fontFamily: 'sans-serif' }}>I</span>
-            </div>
-            <span style={{ fontSize: 9, fontWeight: 800, color: '#b91c1c', marginTop: 2, letterSpacing: 0.5 }}>iSCALE</span>
-          </div>
-          
-          <div style={{ textAlign: 'left' }}>
-            <h2 style={{ fontSize: 'clamp(18px, 3vw, 24px)', fontWeight: 850, color: 'var(--text-primary)', margin: 0 }}>{user.name}</h2>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text-secondary)', fontSize: 13, marginTop: 6, fontWeight: 600 }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginTop: -1 }}>
-                <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-                <line x1="8" y1="21" x2="16" y2="21" />
-                <line x1="12" y1="17" x2="12" y2="21" />
-              </svg>
-              Courses Enrolled
-            </div>
-          </div>
-        </div>
 
         {/* Dynamic metrics stat grid (Real Website Style) */}
         <div className="stats-grid-dashboard-real">

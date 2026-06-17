@@ -12,41 +12,17 @@ const Logo = () => (
     }}>
       <span style={{ color: '#fff', fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20 }}>i</span>
     </div>
-    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, letterSpacing: -0.5, color: 'var(--text-primary)' }}>
+    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, letterSpacing: -0.5, color: 'var(--text-primary)', position: 'relative' }}>
       <span style={{ color: 'var(--red)' }}>i</span>SCALE
+      <sup style={{ fontSize: '10px', color: 'var(--text-muted)', marginLeft: '2px', fontWeight: 600 }}>TM</sup>
     </span>
   </div>
 );
 
-const MegaDropdown = ({ type, isOpen, onClose, setCurrentPage }) => {
+const MegaDropdown = ({ type, isOpen, onClose, setCurrentPage, categories }) => {
   const [activeCategory, setActiveCategory] = useState(
-    type === 'cohort' ? 'Cohort Courses' : 'Data Science Courses'
+    type === 'cohort' ? 'Cohort Courses' : 'All Courses'
   );
-
-  const categories = {
-    'Data Science Courses': [
-      { name: 'Data Science With Generative AI Course', path: 'data-science-with-generative-ai-course' }
-    ],
-    'AI Courses': [
-      { name: 'AI Engineer Advance Program', path: 'ai-engineer-advance-program' }
-    ],
-    'Data Analyst Courses': [
-      { name: 'Master Of Data Analytics Program', path: 'master-of-data-analytics-program' }
-    ],
-    'Foundation Courses': [
-      { name: 'Advance Python with AI Tools', path: 'advance-python-with-ai-tools' },
-      { name: 'Power BI & Tableau For Data Visualization', path: 'power-bi-tableau-for-data-visualization' },
-      { name: 'AI Powered Excel Full Course', path: 'ai-powered-excel-full-course' },
-      { name: 'AI Cohort Course', path: 'ai-cohort-course' }
-    ],
-    'Cohort Courses': [
-      { name: 'AI For Everyone : Complete Guide', path: 'ai-for-everyone-complete-guide' }
-    ],
-    'Free Category': [
-      { name: 'Free Data Science Course', path: 'free-data-science-course' },
-      { name: 'Free Data Analytics Course', path: 'free-data-analytics-course' }
-    ]
-  };
 
   useEffect(() => {
     if (type === 'cohort') {
@@ -61,65 +37,68 @@ const MegaDropdown = ({ type, isOpen, onClose, setCurrentPage }) => {
   const activeCategories = type === 'cohort' ? ['Cohort Courses'] : Object.keys(categories).filter(c => c !== 'Cohort Courses');
 
   return (
-    <div className="mega-dropdown-overlay" onMouseLeave={onClose}>
-      {/* Highlights Ribbon */}
-      <div className="highlights-ribbon">
-        <div className="ribbon-text-container">
-          <span className="ribbon-item" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><TrendingUp size={14} /> Average Package: 12 LPA</span>
-          <span className="ribbon-divider">|</span>
-          <span className="ribbon-item" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Award size={14} /> 1,500+ Successful Placements</span>
-          <span className="ribbon-divider">|</span>
-          <span className="ribbon-item" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Briefcase size={14} /> 500+ Tier-1 Hiring Partners</span>
-          <span className="ribbon-divider">|</span>
-          <span className="ribbon-item" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><TrendingUp size={14} /> 150% Maximum Salary Hike</span>
-          <span className="ribbon-divider">|</span>
-          <span className="ribbon-item" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><MessageSquare size={14} /> 1-on-1 Personal Mentorship</span>
-        </div>
-      </div>
-
-      <div className={`${type === 'cohort' ? 'container-fluid mega-grid-cohort' : 'container mega-grid-all'} mega-dropdown-content`}>
-        {/* Left Column: Categories List (Only for All Courses) */}
-        {type !== 'cohort' && (
-          <div className="mega-dropdown-categories">
-            {activeCategories.map(cat => (
-              <div
-                key={cat}
-                onMouseEnter={() => setActiveCategory(cat)}
-                className={`category-item ${activeCategory === cat ? 'active' : ''}`}
-              >
-                {cat}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Middle Column: Course Cards Grid */}
-        <div className="mega-dropdown-courses">
-          <div className="courses-grid-header">
-            <h3>{activeCategory}</h3>
-            <p>Certified programs and hands-on syllabus engineered for career success.</p>
-          </div>
-          <div className="courses-list-grid">
-            {categories[activeCategory]?.map((course, idx) => (
-              <div
-                key={idx}
-                onClick={() => { setCurrentPage(`course-details/${course.path}`); onClose(); }}
-                className="course-link-card"
-              >
-                <h4>{course.name}</h4>
-                <span>Explore Details →</span>
-              </div>
-            ))}
+    <div className="mega-dropdown-overlay" onMouseLeave={onClose} onClick={onClose}>
+      <div className="mega-dropdown-inner-bg" onClick={e => e.stopPropagation()}>
+        {/* Highlights Ribbon */}
+        <div className="highlights-ribbon">
+          <div className="ribbon-text-container">
+            <span className="ribbon-item" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><TrendingUp size={14} /> Average Package: 12 LPA</span>
+            <span className="ribbon-divider">|</span>
+            <span className="ribbon-item" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Award size={14} /> 1,500+ Successful Placements</span>
+            <span className="ribbon-divider">|</span>
+            <span className="ribbon-item" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Briefcase size={14} /> 500+ Tier-1 Hiring Partners</span>
+            <span className="ribbon-divider">|</span>
+            <span className="ribbon-item" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><TrendingUp size={14} /> 150% Maximum Salary Hike</span>
+            <span className="ribbon-divider">|</span>
+            <span className="ribbon-item" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><MessageSquare size={14} /> 1-on-1 Personal Mentorship</span>
           </div>
         </div>
 
-        {/* Right Column: Interactive Advisor / Promo Card */}
-        <div className="mega-dropdown-promo">
-          <div className="promo-card">
-            <span style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}><Sparkles size={14} /> EXPERT ASSISTANCE</span>
-            <h3>Need Career Guidance?</h3>
-            <p>Talk to our expert counselors today and select the path best matching your background.</p>
-            <button onClick={() => { setCurrentPage('contact'); onClose(); }}>Book Consultation</button>
+        <div className="container-fluid mega-dropdown-content" style={{ padding: '0 4%' }}>
+          <div className={type === 'cohort' ? 'mega-grid-cohort' : 'mega-grid-all'}>
+            {/* Left Column: Categories List (Only for All Courses) */}
+            {type !== 'cohort' && (
+              <div className="mega-dropdown-categories">
+                {activeCategories.map(cat => (
+                  <div
+                    key={cat}
+                    onMouseEnter={() => setActiveCategory(cat)}
+                    className={`category-item ${activeCategory === cat ? 'active' : ''}`}
+                  >
+                    {cat}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Middle Column: Course Cards Grid */}
+            <div className="mega-dropdown-courses">
+              <div className="courses-grid-header">
+                <h3>{activeCategory}</h3>
+                <p>Certified programs and hands-on syllabus engineered for career success.</p>
+              </div>
+              <div className="courses-list-grid">
+                {categories[activeCategory]?.map((course, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => { setCurrentPage(`course-details/${course.path}`); onClose(); }}
+                    className="course-link-card"
+                  >
+                    <h4>{course.name}</h4>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Column: Interactive Advisor / Promo Card */}
+            <div className="mega-dropdown-promo">
+              <div className="promo-card">
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}><Sparkles size={14} /> EXPERT ASSISTANCE</span>
+                <h3>Need Career Guidance?</h3>
+                <p>Talk to our expert counselors today and select the path best matching your background.</p>
+                <button onClick={() => { setCurrentPage('contact'); onClose(); }}>Book Consultation</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -141,30 +120,48 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
   const [mobileCohortOpen, setMobileCohortOpen] = useState(false);
   const [mobileActiveCategory, setMobileActiveCategory] = useState('');
 
-  const categories = {
-    'Data Science Courses': [
-      { name: 'Data Science With Generative AI Course', path: 'data-science-with-generative-ai-course' }
-    ],
-    'AI Courses': [
-      { name: 'AI Engineer Advance Program', path: 'ai-engineer-advance-program' }
-    ],
-    'Data Analyst Courses': [
-      { name: 'Master Of Data Analytics Program', path: 'master-of-data-analytics-program' }
-    ],
-    'Foundation Courses': [
-      { name: 'Advance Python with AI Tools', path: 'advance-python-with-ai-tools' },
-      { name: 'Power BI & Tableau For Data Visualization', path: 'power-bi-tableau-for-data-visualization' },
-      { name: 'AI Powered Excel Full Course', path: 'ai-powered-excel-full-course' },
-      { name: 'AI Cohort Course', path: 'ai-cohort-course' }
-    ],
-    'Cohort Courses': [
-      { name: 'AI For Everyone : Complete Guide', path: 'ai-for-everyone-complete-guide' }
-    ],
-    'Free Category': [
-      { name: 'Free Data Science Course', path: 'free-data-science-course' },
-      { name: 'Free Data Analytics Course', path: 'free-data-analytics-course' }
-    ]
-  };
+  const [categories, setCategories] = useState({
+    'Data Science Courses': [],
+    'AI Courses': [],
+    'Data Analyst Courses': [],
+    'Foundation Courses': [],
+    'Cohort Courses': [],
+    'Free Category': []
+  });
+
+  useEffect(() => {
+    const fetchNavCourses = async () => {
+      try {
+        const response = await fetch('https://iscale-backend.onrender.com/api/course/public-all-courses');
+        const data = await response.json();
+        if (data && Array.isArray(data.data)) {
+          const cats = {
+            'All Courses': [],
+            'Data Science Courses': [],
+            'AI Courses': [],
+            'Data Analyst Courses': [],
+            'Foundation Courses': [],
+            'Cohort Courses': [],
+            'Free Category': []
+          };
+          
+          data.data.forEach(c => {
+            const catName = c.category || 'Foundation Courses';
+            const courseItem = { name: c.title, path: c._id };
+            
+            if (!cats[catName]) cats[catName] = [];
+            cats[catName].push(courseItem);
+            
+            cats['All Courses'].push(courseItem);
+          });
+          setCategories(cats);
+        }
+      } catch (err) {
+        console.error('Navbar API Error:', err);
+      }
+    };
+    fetchNavCourses();
+  }, []);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 20);
@@ -192,17 +189,32 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
         
         /* Mega Dropdown CSS */
         .mega-dropdown-overlay {
-          position: absolute;
-          top: 100%;
+          position: fixed;
+          top: 70px;
           left: 0;
           right: 0;
+          bottom: 0;
           width: 100%;
           background: var(--dropdown-bg);
-          box-shadow: 0 15px 40px rgba(0,0,0,0.12);
           z-index: 1000;
+          animation: navFadeIn 0.2s forwards;
+          cursor: default;
+          overflow: hidden;
+        }
+        .mega-dropdown-inner-bg {
+          background: var(--dropdown-bg);
+          width: 100%;
+          min-height: calc(100vh - 70px);
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0 15px 40px rgba(0,0,0,0.12);
           border-bottom: 1px solid var(--border-color);
           border-top: 1px solid var(--border-color);
           animation: navSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes navFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
         @keyframes navSlideDown {
           from { opacity: 0; transform: translateY(10px); }
@@ -219,6 +231,9 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
           overflow: hidden;
           white-space: nowrap;
           border-bottom: 1px solid rgba(255,255,255,0.1);
+          position: sticky;
+          top: 0;
+          z-index: 2;
         }
         .ribbon-text-container {
           display: flex;
@@ -237,25 +252,29 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
           min-height: 380px;
           padding: 32px 24px;
           gap: 32px;
+          flex: 1;
+          overflow-y: auto;
         }
         .mega-grid-all {
+          display: grid;
           grid-template-columns: 240px 1fr 280px;
         }
         .mega-grid-cohort {
+          display: grid;
           grid-template-columns: 1fr 320px;
         }
         .mega-dropdown-categories {
           border-right: 1px solid var(--border-color);
-          padding-right: 16px;
+          padding-right: 20px;
           display: flex;
           flex-direction: column;
-          gap: 6px;
+          gap: 10px;
         }
         .category-item {
-          padding: 12px 16px;
-          border-radius: 8px;
+          padding: 14px 18px;
+          border-radius: 12px;
           cursor: pointer;
-          font-size: 14px;
+          font-size: 15px;
           font-weight: 600;
           color: var(--text-secondary);
           transition: all 0.2s;
@@ -266,32 +285,33 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
           background: var(--bg-secondary);
         }
         .mega-dropdown-courses {
-          padding: 0 16px;
+          padding: 0 18px;
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: 20px;
           text-align: left;
         }
         .courses-grid-header h3 {
-          font-size: 18px;
+          font-size: 20px;
           font-weight: 800;
           color: var(--text-primary);
           margin-bottom: 4px;
         }
         .courses-grid-header p {
-          font-size: 13px;
+          font-size: 14px;
           color: var(--text-muted);
         }
         .courses-list-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 16px;
+          gap: 18px;
         }
         .course-link-card {
           background: var(--bg-secondary);
           border: 1px solid var(--border-color);
-          padding: 16px;
-          border-radius: 12px;
+          padding: 20px;
+          min-height: 108px;
+          border-radius: 16px;
           cursor: pointer;
           transition: all 0.2s;
           display: flex;
@@ -305,25 +325,25 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
           box-shadow: var(--card-shadow);
         }
         .course-link-card h4 {
-          font-size: 14px;
+          font-size: 15px;
           font-weight: 700;
           color: var(--text-primary);
           margin-bottom: 8px;
           line-height: 1.4;
         }
         .course-link-card span {
-          font-size: 12px;
+          font-size: 13px;
           font-weight: 600;
           color: var(--red);
         }
         .mega-dropdown-promo {
-          padding-left: 16px;
+          padding-left: 18px;
           border-left: 1px solid var(--border-color);
         }
         .promo-card {
           background: linear-gradient(135deg, #161d30 0%, #0d0f17 100%);
           color: #fff;
-          padding: 24px;
+          padding: 28px;
           border-radius: 16px;
           height: 100%;
           display: flex;
@@ -341,13 +361,13 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
           margin-bottom: 8px;
         }
         .promo-card h3 {
-          font-size: 18px;
+          font-size: 20px;
           font-weight: 800;
           margin-bottom: 12px;
           line-height: 1.3;
         }
         .promo-card p {
-          font-size: 12px;
+          font-size: 13px;
           color: #a0aec0;
           line-height: 1.5;
           margin-bottom: 20px;
@@ -356,10 +376,10 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
           background: #fff;
           color: #0f0f1b;
           border: none;
-          padding: 10px 20px;
+          padding: 11px 20px;
           border-radius: 8px;
           font-weight: 700;
-          font-size: 13px;
+          font-size: 14px;
           cursor: pointer;
           transition: all 0.2s;
         }
@@ -373,7 +393,7 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
         .mobile-menu-active {
           display: flex;
           flex-direction: column;
-          position: absolute;
+          position: fixed;
           top: 70px; left: 0; right: 0;
           background: var(--dropdown-bg);
           padding: 20px;
@@ -402,8 +422,8 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
           <Youtube size={14} color="#ff0000" />
           <span>100k Community</span>
         </div>
-        <span>📱 +91-7880113112</span>
-        <span>📞 +91 7880113112</span>
+        <span>ðŸ“± +91-7880113112</span>
+        <span>ðŸ“ž +91 7880113112</span>
       </div>
 
       {/* Main Navbar */}
@@ -441,8 +461,7 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
                   whiteSpace: 'nowrap'
                 }}
               >
-                <span>▦ All Courses</span>
-                <ChevronDown size={20} style={{ transform: dropdownAllOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                <span>All Courses</span>
               </button>
             </div>
 
@@ -593,7 +612,7 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
               borderRadius: 8, fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 12,
               display: 'flex', alignItems: 'center', gap: 6, border: '1px solid #222'
             }}>
-              <span style={{ fontSize: 16 }}>▶</span>
+              <span style={{ fontSize: 16 }}>â–¶</span>
               <div style={{ textAlign: 'left', lineHeight: 1.2 }}>
                 <div style={{ fontSize: 9, opacity: 0.7 }}>GET IT ON</div>
                 <div style={{ fontSize: 12, fontWeight: 700 }}>Google Play</div>
@@ -612,12 +631,14 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
           isOpen={dropdownAllOpen} 
           onClose={() => setDropdownAllOpen(false)} 
           setCurrentPage={setCurrentPage} 
+          categories={categories}
         />
         <MegaDropdown 
           type="cohort"
           isOpen={dropdownCohortOpen} 
           onClose={() => setDropdownCohortOpen(false)} 
           setCurrentPage={setCurrentPage} 
+          categories={categories}
         />
 
         {/* Mobile Dropdown Drawer */}
@@ -677,7 +698,7 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center'
                 }}
               >
-                <span>▦ All Courses</span>
+                <span>All Courses</span>
                 <ChevronDown size={18} style={{ transform: mobileCoursesOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
               </button>
               {mobileCoursesOpen && (
@@ -694,7 +715,7 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
                         }}
                       >
                         {cat}
-                        <span>{mobileActiveCategory === cat ? '−' : '+'}</span>
+                        <span>{mobileActiveCategory === cat ? 'âˆ’' : '+'}</span>
                       </button>
                       {mobileActiveCategory === cat && (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingLeft: 12, marginTop: 4 }}>
