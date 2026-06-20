@@ -34,10 +34,14 @@ const VideoPlayer = ({ videoId }) => {
         const data = await response.json();
         console.log("API RESPONSE:", data); // Helpful for debugging
         
-        if (data.status && data.src) {
+        if (data.otp && data.playbackInfo) {
+           setVideoUrl(`https://player.vdocipher.com/v2/?otp=${data.otp}&playbackInfo=${data.playbackInfo}`);
+        } else if (data.data && data.data.otp && data.data.playbackInfo) {
+           setVideoUrl(`https://player.vdocipher.com/v2/?otp=${data.data.otp}&playbackInfo=${data.data.playbackInfo}`);
+        } else if (data.status && data.src) {
            setVideoUrl(data.src);
         } else {
-           throw new Error('Video URL not found in response');
+           throw new Error('Video URL or OTP/PlaybackInfo not found in response');
         }
       } catch (err) {
         console.error('Error fetching video:', err);
@@ -67,7 +71,7 @@ const VideoPlayer = ({ videoId }) => {
       <iframe
         src={videoUrl}
         style={{ border: 0, width: '100%', height: '100%' }}
-        allow="encrypted-media"
+        allow="encrypted-media; fullscreen; picture-in-picture"
         allowFullScreen
         title="VdoCipher Video Player"
       ></iframe>

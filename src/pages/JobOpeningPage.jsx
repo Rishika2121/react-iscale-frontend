@@ -70,7 +70,7 @@ const JobOpeningPage = ({ setCurrentPage }) => {
             <span>›</span>
             <span>Job Opening</span>
           </div>
-          <h1 className="job-title reveal" style={{ transitionDelay: '100ms' }}>Job Opening</h1>
+          <h1 className="job-title reveal" style={{ transitionDelay: '100ms' }}>Job <span className="animated-text-gradient">Opening</span></h1>
           
           <div className="filter-container reveal" style={{ transitionDelay: '200ms', flexWrap: 'wrap' }}>
             <div className="filter-input-group">

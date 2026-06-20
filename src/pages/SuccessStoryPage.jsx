@@ -105,7 +105,7 @@ const SuccessStoryPage = ({ setCurrentPage }) => {
             <span style={{ color: '#94a3b8' }}>›</span>
             <span style={{ color: '#fff', fontWeight: 600 }}>Success Story</span>
           </div>
-          <h1 className="page-title reveal" style={{ transitionDelay: '100ms' }}>Success Story</h1>
+          <h1 className="page-title reveal" style={{ transitionDelay: '100ms' }}><span className="animated-text-gradient">Success</span> Story</h1>
         </div>
       </section>
 

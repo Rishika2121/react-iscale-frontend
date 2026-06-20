@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowRight, ShieldCheck, Mail, Lock, User, Phone, Eye, EyeOff } from 'lucide-react';
 
 const RegisterPage = ({ setCurrentPage }) => {
   const [form, setForm] = useState({
     name: '',
-    contact: '',
     email: '',
     password: ''
   });
@@ -13,57 +12,75 @@ const RegisterPage = ({ setCurrentPage }) => {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
 
+  useEffect(() => {
+    const registerToken = localStorage.getItem("registerToken");
+    if (!registerToken) {
+      setCurrentPage("login");
+    }
+  }, [setCurrentPage]);
+
   const handleRegister = async (e) => {
-    if (e) e.preventDefault();
-    if (!form.name || !form.contact || !form.email || !form.password) {
-      alert("Please fill in all fields");
+    e.preventDefault();
+
+    const registerToken = localStorage.getItem("registerToken");
+
+    if (!registerToken) {
+      alert("Session expired, please login again");
+      setCurrentPage("login");
       return;
     }
-
-    const nameParts = form.name.trim().split(' ');
-    const fname = nameParts[0] || '';
-    const lname = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
 
     try {
       setLoading(true);
 
-      const response = await fetch(
+      const nameParts = form.name.trim().split(" ");
+      const fname = nameParts[0] || "";
+      const lname = nameParts.slice(1).join(" ") || "";
+
+      const res = await fetch(
         "https://iscale-backend.onrender.com/api/auth/register",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${registerToken}`,
           },
           body: JSON.stringify({
-            fname: fname,
-            lname: lname,
+            fname,
+            lname,
             email: form.email,
             password: form.password,
-            contact: Number(form.contact.replace(/\D/g, '')) || 0,
-            whatsapp: Number(form.contact.replace(/\D/g, '')) || 0,
-            gender: 'other', // default since it was removed from UI
+            gender: "other",
             c_current_state: "000000000000000000000000",
             c_current_city: "000000000000000000000000",
-            c_user_refer_by: "000000000000000000000000"
+            c_user_refer_by: "000000000000000000000000",
           }),
         }
       );
 
-      const data = await response.json();
-      console.log("Registration Response:", data);
+      const data = await res.json();
 
-      if (data.status) {
-        setPopupMessage("Your account has been created successfully. Redirecting you to login...");
+      if (data.status && data.token) {
+        localStorage.setItem("token", data.token);
+        if (data.user) {
+          localStorage.setItem("user", JSON.stringify(data.user));
+        }
+
+        localStorage.removeItem("registerToken");
+
+        setPopupMessage("Account created successfully!");
         setShowSuccessPopup(true);
+
         setTimeout(() => {
-          setCurrentPage("login");
-        }, 2200);
+          setCurrentPage("dashboard");
+        }, 2000);
       } else {
-        alert(data.message || "Registration Failed");
+        alert(data.message || "Registration failed");
       }
+
     } catch (error) {
-      console.error(error);
-      alert("Server Error. Unable to register.");
+      console.log(error);
+      alert("Server error");
     } finally {
       setLoading(false);
     }
@@ -84,7 +101,9 @@ const RegisterPage = ({ setCurrentPage }) => {
               <ShieldCheck size={32} />
             </div>
             <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 800, marginBottom: 8, color: 'var(--text-primary)' }}>Create Account</h1>
-            <p style={{ color: 'var(--text-secondary)', fontSize: 15 }}>Register to start your learning journey.</p>
+            <p style={{ color: 'var(--text-secondary)', fontSize: 15 }}>
+              Register to start your learning journey.
+            </p>
           </div>
 
           <form onSubmit={handleRegister}>
@@ -97,24 +116,6 @@ const RegisterPage = ({ setCurrentPage }) => {
                   placeholder="Enter your full name"
                   value={form.name}
                   onChange={e => setForm({ ...form, name: e.target.value })}
-                  style={{
-                    width: '100%', padding: '14px 16px 14px 48px',
-                    border: '1.5px solid var(--border-color)', borderRadius: 12,
-                    fontSize: 15, background: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none'
-                  }}
-                />
-              </div>
-            </div>
-
-            <div style={{ marginBottom: 20 }}>
-              <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 600 }}>Phone Number *</label>
-              <div style={{ position: 'relative' }}>
-                <Phone size={20} color="var(--text-muted)" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)' }} />
-                <input
-                  type="tel"
-                  placeholder="Enter your phone number"
-                  value={form.contact}
-                  onChange={e => setForm({ ...form, contact: e.target.value })}
                   style={{
                     width: '100%', padding: '14px 16px 14px 48px',
                     border: '1.5px solid var(--border-color)', borderRadius: 12,
@@ -179,7 +180,7 @@ const RegisterPage = ({ setCurrentPage }) => {
                 opacity: loading ? 0.7 : 1
               }}
             >
-              {loading ? 'Creating Account...' : 'Register'} <ArrowRight size={18} />
+              {loading ? 'Registering...' : 'Register'} <ArrowRight size={18} />
             </button>
           </form>
 
@@ -195,7 +196,6 @@ const RegisterPage = ({ setCurrentPage }) => {
         </div>
       </div>
 
-      {/* Success Popup */}
       {showSuccessPopup && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,

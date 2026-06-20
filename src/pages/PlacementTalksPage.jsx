@@ -67,7 +67,7 @@ const PlacementTalksPage = ({ setCurrentPage }) => {
             <span>›</span>
             <span>Pre-Placement Talks</span>
           </div>
-          <h1 className="page-title reveal" style={{ transitionDelay: '100ms' }}>Pre-Placement Talks</h1>
+          <h1 className="page-title reveal" style={{ transitionDelay: '100ms' }}>Pre-Placement <span className="animated-text-gradient">Talks</span></h1>
         </div>
         </section>
 

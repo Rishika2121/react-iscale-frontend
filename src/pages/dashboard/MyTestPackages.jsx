@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BookOpen, Search, ArrowRight, CheckCircle, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+const TEST_CATEGORY_DROPDOWN_URL = 'https://iscale-backend.onrender.com/api/test-category/test-category-dropdown';
+
 const MyTestPackages = ({ setCurrentPage }) => {
   const navigate = useNavigate();
   const [packages, setPackages] = useState([]);
@@ -17,13 +19,40 @@ const MyTestPackages = ({ setCurrentPage }) => {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch('https://iscale-backend.onrender.com/api/test-category/test-category-dropdown');
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setCategories([]);
+        return;
+      }
+
+      const res = await fetch(TEST_CATEGORY_DROPDOWN_URL, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          setCategories([]);
+          return;
+        }
+        throw new Error(`Failed to load test categories: ${res.status}`);
+      }
+
       const data = await res.json();
       if (data.status && Array.isArray(data.data)) {
         setCategories(data.data);
+      } else {
+        setCategories([]);
       }
     } catch (err) {
+      if (err?.message?.includes('401')) {
+        setCategories([]);
+        return;
+      }
+
       console.error(err);
+      setCategories([]);
     }
   };
 

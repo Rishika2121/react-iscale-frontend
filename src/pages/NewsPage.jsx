@@ -60,7 +60,7 @@ const NewsPage = () => {
           <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 12, opacity: 0.9 }}>
             Home <span style={{ margin: '0 6px' }}>›</span> All News & Update
           </div>
-          <h1 style={{ fontSize: 44, fontWeight: 900, textShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>All News & Update</h1>
+          <h1 style={{ fontSize: 44, fontWeight: 900, textShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>All News & <span className="animated-text-gradient">Update</span></h1>
         </div>
       </div>
 

@@ -6,12 +6,32 @@ const ContactPage = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
 
-  const handleSubmit = (e) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert(`Thank you ${name}! We have received your inquiry.`);
-    setName('');
-    setEmail('');
-    setMessage('');
+    setLoading(true);
+    try {
+      const response = await fetch('https://iscale-backend.onrender.com/api/contact-us/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, message })
+      });
+      const data = await response.json();
+      if (data.status || response.ok) {
+        alert(`Thank you ${name}! We have received your inquiry.`);
+        setName('');
+        setEmail('');
+        setMessage('');
+      } else {
+        alert(data.message || 'Failed to send message. Please try again later.');
+      }
+    } catch (err) {
+      console.error('Contact Form Error:', err);
+      alert('An error occurred. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

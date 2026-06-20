@@ -121,7 +121,7 @@ const EventsPage = ({ setCurrentPage }) => {
             <span style={{ margin: '0 8px', color: 'var(--text-muted)' }}>›</span>
             <span>All Events</span>
           </div>
-          <h1 className="page-title reveal" style={{ transitionDelay: '100ms' }}>All Events</h1>
+          <h1 className="page-title reveal" style={{ transitionDelay: '100ms' }}>All <span className="animated-text-gradient">Events</span></h1>
           <div className="events-count-badge reveal" style={{ transitionDelay: '200ms' }}>
             {events.length} {events.length === 1 ? 'Event' : 'Events'}
           </div>

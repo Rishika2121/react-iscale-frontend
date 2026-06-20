@@ -44,7 +44,8 @@ const marketingSlides = [
     title: 'Super Cohort 2.0',
     desc: 'Our flagship Data Science & Generative AI program is starting soon. Complete training with live mentor support and placement guarantees.',
     highlight: '20% Early Bird Discount',
-    gradient: 'linear-gradient(135deg, #0f172a 0%, #1d4ed8 45%, #0f172a 100%)'
+    gradient: 'linear-gradient(135deg, #0f172a 0%, #1d4ed8 45%, #0f172a 100%)',
+    img: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 2,
@@ -52,7 +53,8 @@ const marketingSlides = [
     title: 'Industry Placements',
     desc: 'iScale alumni are coding at top-tier companies including Google, Amazon, Microsoft, and tech startups. Average hike of 150%.',
     highlight: '500+ Hiring MNC Partners',
-    gradient: 'linear-gradient(135deg, #111827 0%, #2563eb 35%, #ef4444 100%)'
+    gradient: 'linear-gradient(135deg, #111827 0%, #2563eb 35%, #ef4444 100%)',
+    img: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 3,
@@ -60,7 +62,8 @@ const marketingSlides = [
     title: 'Interactive Cloud Labs',
     desc: 'Don\'t just watch videos. Code directly in your browser with our integrated cloud IDE and get instant feedback on your projects.',
     highlight: 'Zero Local Setup',
-    gradient: 'linear-gradient(135deg, #0b1120 0%, #1d4ed8 40%, #0f172a 100%)'
+    gradient: 'linear-gradient(135deg, #0b1120 0%, #1d4ed8 40%, #0f172a 100%)',
+    img: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 4,
@@ -68,7 +71,8 @@ const marketingSlides = [
     title: '24/7 Mentorship Support',
     desc: 'Connect immediately with technical experts and TAs via live voice rooms and custom collaborative screen-sharing.',
     highlight: 'Live 1-on-1 Assistance',
-    gradient: 'linear-gradient(135deg, #111827 0%, #0f172a 35%, #ef4444 100%)'
+    gradient: 'linear-gradient(135deg, #0f172a 0%, #9333ea 40%, #0f172a 100%)',
+    img: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=600&q=80'
   }
 ];
 
@@ -156,6 +160,15 @@ const MarketingCarousel = () => {
              </div>
              <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#22c55e', opacity: 0.8 }} />
           </div>
+
+          {/* Static Top Header */}
+          <div style={{
+            position: 'absolute', top: 56, left: 0, right: 0, padding: '0 24px', zIndex: 20,
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+          }}>
+            <span style={{ fontSize: 16, fontWeight: 900, color: '#fff', letterSpacing: 0.5, textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>iScale<span style={{color:'var(--red)'}}>.</span></span>
+            <span style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: 1 }}>Upskilling</span>
+          </div>
       {/* Slide Track */}
       <div style={{
         display: 'flex',
@@ -190,6 +203,12 @@ const MarketingCarousel = () => {
               filter: 'blur(40px)',
               animation: 'pulseGlow 6s infinite alternate'
             }} />
+
+            {slide.img && (
+              <div style={{ width: '100%', height: 280, borderRadius: 16, overflow: 'hidden', marginBottom: 24, boxShadow: '0 12px 24px rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', flexShrink: 0 }}>
+                <img src={slide.img} alt={slide.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+            )}
 
             <div style={{
               display: 'inline-block',
@@ -293,7 +312,7 @@ const Hero = ({ setCurrentPage }) => {
           }}>
             <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'linear-gradient(135deg, #2563eb, #3b82f6)', boxShadow: '0 0 10px var(--red)' }} />
             <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: 0.5, color: 'var(--text-primary)' }}>
-              <span className="text-gradient">iSCALE Upskilling</span>
+              <span className="animated-text-gradient">iSCALE Upskilling</span>
             </span>
           </div>
 
@@ -304,7 +323,7 @@ const Hero = ({ setCurrentPage }) => {
 
           <h1 style={{ fontSize: 'clamp(30px, 8vw, 56px)', fontWeight: 800, lineHeight: 1.12, marginBottom: 16, wordBreak: 'break-word', hyphens: 'auto', color: 'var(--text-primary)' }}>
             <span style={{ color: 'var(--text-primary)' }}>India's Trusted</span>{' '}
-            <span style={{ color: 'var(--red)' }}>Upskilling &<br />E-Learning</span>{' '}
+            <span className="animated-text-gradient">Upskilling &<br />E-Learning</span>{' '}
             <span style={{ color: 'var(--text-secondary)' }}>Platform for<br />Future Readiness.</span>
           </h1>
 
@@ -382,7 +401,7 @@ const AboutSection = ({ setCurrentPage }) => (
       {/* Content */}
       <div>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(32px, 5vw, 44px)', fontWeight: 800, marginBottom: 20, lineHeight: 1.1, color: 'var(--text-primary)' }}>
-          Know About <span style={{ color: 'var(--red)' }}>iScale</span><br />Learning
+          Know About <span className="animated-text-gradient">iScale</span><br />Learning
         </h2>
         <p style={{ color: 'var(--text-secondary)', fontSize: 16, lineHeight: 1.75, marginBottom: 40, maxWidth: 540 }}>
           A well-organized and flexible program that takes care of you. You start as a Beginner, Intermediate, or Advanced learner based on your skills.
@@ -520,7 +539,7 @@ const TestimonialsSection = ({ setCurrentPage }) => {
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
           <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '4px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700 }}>THE ISCALE</span>
         </div>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 800, textAlign: 'center', marginBottom: 24, color: 'var(--text-primary)' }}>Students Testimonials</h2>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 800, textAlign: 'center', marginBottom: 24, color: 'var(--text-primary)' }}>Students <span className="animated-text-gradient">Testimonials</span></h2>
 
         {loading ? (
           <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-secondary)' }}>Loading Testimonials...</div>
@@ -591,7 +610,7 @@ const LatestUpdates = ({ setCurrentPage }) => {
       </div>
       <div className="container-fluid" style={{ position: 'relative', zIndex: 1 }}>
         <div style={{ textAlign: 'center', marginBottom: 12 }}>
-          <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700 }}>EXPLORE OPPORTUNITIES</span>
+          <span style={{ background: 'rgba(37, 99, 235, 0.08)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700 }}><span className="animated-text-gradient">EXPLORE OPPORTUNITIES</span></span>
         </div>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 800, textAlign: 'center', marginBottom: 16, color: 'var(--text-primary)' }}>Latest <span className="animated-text-gradient">Updates</span></h2>
 
@@ -727,12 +746,12 @@ const PopularCourses = ({ setCurrentPage }) => {
 
   return (
   <section className="reveal" style={{ padding: '30px 0 40px', background: 'var(--bg-primary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
-    <div className="container-fluid">
+    <div className="container">
       <div style={{ textAlign: 'center', marginBottom: 12 }}>
-        <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700, letterSpacing: 0.5 }}>EXPLORE UP-TO-DATE PROGRAMS</span>
+        <span style={{ background: 'rgba(37, 99, 235, 0.08)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700, letterSpacing: 0.5 }}><span className="animated-text-gradient">EXPLORE UP-TO-DATE PROGRAMS</span></span>
       </div>
       <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 800, textAlign: 'center', marginBottom: 12, color: 'var(--text-primary)' }}>
-        Most Popular <span style={{ color: 'var(--red)' }}>Courses</span>
+        Most Popular <span className="animated-text-gradient">Courses</span>
       </h2>
       <p style={{ color: 'var(--text-secondary)', textAlign: 'center', marginBottom: 28, maxWidth: 620, margin: '0 auto 28px' }}>
         Learn from top industry veterans, build practical experience through real-world projects, and jumpstart your technical career.
@@ -781,7 +800,7 @@ const PopularCourses = ({ setCurrentPage }) => {
                   </div>
                   
                   <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 12, lineHeight: 1.3, color: 'var(--text-primary)' }}>
-                    {course.title}
+                    <span className="animated-text-gradient">{course.title}</span>
                   </h4>
 
                   <div style={{ display: 'flex', gap: 16, marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)', fontWeight: 500 }}>
@@ -980,7 +999,7 @@ const CompanyMarquee = ({ setCurrentPage }) => {
       {loading ? (
         <div style={{ textAlign: 'center', padding: '20px 0' }}>Loading partners...</div>
       ) : companies.length > 0 ? (
-        <div style={{ padding: '0 5%', overflow: 'hidden', whiteSpace: 'nowrap', position: 'relative' }}>
+        <div style={{ padding: '0 5%', overflow: 'hidden', whiteSpace: 'nowrap', position: 'relative', WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)', maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }}>
           <div style={{ display: 'inline-flex', gap: 32, animation: 'marquee 50s linear infinite', padding: '10px 0' }}>
             {[...companies, ...companies, ...companies].map((c, i) => (
               <div key={i} className="hover-glow" style={{
@@ -1250,7 +1269,7 @@ const LearnersCommunity = () => (
     `}</style>
     <div className="container">
       <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 900, textAlign: 'center', marginBottom: 30, color: 'var(--text-primary)' }}>
-        India's Most Loved <br/> Learners Community <span style={{ color: 'var(--red)' }}>❤️</span>
+        India's Most Loved <br/> Learners Community
       </h2>
 
       <div className="community-stats" style={{ position: 'relative' }}>
@@ -1268,10 +1287,6 @@ const LearnersCommunity = () => (
             <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 16, padding: '30px 20px', width: '100%', textAlign: 'center', boxShadow: 'var(--card-shadow)', borderBottom: '4px solid var(--red)', position: 'relative', overflow: 'hidden' }}>
               {/* Top semi-circle design */}
               <div style={{ position: 'absolute', top: -50, left: '50%', transform: 'translateX(-50%)', width: 100, height: 100, borderRadius: '50%', border: '15px solid rgba(37, 99, 235, 0.05)' }} />
-              
-              <div style={{ width: 48, height: 48, background: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, margin: '0 auto 16px', position: 'relative', zIndex: 3, boxShadow: 'var(--card-shadow)' }}>
-                {stat.icon}
-              </div>
               <div style={{ fontSize: 36, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 8 }}>{stat.val}</div>
               <div style={{ fontSize: 14, color: 'var(--text-secondary)' }}>{stat.label}</div>
             </div>
@@ -1335,7 +1350,7 @@ const NewsUpdates = ({ setCurrentPage }) => {
   <section style={{ padding: 'clamp(30px, 4vw, 50px) 0', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
     <div className="container-fluid" style={{ maxWidth: 1100, margin: '0 auto' }}>
       <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 36, fontWeight: 900, textAlign: 'center', marginBottom: 48, color: 'var(--text-primary)' }}>
-        Latest <span style={{ background: 'linear-gradient(135deg, var(--red) 0%, #60a5fa 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'inline-block' }}>News & Updates</span>
+        Latest <span className="animated-text-gradient">News & Updates</span>
       </h2>
 
       {loading ? (
@@ -1457,7 +1472,7 @@ const InTheNews = () => {
           </span>
         </div>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 900, textAlign: 'center', marginBottom: 40 }}>
-          <span style={{ background: 'linear-gradient(135deg, #2563eb 0%, #6366f1 35%, #7f00ff 70%, #3b82f6 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'inline-block' }}>
+          <span className="animated-text-gradient">
             We've been in the news!
           </span>
         </h2>
@@ -1527,7 +1542,7 @@ const TalkToTeam = ({ setCurrentPage }) => (
           GOT MORE QUESTIONS ?
         </span>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(32px, 5vw, 44px)', fontWeight: 900, color: 'var(--text-primary)', marginBottom: 16 }}>
-          Talk <span style={{ color: 'var(--red)' }}>to our team directly</span>
+          Talk <span className="animated-text-gradient">to our team directly</span>
         </h2>
         <p style={{ color: 'var(--text-secondary)', fontSize: 16, marginBottom: 32 }}>Contact us and our team will get in touch with you shortly</p>
         
@@ -1597,24 +1612,20 @@ const AlliedCollegesSection = ({ setCurrentPage }) => {
         direction="left"
         gap={32}
         renderItem={(college, i) => (
-          <div key={i} className="premium-card hover-glow"
+          <div key={i} className="hover-glow"
             style={{
               width: 280, height: 280, borderRadius: 24, padding: '24px', 
-              background: `linear-gradient(135deg, hsla(${i * 45}, 80%, 20%, 0.8), hsla(${i * 45 + 30}, 80%, 10%, 0.9))`,
-              boxShadow: `0 12px 32px hsla(${i * 45}, 80%, 50%, 0.15)`, 
-              border: `1px solid hsla(${i * 45}, 80%, 50%, 0.3)`,
-              borderTop: `2px solid hsl(${i * 45}, 80%, 50%)`,
+              background: 'var(--card-bg)',
+              boxShadow: 'var(--card-shadow)', 
+              border: '1px solid var(--border-color)',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
               position: 'relative', flexShrink: 0, cursor: 'pointer', overflow: 'hidden'
             }}
           >
-            {/* Glowing orb background effect inside card */}
-            <div style={{ position: 'absolute', top: '-50%', left: '-50%', width: '200%', height: '200%', background: `radial-gradient(circle, hsla(${i * 45}, 80%, 50%, 0.1) 0%, transparent 50%)`, pointerEvents: 'none' }} />
-            
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', marginBottom: 16, background: 'rgba(255, 255, 255, 0.05)', borderRadius: '50%', padding: 20, boxShadow: 'inset 0 0 20px rgba(255,255,255,0.02)' }}>
-              <img src={college.img} alt={college.name} style={{ maxWidth: '100%', maxHeight: '110px', objectFit: 'contain', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.5))' }} />
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', marginBottom: 16 }}>
+              <img src={college.img} alt={college.name} style={{ maxWidth: '100%', maxHeight: '110px', objectFit: 'contain' }} />
             </div>
-            <h4 style={{ fontSize: 16, fontWeight: 800, color: '#fff', textAlign: 'center', margin: 0, zIndex: 1, textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{college.name}</h4>
+            <h4 style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-primary)', textAlign: 'center', margin: 0, zIndex: 1 }}>{college.name}</h4>
           </div>
         )}
       />
@@ -1645,7 +1656,7 @@ const AlliedCollegesSection = ({ setCurrentPage }) => {
 const EnrolledCoursesSection = ({ enrolledCourses, userName, setCurrentPage }) => {
   return (
     <section className="reveal active bg-dots" style={{ padding: 'clamp(20px, 3vw, 40px) 0', background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)', position: 'relative' }}>
-      <div className="container-fluid">
+      <div className="container">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32, flexWrap: 'wrap', gap: 16 }}>
           <div>
             <span style={{ background: 'rgba(37, 99, 235, 0.08)', color: 'var(--red)', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700, letterSpacing: 0.5 }}>WELCOME BACK</span>
@@ -1688,7 +1699,7 @@ const EnrolledCoursesSection = ({ enrolledCourses, userName, setCurrentPage }) =
               <div style={{ padding: 24, display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
                 <div>
                   <span style={{ fontSize: 10, fontWeight: 800, color: 'var(--red)', textTransform: 'uppercase', letterSpacing: 1 }}>{course.category}</span>
-                  <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-primary)', margin: '8px 0 16px', lineHeight: 1.3 }}>{course.title}</h3>
+                  <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-primary)', margin: '8px 0 16px', lineHeight: 1.3 }}><span className="animated-text-gradient">{course.title}</span></h3>
                   
                   {/* Progress bar */}
                   <div style={{ marginBottom: 20 }}>
@@ -1876,8 +1887,8 @@ const HomePage = ({ setCurrentPage }) => {
         }
         .courses-grid {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 20px;
+          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+          gap: 24px;
         }
         .success-grid {
           display: grid;
@@ -1898,7 +1909,6 @@ const HomePage = ({ setCurrentPage }) => {
         @media (max-width: 1024px) {
           .hero-shell { grid-template-columns: minmax(0, 1fr) minmax(300px, 360px); gap: 40px; }
           .hero-phone-column { transform: translateX(-40px); }
-          .courses-grid { grid-template-columns: repeat(2, 1fr); }
           .success-grid { grid-template-columns: 1fr; }
 
           .featured-img-container { min-height: 280px; }
@@ -1913,7 +1923,6 @@ const HomePage = ({ setCurrentPage }) => {
           .hero-floating-card { left: 16px; top: 16px; }
           .about-grid { grid-template-columns: 1fr; gap: 40px; }
           .features-grid { grid-template-columns: 1fr; }
-          .courses-grid { grid-template-columns: 1fr; }
 
           .featured-success-card { flex-direction: column !important; }
           .featured-img-container { flex: 0 0 100% !important; max-width: 100% !important; min-height: auto !important; aspect-ratio: 16/9; }

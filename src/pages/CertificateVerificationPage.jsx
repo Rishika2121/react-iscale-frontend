@@ -270,7 +270,7 @@ const CertificateVerificationPage = ({ setCurrentPage }) => {
             <ShieldCheck size={36} />
           </div>
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, letterSpacing: '-0.5px', marginBottom: 12 }}>
-            Certificate Verification
+            Certificate <span className="animated-text-gradient">Verification</span>
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: 16, maxWidth: 500, margin: '0 auto', lineHeight: 1.6 }}>
             Verify the authenticity of credential certificates issued by iScale Upskilling Platform.

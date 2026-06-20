@@ -43,6 +43,7 @@ import FaqPage from './pages/FaqPage';
 import CertificateVerificationPage from './pages/CertificateVerificationPage';
 import EnrolledCourseDetails from './pages/EnrolledCourseDetails';
 import EnrollCourseDetailsList from './pages/EnrollCourseDetailsList';
+import HireWithUsPage from './pages/HireWithUsPage';
 
 
 const CourseDetailsWrapper = ({ setCurrentPage }) => {
@@ -145,6 +146,7 @@ const AppContent = () => {
             <Route path="/allied-colleges" element={<AlliedCollegesPage />} />
             <Route path="/placement" element={<ClientsPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/hire-with-us" element={<HireWithUsPage />} />
             <Route path="/news" element={<NewsPage />} />
             <Route path="/news-details/:id" element={<NewsDetailsPage />} />
             <Route path="/expert-details" element={<ExpertDetailsPage />} />

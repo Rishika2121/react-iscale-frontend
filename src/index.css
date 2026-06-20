@@ -284,6 +284,12 @@ body {
   animation: shine 4s linear infinite;
 }
 
+.animated-bg-gradient {
+  background: linear-gradient(to right, var(--red), #8b5cf6, var(--red));
+  background-size: 200% auto;
+  animation: shine 4s linear infinite;
+}
+
 @keyframes shine {
   to {
     background-position: 200% center;

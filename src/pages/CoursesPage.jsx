@@ -196,7 +196,7 @@ const CoursesPage = ({ setCurrentPage }) => {
       <div className="public-courses-hero">
         <div className="container">
           <h1 style={{ fontSize: 44, fontWeight: 900 }}>
-            <span className="animated-text-gradient">Explore</span> <span className="text-gradient" style={{ background: 'linear-gradient(135deg, var(--red) 0%, var(--red-light) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Courses</span>
+            <span className="animated-text-gradient">Explore Courses</span>
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: 16, marginTop: 8 }}>
             Upskill under leading domain experts with curated practical curriculum.
@@ -222,7 +222,7 @@ const CoursesPage = ({ setCurrentPage }) => {
           </h3>
           
           <div style={{ marginBottom: '24px' }}>
-            <h4 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '14px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Categories</h4>
+            <h4 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '14px', textTransform: 'uppercase', letterSpacing: '0.5px' }}><span className="animated-text-gradient">Categories</span></h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {categories.map(cat => (
                 <label key={cat} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '14px', color: activeCategory === cat ? 'var(--red)' : 'var(--text-secondary)', fontWeight: activeCategory === cat ? 700 : 500, transition: 'all 0.2s' }}>
@@ -248,7 +248,7 @@ const CoursesPage = ({ setCurrentPage }) => {
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid var(--border-color)' }}>
             <span style={{ color: 'var(--text-muted)', fontSize: 15, fontWeight: 600 }}>
-              Showing <span style={{ color: 'var(--text-primary)', fontWeight: 800 }}>{filtered.length}</span> programs
+              Showing <span style={{ color: 'var(--text-primary)', fontWeight: 800 }}>{filtered.length}</span> <span className="animated-text-gradient">programs</span>
             </span>
           </div>
 
@@ -280,7 +280,7 @@ const CoursesPage = ({ setCurrentPage }) => {
                     </div>
                     
                     <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 12, lineHeight: 1.3, color: 'var(--text-primary)' }}>
-                      {course.title}
+                      <span className="animated-text-gradient">{course.title}</span>
                     </h4>
 
                     <div style={{ display: 'flex', gap: 16, marginBottom: 12, fontSize: 13, color: 'var(--text-muted)', fontWeight: 600 }}>

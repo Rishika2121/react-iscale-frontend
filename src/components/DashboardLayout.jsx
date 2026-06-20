@@ -17,7 +17,7 @@ import {
   Heart
 } from 'lucide-react';
 
-// Custom SVG Logo matching the screenshot
+
 const ShieldLogo = ({ onClick }) => (
   <div onClick={onClick} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
     <svg width="38" height="42" viewBox="0 0 100 110" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -39,6 +39,17 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
   const [moreDropdownOpen, setMoreDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+
+  const getDisplayFullName = (value) => {
+    const resolved = value?.name || value?.fullName || value?.firstName || value?.fname || value?.first_name || value?.username || value?.userName || value?.c_first_name || value?.m_first_name || value?.displayName;
+    
+    if (!resolved || resolved === 'User') {
+      if (value?.email) return String(value.email).split('@')[0];
+      return 'Profile';
+    }
+    
+    return String(resolved).trim() || 'Profile';
+  };
   
   const [notifications, setNotifications] = useState([
     { id: 1, title: 'Welcome to iSCALE!', message: 'Start exploring courses to boost your career.', time: '2 hours ago', read: false },
@@ -50,12 +61,51 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       try {
-        setUser(JSON.parse(storedUser));
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
       } catch (e) { }
     } else {
       // Mock user for now if missing
       setUser({ name: 'Ridhi Mishra' });
     }
+
+    // Fetch latest profile from API to ensure we have the real name
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetch('https://iscale-backend.onrender.com/api/myprofile', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+        .then(res => res.json())
+        .then(result => {
+          if (result.status && result.data) {
+            const data = result.data;
+            const fetchedName = data.firstName || data.fname || data.c_first_name || data.name || data.fullName;
+            if (fetchedName) {
+               setUser(prev => {
+                 const updatedUser = { ...prev, ...data, name: fetchedName, firstName: fetchedName };
+                 localStorage.setItem('user', JSON.stringify(updatedUser));
+                 return updatedUser;
+               });
+            }
+          }
+        })
+        .catch(err => console.error("Failed to fetch user profile", err));
+    }
+    
+    // Listen for real-time profile updates from the MyProfile component
+    const handleProfileUpdate = () => {
+      const updatedUserStr = localStorage.getItem('user');
+      if (updatedUserStr) {
+        try {
+          setUser(JSON.parse(updatedUserStr));
+        } catch (e) {}
+      }
+    };
+    window.addEventListener('profileUpdated', handleProfileUpdate);
+    
+    return () => {
+      window.removeEventListener('profileUpdated', handleProfileUpdate);
+    };
   }, []);
 
   const handleLogout = () => {
@@ -527,7 +577,7 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
             <div style={{ position: 'relative' }}>
               <button onClick={() => setProfileDropdownOpen(!profileDropdownOpen)} className="header-profile-trigger">
                 <div className="header-profile-icon"><User size={16} /></div>
-                <span className="profile-name-text" style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-primary)' }}>{user.name ? user.name.split(' ')[0] : 'User'}</span>
+                <span className="profile-name-text" style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-primary)' }}>{getDisplayFullName(user)}</span>
                 <ChevronDown className="profile-name-text" size={14} style={{ color: 'var(--text-secondary)' }} />
               </button>
               {profileDropdownOpen && (
@@ -610,7 +660,7 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
               <li><button className="footer-link-btn" onClick={() => setCurrentPage('home')}>About Us</button></li>
               <li><button className="footer-link-btn">Our Clients</button></li>
               <li><button className="footer-link-btn">Allied Colleges</button></li>
-              <li><button className="footer-link-btn">Hire with Us</button></li>
+              <li><button className="footer-link-btn" onClick={() => setCurrentPage('hire-with-us')}>Hire with Us</button></li>
             </ul>
           </div>
           <div>

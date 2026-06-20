@@ -206,14 +206,6 @@ const coursesDatabase = {
       { name: 'Nishant Sir', role: 'Mentor', img: 'https://www.theiscale.com/myadmin/uploads/courses/nikki_(1).png' },
       { name: 'Bijay Sir', role: 'Mentor', img: 'https://www.theiscale.com/myadmin/uploads/courses/Bijay_(1).png' },
       { name: 'Sweta', role: 'Mentor', img: 'https://www.theiscale.com/myadmin/uploads/courses/Sweta_(1).png' }
-    ],
-    reviews: [
-      { name: 'Shweta Shandilya', companyImg: 'https://www.theiscale.com/myadmin/uploads/more/IBM-removebg-preview.png', img: 'https://www.theiscale.com/myadmin/uploads/more/Shweta_Shandilya-Edit.jpg' },
-      { name: 'Mr. Uday Narang', companyImg: 'https://www.theiscale.com/myadmin/uploads/more/osm.png', img: 'https://www.theiscale.com/myadmin/uploads/more/uday_smaall.png' },
-      { name: 'Prasad Menon', companyImg: 'https://www.theiscale.com/myadmin/uploads/more/amagi1.png', img: 'https://www.theiscale.com/myadmin/uploads/more/prasad_menon.png' },
-      { name: 'Jaibir Siwach', companyImg: 'https://www.theiscale.com/myadmin/uploads/more/kabira.png', img: 'https://www.theiscale.com/myadmin/uploads/more/Jaibir_Siwach_small1.png' },
-      { name: 'Sardar Ji', companyImg: 'https://www.theiscale.com/myadmin/uploads/more/reliance_jio.png', img: 'https://www.theiscale.com/myadmin/uploads/more/sardar_ji.png' },
-      { name: 'Rahil Hop', companyImg: 'https://www.theiscale.com/myadmin/uploads/more/Untitled-1.png', img: 'https://www.theiscale.com/myadmin/uploads/more/Rahil_Hop_small1.png' }
     ]
   },
   'master-of-data-analytics-program': {
@@ -1442,11 +1434,11 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
             <div style={{ color: 'var(--text-secondary)', fontSize: 14, fontWeight: 600, marginBottom: 12 }}>
               <span style={{ cursor: 'pointer' }} onClick={() => setCurrentPage('home')}>Home</span> 
               <span style={{ margin: '0 8px' }}>&gt;</span> 
-              <span style={{ color: 'var(--red)' }}>{data.category || 'Data Science Courses'}</span>
+              <span className="animated-text-gradient">{data.category || 'Data Science Courses'}</span>
             </div>
             
             <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 42, fontWeight: 900, color: 'var(--text-primary)', lineHeight: 1.2, marginBottom: 16 }}>
-              {data.title}
+              <span className="animated-text-gradient">{data.title}</span>
             </h1>
             
             <p style={{ color: 'var(--text-secondary)', fontSize: 16, lineHeight: 1.6, marginBottom: 20, maxWidth: 600 }}>
@@ -1627,7 +1619,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32, flexWrap: 'wrap', gap: 12 }}>
               <div>
                 <span style={{ color: 'var(--red)', fontSize: 11, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase' }}>What You Will Learn</span>
-                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 900, color: 'var(--text-primary)', marginTop: 6, marginBottom: 0 }}>Course Curriculum</h2>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 900, color: 'var(--text-primary)', marginTop: 6, marginBottom: 0 }}>Course <span className="animated-text-gradient">Curriculum</span></h2>
               </div>
               {curriculumData.length > 0 && (
                 <div style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 600, background: 'var(--bg-secondary)', padding: '6px 14px', borderRadius: 20, border: '1px solid var(--border-color)' }}>
@@ -1702,7 +1694,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40, flexWrap: 'wrap', gap: 16 }}>
               <div>
                 <span style={{ color: 'var(--red)', fontSize: 12, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase' }}>Hands-On Experience</span>
-                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)', marginTop: 8 }}>Projects & Portfolios</h2>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)', marginTop: 8 }}>Projects & <span className="animated-text-gradient">Portfolios</span></h2>
               </div>
               <p style={{ color: 'var(--text-secondary)', fontSize: 16, maxWidth: 450, margin: 0, fontWeight: 500 }}>
                 Build 15+ production-grade projects. Deploy them to live servers and build an impressive portfolio to showcase to hiring managers.
@@ -1744,7 +1736,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
           {/* Tools */}
           {toolsData && toolsData.length > 0 && (
             <div id="tools" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 40 }}>Tools Covered</h2>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 40 }}><span className="animated-text-gradient">Tools</span> Covered</h2>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 32, justifyContent: 'flex-start' }}>
                 {toolsData.map((tool, idx) => (
                   <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, background: 'var(--bg-secondary)', padding: '16px 24px', borderRadius: 12, border: '1px solid var(--border-color)', minWidth: 100, textAlign: 'center' }}>
@@ -1761,7 +1753,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
           {/* Certificate */}
           <div id="certificate" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32, flexWrap: 'wrap', gap: 16 }}>
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>Certificate of Completion</h2>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>Certificate of <span className="animated-text-gradient">Completion</span></h2>
               {isCertUnlocked ? (
                 <span style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', padding: '6px 16px', borderRadius: 100, fontSize: 12, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
                   <CheckCircle size={14} /> Unlocked
@@ -2020,7 +2012,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                       <p style={{ fontSize: 8, color: '#64748b', maxWidth: 280, margin: '0 auto 6px auto', lineHeight: 1.3 }}>
                         for successfully finishing all learning modules and industry-oriented practical tasks for
                       </p>
-                      <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, fontWeight: 700, color: '#b45309', textTransform: 'uppercase', marginBottom: 12 }}>{data.title}</div>
+                      <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, fontWeight: 700, color: '#b45309', textTransform: 'uppercase', marginBottom: 12 }}><span className="animated-text-gradient">{data.title}</span></div>
                       
                       {/* Compact Footer: 3 Columns (Date, Seal, Signature) */}
                       <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #e2e8f0', paddingTop: 8, marginTop: 'auto' }}>
@@ -2126,7 +2118,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
           <div id="instructor" style={{ background: 'var(--card-bg)', borderRadius: 24, padding: 40, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)', borderTop: '6px solid #3b82f6' }}>
             <div style={{ marginBottom: 32 }}>
               <span style={{ color: 'var(--red)', fontSize: 11, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase' }}>Meet the Experts</span>
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 900, color: 'var(--text-primary)', marginTop: 6, marginBottom: 0 }}>Your Instructors</h2>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 900, color: 'var(--text-primary)', marginTop: 6, marginBottom: 0 }}>Your <span className="animated-text-gradient">Instructors</span></h2>
             </div>
             {instructorsData && instructorsData.length > 0 ? (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: 20 }}>
@@ -2215,7 +2207,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
 
           {/* FAQ section placed after Instructor */}
           <div id="faq" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)', borderTop: '6px solid #10b981', marginTop: 40 }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 32 }}>FAQ's</h2>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 32 }}><span className="animated-text-gradient">FAQ's</span></h2>
             <div>
               {faqs && faqs.length > 0 ? (
                 faqs.slice(0, faqShowMore ? faqs.length : 3).map((faq, idx) => (
@@ -2241,7 +2233,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
           <div className="container">
             <div style={{ textAlign: 'center', marginBottom: 40 }}>
               <span style={{ color: 'var(--red)', fontSize: 12, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase' }}>Invest in Your Future</span>
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)', marginTop: 8 }}>Flexible Pricing Plans</h2>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)', marginTop: 8 }}>Flexible <span className="animated-text-gradient">Pricing Plans</span></h2>
             </div>
 
             {(data.category?.toLowerCase().includes('foundation') || courseId.includes('python') || courseId.includes('excel') || courseId.includes('visualization')) ? (
@@ -2251,7 +2243,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                   <div style={{ display: 'inline-flex', background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', padding: '6px 12px', borderRadius: 8, fontSize: 11, fontWeight: 800, textTransform: 'uppercase', marginBottom: 16 }}>
                     Foundation Program
                   </div>
-                  <h3 style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 12 }}>{data.title}</h3>
+                  <h3 style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 12 }}><span className="animated-text-gradient">{data.title}</span></h3>
                   <p style={{ color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>Get lifetime access to high-quality recorded video lectures, self-assessment tests, complete code notebooks, and direct mentor query support.</p>
                   
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 24, borderTop: '1px solid var(--border-color)', paddingTop: 20 }}>
@@ -2288,7 +2280,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                     </div>
                   </div>
 
-                  <h3 style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 12 }}>{data.title}</h3>
+                  <h3 style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 12 }}><span className="animated-text-gradient">{data.title}</span></h3>
                   <p style={{ color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>Learn dynamically in a group cohort. Get 30+ interactive lectures where **the first half of modules are completely free on YouTube** and the remaining advanced topics are exclusive to premium members.</p>
                   
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 24, borderTop: '1px solid var(--border-color)', paddingTop: 20 }}>
@@ -2380,7 +2372,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <span style={{ color: 'var(--red)', fontSize: 12, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase' }}>What Our Students Say</span>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 36, fontWeight: 900, color: 'var(--text-primary)', marginTop: 8, marginBottom: 0 }}>Student Testimonials</h2>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 36, fontWeight: 900, color: 'var(--text-primary)', marginTop: 8, marginBottom: 0 }}>Student <span className="animated-text-gradient">Testimonials</span></h2>
           </div>
 
           {/* Loading state */}

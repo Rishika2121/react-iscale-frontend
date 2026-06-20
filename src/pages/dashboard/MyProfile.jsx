@@ -499,6 +499,18 @@ const MyProfile = () => {
         setEditing(false);
         setSaved(true);
         setTimeout(() => setSaved(false), 2500);
+        
+        // Update localStorage and trigger global dashboard update
+        const storedUserStr = localStorage.getItem('user');
+        if (storedUserStr) {
+          try {
+            const storedUser = JSON.parse(storedUserStr);
+            const newName = formData.firstName || formData.fname || formData.c_first_name || formData.name;
+            const updatedUser = { ...storedUser, ...formData, name: newName, firstName: newName };
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            window.dispatchEvent(new Event('profileUpdated'));
+          } catch (e) {}
+        }
       } else {
         alert(result.message || 'Failed to update profile');
       }

@@ -68,11 +68,7 @@ const styles = `
   line-height: 1.2;
 }
 
-.explore-title span {
-  background: linear-gradient(135deg, var(--red) 0%, #ff6b72 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+
 
 .explore-subtitle {
   font-size: 0.95rem;
@@ -642,7 +638,7 @@ const CourseCard = ({ course, setCurrentPage }) => (
     </div>
 
     <div className="course-body-premium">
-      <h3 className="course-title-premium">{course.title}</h3>
+      <h3 className="course-title-premium"><span className="animated-text-gradient">{course.title}</span></h3>
 
       <div className="course-meta-row-premium" style={{ minHeight: '16px' }}>
         <span className="course-meta-item-premium">
@@ -766,7 +762,7 @@ const ExploreCourses = ({ setCurrentPage }) => {
               <span>›</span>
               <span className="bc-active">All Courses</span>
             </nav>
-            <h1 className="explore-title" style={{ fontSize: '3.5rem' }}>Explore Our <span>Programs</span></h1>
+            <h1 className="explore-title" style={{ fontSize: '3.5rem' }}>Explore Our <span className="animated-text-gradient">Programs</span></h1>
             <p className="explore-subtitle">Empower your career with industry-tailored tracks, live mentorship, and complete certification programs.</p>
           </div>
         </div>
@@ -784,8 +780,7 @@ const ExploreCourses = ({ setCurrentPage }) => {
               boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)' 
             }}>
               {/* Highlight Ribbon */}
-              <div style={{ 
-                background: 'linear-gradient(135deg, var(--red) 0%, #991b1b 100%)', 
+              <div className="animated-bg-gradient" style={{ 
                 color: '#fff', 
                 padding: '20px 24px', 
                 fontWeight: 800, 

@@ -59,7 +59,7 @@ setTestimonials(Array.isArray(data.data) ? data.data : (Array.isArray(data) ? da
           <div style={{ fontSize: 14, marginBottom: 12, opacity: 0.8 }}>
             <span style={{ cursor: 'pointer' }} onClick={() => setCurrentPage && setCurrentPage('home')}>Home</span> › Student Testimonials
           </div>
-          <h1 className="reveal" style={{ fontFamily: 'var(--font-display)', fontSize: 44, fontWeight: 800 }}>Student Testimonials</h1>
+          <h1 className="reveal" style={{ fontFamily: 'var(--font-display)', fontSize: 44, fontWeight: 800 }}>Student <span className="animated-text-gradient">Testimonials</span></h1>
           <p className="reveal" style={{ transitionDelay: '100ms', fontSize: 16, opacity: 0.9, marginTop: 12, maxWidth: 600, margin: '12px auto 0' }}>
             Hear from our students about their learning journey and success stories.
           </p>

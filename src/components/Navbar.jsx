@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ChevronDown, Youtube, Sun, Moon, Calendar, Trophy, MessageSquare, Briefcase, Mic, ShieldCheck, TrendingUp, Award, Sparkles } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronRight, Youtube, Sun, Moon, Calendar, Trophy, MessageSquare, Briefcase, Mic, ShieldCheck, TrendingUp, Award, Sparkles } from 'lucide-react';
 
 const Logo = () => (
   <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
@@ -39,22 +39,7 @@ const MegaDropdown = ({ type, isOpen, onClose, setCurrentPage, categories }) => 
   return (
     <div className="mega-dropdown-overlay" onMouseLeave={onClose} onClick={onClose}>
       <div className="mega-dropdown-inner-bg" onClick={e => e.stopPropagation()}>
-        {/* Highlights Ribbon */}
-        <div className="highlights-ribbon">
-          <div className="ribbon-text-container">
-            <span className="ribbon-item" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><TrendingUp size={14} /> Average Package: 12 LPA</span>
-            <span className="ribbon-divider">|</span>
-            <span className="ribbon-item" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Award size={14} /> 1,500+ Successful Placements</span>
-            <span className="ribbon-divider">|</span>
-            <span className="ribbon-item" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Briefcase size={14} /> 500+ Tier-1 Hiring Partners</span>
-            <span className="ribbon-divider">|</span>
-            <span className="ribbon-item" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><TrendingUp size={14} /> 150% Maximum Salary Hike</span>
-            <span className="ribbon-divider">|</span>
-            <span className="ribbon-item" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><MessageSquare size={14} /> 1-on-1 Personal Mentorship</span>
-          </div>
-        </div>
-
-        <div className="container-fluid mega-dropdown-content" style={{ padding: '0 4%' }}>
+        <div className="container-fluid mega-dropdown-content" style={{ padding: '24px' }}>
           <div className={type === 'cohort' ? 'mega-grid-cohort' : 'mega-grid-all'}>
             {/* Left Column: Categories List (Only for All Courses) */}
             {type !== 'cohort' && (
@@ -65,7 +50,8 @@ const MegaDropdown = ({ type, isOpen, onClose, setCurrentPage, categories }) => 
                     onMouseEnter={() => setActiveCategory(cat)}
                     className={`category-item ${activeCategory === cat ? 'active' : ''}`}
                   >
-                    {cat}
+                    <span>{cat}</span>
+                    <ChevronRight size={16} />
                   </div>
                 ))}
               </div>
@@ -85,18 +71,12 @@ const MegaDropdown = ({ type, isOpen, onClose, setCurrentPage, categories }) => 
                     className="course-link-card"
                   >
                     <h4>{course.name}</h4>
+                    <span>6 Months</span>
                   </div>
                 ))}
               </div>
-            </div>
-
-            {/* Right Column: Interactive Advisor / Promo Card */}
-            <div className="mega-dropdown-promo">
-              <div className="promo-card">
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}><Sparkles size={14} /> EXPERT ASSISTANCE</span>
-                <h3>Need Career Guidance?</h3>
-                <p>Talk to our expert counselors today and select the path best matching your background.</p>
-                <button onClick={() => { setCurrentPage('contact'); onClose(); }}>Book Consultation</button>
+              <div style={{ marginTop: 20, paddingTop: 20, borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'flex-end' }}>
+                <span onClick={() => { setCurrentPage('courses'); onClose(); }} style={{ fontSize: 13, textDecoration: 'underline', color: 'var(--text-secondary)', cursor: 'pointer', fontWeight: 600 }}>View All Courses</span>
               </div>
             </div>
           </div>
@@ -194,22 +174,23 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
           left: 0;
           right: 0;
           bottom: 0;
-          width: 100%;
-          background: var(--dropdown-bg);
+          background: transparent;
           z-index: 1000;
           animation: navFadeIn 0.2s forwards;
           cursor: default;
-          overflow: hidden;
         }
         .mega-dropdown-inner-bg {
-          background: var(--dropdown-bg);
+          background: var(--bg-primary);
           width: 100%;
-          min-height: calc(100vh - 70px);
+          max-width: 1060px;
+          margin-left: 4%;
           display: flex;
           flex-direction: column;
-          box-shadow: 0 15px 40px rgba(0,0,0,0.12);
-          border-bottom: 1px solid var(--border-color);
-          border-top: 1px solid var(--border-color);
+          box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+          border: 1px solid var(--border-color);
+          border-top: none;
+          border-radius: 0 0 12px 12px;
+          overflow: hidden;
           animation: navSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         @keyframes navFadeIn {
@@ -257,11 +238,11 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
         }
         .mega-grid-all {
           display: grid;
-          grid-template-columns: 240px 1fr 280px;
+          grid-template-columns: 320px 1fr;
         }
         .mega-grid-cohort {
           display: grid;
-          grid-template-columns: 1fr 320px;
+          grid-template-columns: 1fr;
         }
         .mega-dropdown-categories {
           border-right: 1px solid var(--border-color);
@@ -272,17 +253,19 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
         }
         .category-item {
           padding: 14px 18px;
-          border-radius: 12px;
+          border-radius: 8px;
           cursor: pointer;
           font-size: 15px;
           font-weight: 600;
           color: var(--text-secondary);
           transition: all 0.2s;
-          text-align: left;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
         }
         .category-item:hover, .category-item.active {
           color: var(--red);
-          background: var(--bg-secondary);
+          background: rgba(239, 68, 68, 0.08);
         }
         .mega-dropdown-courses {
           padding: 0 18px;
@@ -307,34 +290,35 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
           gap: 18px;
         }
         .course-link-card {
-          background: var(--bg-secondary);
+          background: var(--bg-primary);
           border: 1px solid var(--border-color);
-          padding: 20px;
-          min-height: 108px;
-          border-radius: 16px;
+          padding: 24px;
+          min-height: 120px;
+          border-radius: 8px;
           cursor: pointer;
           transition: all 0.2s;
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
+          justify-content: flex-start;
+          gap: 16px;
           text-align: left;
         }
         .course-link-card:hover {
-          border-color: var(--red);
-          background: var(--dropdown-bg);
-          box-shadow: var(--card-shadow);
+          border-color: rgba(0,0,0,0.1);
+          box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+          transform: translateY(-2px);
         }
         .course-link-card h4 {
           font-size: 15px;
           font-weight: 700;
           color: var(--text-primary);
-          margin-bottom: 8px;
+          margin: 0;
           line-height: 1.4;
         }
         .course-link-card span {
           font-size: 13px;
-          font-weight: 600;
-          color: var(--red);
+          font-weight: 500;
+          color: var(--text-secondary);
         }
         .mega-dropdown-promo {
           padding-left: 18px;

@@ -26,9 +26,9 @@ const ClientsPage = () => {
             return {
               name: item.m_client_name || item.clientName || item.name || item.c_client_name || 'Partner Client',
               desc: item.m_client_description || item.description || item.desc || item.c_client_description || 'A valuable partner of our ecosystem.',
-              logo: getImageUrl(item.m_client_logo || item.logo || item.image || item.c_client_logo) || 'https://www.theiscale.com/myadmin/uploads/more/phonepay1.png'
+              logo: getImageUrl(item.m_client_logo || item.logo || item.image || item.c_client_logo)
             };
-          });
+          }).filter(c => c.logo); // Only include clients that have an image
           setClientsData(mappedClients);
         } else {
           throw new Error("Empty or invalid API data");
