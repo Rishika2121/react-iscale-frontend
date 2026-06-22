@@ -7,7 +7,7 @@ const NewsPage = () => {
 
   useEffect(() => { 
     window.scrollTo(0, 0); 
-    fetch('https://iscale-backend.onrender.com/api/news&updates/public-all-news&updates?page=1&limit=1000')
+    fetch('https://iscale-backend.onrender.com/api/news&updates/public-all-news&updates')
       .then(res => res.json())
       .then(result => {
         const arr = result.data?.docs || result.data || [];

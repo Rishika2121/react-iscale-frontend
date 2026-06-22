@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Play, Download, Eye, Calendar, Globe, ChevronDown, ChevronUp, ChevronRight, FileText, CheckCircle, XCircle, CreditCard, Video, ArrowRight, User, BookOpen, Award, Sparkles, Star, Search, Lock, Check, ShieldCheck, Printer, PlayCircle, Heart } from 'lucide-react';
-
+import VideoPlayer from '../components/VideoPlayer';
 
 const coursesDatabase = {
   'data-science-with-generative-ai-course': {
@@ -1364,7 +1364,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                     controls
                     autoPlay
                   />
-                ) : (
+                ) : embedUrl.includes('http') || embedUrl.includes('youtube.com') || embedUrl.includes('vimeo.com') ? (
                   <iframe
                     style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
                     src={embedUrl + (embedUrl.includes('?') ? '&autoplay=1' : '?autoplay=1')}
@@ -1373,6 +1373,10 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
                   />
+                ) : (
+                  <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+                    <VideoPlayer videoId={embedUrl} />
+                  </div>
                 )
               ) : (
                 <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>Video unavailable</div>
@@ -1499,7 +1503,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                   )}
                   <div style={{ flex: 1, padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'center', zIndex: 1, marginTop: data.cssThumbnailConfig.badge ? 20 : 0 }}>
                     {data.cssThumbnailConfig.lines.map((line, idx) => (
-                      <div key={idx} style={line.style}>{line.text}</div>
+                      <div key={idx} style={{...line.style, fontSize: `clamp(20px, 6vw, ${line.style.fontSize || 32}px)`}}>{line.text}</div>
                     ))}
                   </div>
                   <div style={{ position: 'absolute', right: 0, top: 0, width: '60%', height: '100%', background: `url(${data.cssThumbnailConfig.bgImage}) center/cover`, opacity: 0.6, clipPath: 'polygon(20% 0, 100% 0, 100% 100%, 0 100%)' }} />

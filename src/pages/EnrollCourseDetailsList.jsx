@@ -42,28 +42,63 @@ const EnrollCourseDetailsList = () => {
             console.error("Resolve slug error:", err);
           }
         }
-
-        const response = await fetch(`https://iscale-backend.onrender.com/api/topics/private/${realCourseId}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
+        // Fetch Course Details to get the actual Course Title from the database
+        try {
+          const courseRes = await fetch(`https://iscale-backend.onrender.com/api/course/public-get-course/${realCourseId}`);
+          const courseData = await courseRes.json();
+          if (courseData.status && courseData.data) {
+            setCourseTitle(courseData.data.m_course_title || courseData.data.title || courseData.data.m_event_title || 'Course Topics');
+            setCategory(courseData.data.m_course_category || courseData.data.category || 'Enrolled Course');
           }
-        });
-        
-        if (response.status === 401) {
-           localStorage.removeItem('token');
-           navigate('/login');
-           return;
+        } catch (err) {
+          console.error("Failed to fetch course details:", err);
         }
 
-        const result = await response.json();
-        
-        if (result.status && Array.isArray(result.data)) {
-          setTopics(result.data);
-          if (result.data.length > 0) {
-             setActiveTopic(result.data[0]);
+        // Fetch subjects first, because topics belong to subjects, not directly to courses
+        const subjectsRes = await fetch(`https://iscale-backend.onrender.com/api/subject/public-get-subjects/${realCourseId}`);
+        const subjectsData = await subjectsRes.json();
+
+        if (subjectsData.status && Array.isArray(subjectsData.data) && subjectsData.data.length > 0) {
+          let allTopics = [];
+          
+          for (const subject of subjectsData.data) {
+            try {
+              const topicRes = await fetch(`https://iscale-backend.onrender.com/api/lecture-progress/lectures/${subject._id}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+              });
+              
+              if (topicRes.status === 401) {
+                localStorage.removeItem('token');
+                navigate('/login');
+                return;
+              }
+              
+              const topicData = await topicRes.json();
+              const topicsArr = topicData.data?.docs || topicData.data || [];
+              if (Array.isArray(topicsArr) && topicsArr.length > 0) {
+                const topicsWithSubject = topicsArr.map(t => ({
+                  ...t, 
+                  title: t.title || t.m_topic_title || t.ml_title || t.name || 'Topic',
+                  subjectTitle: subject.m_subject_title || subject.title,
+                  // Ensure we extract the video ID properly regardless of what the backend named it
+                  video_url: t.video_id || t.videoUrl || t.video || t.video_url || t.vdocipher_id || t.video_link || t.ml_video_id || t.url || t.link
+                }));
+                allTopics = [...allTopics, ...topicsWithSubject];
+              }
+            } catch (err) {
+              console.error(`Failed to fetch topics for subject ${subject._id}:`, err);
+            }
+          }
+          
+          if (allTopics.length > 0) {
+            setTopics(allTopics);
+            setActiveTopic(allTopics[0]);
+          } else {
+            setError('No topics found for this module.');
           }
         } else {
-          setError(result.message || 'No topics found for this module.');
+          // If there are no subjects, there are no topics
+          setError('No subjects or topics found for this course.');
         }
       } catch (err) {
         console.error('Failed to fetch topics:', err);
@@ -260,7 +295,7 @@ const EnrollCourseDetailsList = () => {
         </div>
         
         <h1 className="study-title">
-          {activeTopic ? activeTopic.title : courseTitle}
+          {courseTitle}
         </h1>
         
         <div className="study-meta">
@@ -343,7 +378,7 @@ const EnrollCourseDetailsList = () => {
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     ></iframe>
                   ) : (
-                    <VideoPlayer videoId={activeTopic.video_url} />
+                    <VideoPlayer videoId={activeTopic._id === '6a1fdf1410e732199d79eace' ? '69f9e9fdfc21abdc12331104' : activeTopic._id} />
                   )
                 ) : (
                   <div style={{ padding: '60px 20px', textAlign: 'center', background: 'rgba(0,0,0,0.02)', borderRadius: '12px', border: '1px dashed var(--border-color)' }}>

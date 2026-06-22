@@ -21,27 +21,22 @@ const VideoPlayer = ({ videoId }) => {
         }
 
         // Call the VdoCipher API backend endpoint provided
+        console.log("Sending Topic ID:", videoId);
         const response = await fetch('https://iscale-backend.onrender.com/api/video/play_video', {
           method: 'POST',
           headers: headers,
-          body: JSON.stringify({ videoId: videoId }), // Passed from EnrollCourseDetailsList
+          body: JSON.stringify({
+  topic_id: videoId
+}) // Passed from EnrollCourseDetailsList
         });
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch video details');
-        }
-
         const data = await response.json();
-        console.log("API RESPONSE:", data); // Helpful for debugging
+        console.log("VIDEO RESPONSE:", data);
         
-        if (data.otp && data.playbackInfo) {
-           setVideoUrl(`https://player.vdocipher.com/v2/?otp=${data.otp}&playbackInfo=${data.playbackInfo}`);
-        } else if (data.data && data.data.otp && data.data.playbackInfo) {
-           setVideoUrl(`https://player.vdocipher.com/v2/?otp=${data.data.otp}&playbackInfo=${data.data.playbackInfo}`);
-        } else if (data.status && data.src) {
+        if (data.status && data.src) {
            setVideoUrl(data.src);
         } else {
-           throw new Error('Video URL or OTP/PlaybackInfo not found in response');
+           throw new Error('Video URL not found in response');
         }
       } catch (err) {
         console.error('Error fetching video:', err);
@@ -59,7 +54,12 @@ const VideoPlayer = ({ videoId }) => {
   }
 
   if (error) {
-    return <div style={{ padding: '40px', textAlign: 'center', color: '#ef4444' }}>Error loading video: {error}</div>;
+    return (
+      <div style={{ padding: '40px', textAlign: 'center', color: '#ef4444' }}>
+        <p>Error loading video: {error}</p>
+        <p style={{ fontSize: '12px', marginTop: '10px', color: '#94a3b8' }}>Debug Video ID: {String(videoId)}</p>
+      </div>
+    );
   }
 
   if (!videoUrl) {

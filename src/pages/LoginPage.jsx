@@ -8,20 +8,22 @@ const LoginPage = ({ setCurrentPage }) => {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
 
-  const [loginMethod, setLoginMethod] = useState('email'); // 'email' or 'phone'
-  const [otpStep, setOtpStep] = useState('phone'); // 'phone', 'register', 'otp'
+  const [loginMethod, setLoginMethod] = useState('email'); 
+  const [otpStep, setOtpStep] = useState('phone'); 
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
-  const [registerForm, setRegisterForm] = useState({ firstName: '', lastName: '', email: '', password: '', whatsapp: '', gender: 'Male' });
+
+  const cleanPhone = (p) => String(p || "").replace(/\D/g, "").slice(-10);
 
   const normalizeUser = (user) => {
-    const name = user?.name || user?.fullName || user?.firstName || user?.fname || user?.first_name || '';
-    const emailPrefix = user?.email ? String(user.email).split('@')[0] : 'Profile';
-    const firstName = String(user?.firstName || user?.fname || user?.first_name || name || emailPrefix).trim().split(/\s+/)[0];
+    if (!user) return { name: 'Profile', firstName: 'Profile' };
+    const name = user.name || user.fullName || user.firstName || user.fname || user.first_name || '';
+    const emailPrefix = user.email ? String(user.email).split('@')[0] : 'Profile';
+    const firstName = String(user.firstName || user.fname || user.first_name || name || emailPrefix).trim().split(/\s+/)[0];
 
     return {
       ...user,
-      name: name || user?.name || emailPrefix,
+      name: name || user.name || emailPrefix,
       firstName
     };
   };
@@ -35,44 +37,24 @@ const LoginPage = ({ setCurrentPage }) => {
 
     try {
       setLoading(true);
-
-      const response = await fetch(
-        "https://iscale-backend.onrender.com/api/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            email: form.credential,
-            password: form.password
-          })
-        }
-      );
+      const response = await fetch("https://iscale-backend.onrender.com/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: form.credential, password: form.password })
+      });
 
       const data = await response.json();
-      console.log("Login Response:", data);
-
       if (data.status) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(normalizeUser(data.user)));
         
         setPopupMessage(`Welcome back! Preparing your customized dashboard...`);
         setShowSuccessPopup(true);
-        setTimeout(() => {
-          const redirect = localStorage.getItem('redirectAfterLogin');
-          if (redirect) {
-            localStorage.removeItem('redirectAfterLogin');
-            setCurrentPage(redirect);
-          } else {
-            setCurrentPage("dashboard");
-          }
-        }, 2200);
+        setTimeout(() => setCurrentPage("dashboard"), 2200);
       } else {
         alert(data.message || "Login Failed");
       }
     } catch (error) {
-      console.error(error);
       alert("Server Error. Unable to login.");
     } finally {
       setLoading(false);
@@ -81,17 +63,21 @@ const LoginPage = ({ setCurrentPage }) => {
 
   const handleSendOTP = async (e) => {
     if (e) e.preventDefault();
-    if (!phone || phone.length < 10) {
-      alert("Please enter a valid phone number.");
+    const mobileNum = cleanPhone(phone);
+    
+    if (mobileNum.length !== 10) {
+      alert("Please enter a valid 10-digit phone number.");
       return;
     }
+
+    setOtp(""); 
 
     try {
       setLoading(true);
       const response = await fetch("https://iscale-backend.onrender.com/api/auth/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mobile: phone })
+        body: JSON.stringify({ mobile: Number(mobileNum) })
       });
       const data = await response.json();
       
@@ -101,7 +87,6 @@ const LoginPage = ({ setCurrentPage }) => {
         alert(data.message || "Failed to send OTP.");
       }
     } catch (error) {
-      console.error(error);
       alert("Server Error. Unable to send OTP.");
     } finally {
       setLoading(false);
@@ -110,8 +95,11 @@ const LoginPage = ({ setCurrentPage }) => {
 
   const handleVerifyOTP = async (e) => {
     if (e) e.preventDefault();
-    if (!otp) {
-      alert("Please enter OTP");
+    const mobileNum = cleanPhone(phone);
+    const otpValue = String(otp).trim();
+
+    if (otpValue.length !== 6) {
+      alert("Please enter a valid 6-digit OTP");
       return;
     }
 
@@ -120,7 +108,7 @@ const LoginPage = ({ setCurrentPage }) => {
       const response = await fetch("https://iscale-backend.onrender.com/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mobile: phone, otp: otp })
+        body: JSON.stringify({ mobile: Number(mobileNum), otp: otpValue })
       });
       const data = await response.json();
 
@@ -129,33 +117,39 @@ const LoginPage = ({ setCurrentPage }) => {
         return;
       }
 
-      if (data.type === "login") {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(normalizeUser(data.user)));
-        
+      const flowType = data.type || data.action;
+      const authToken = data.token || data.registerToken;
+
+      if (flowType === "login") {
+        localStorage.setItem("token", authToken);
+        if (data.user) {
+          localStorage.setItem("user", JSON.stringify(normalizeUser(data.user)));
+        }
         setPopupMessage("Welcome back!");
         setShowSuccessPopup(true);
-        setTimeout(() => {
-          setCurrentPage("dashboard");
-        }, 1500);
-      }
-
-      if (data.type === "register") {
-        localStorage.setItem("registerToken", data.token);
-
+        setTimeout(() => setCurrentPage("dashboard"), 1500);
+      } 
+      else if (flowType === "register") {
+        localStorage.setItem("registerToken", authToken);
         setPopupMessage("OTP Verified! Complete your profile.");
         setShowSuccessPopup(true);
-        setTimeout(() => {
-          setCurrentPage("register");
-        }, 1500);
+        setTimeout(() => setCurrentPage("register"), 1500);
+      } 
+      else {
+        localStorage.setItem("token", authToken);
+        setPopupMessage("Login Successful!");
+        setShowSuccessPopup(true);
+        setTimeout(() => setCurrentPage("dashboard"), 1500);
       }
+
     } catch (error) {
-      console.error(error);
       alert("Server Error");
     } finally {
       setLoading(false);
     }
   };
+
+  const isOtpReady = String(otp).trim().length === 6;
 
   return (
     <div className="bg-dots" style={{ minHeight: '90vh', background: 'var(--gradient-hero)', display: 'flex', alignItems: 'center', padding: '60px 0', color: 'var(--text-primary)' }}>
@@ -199,11 +193,7 @@ const LoginPage = ({ setCurrentPage }) => {
                     placeholder="Enter your email"
                     value={form.credential}
                     onChange={e => setForm({ ...form, credential: e.target.value })}
-                    style={{
-                      width: '100%', padding: '14px 16px 14px 48px',
-                      border: '1.5px solid var(--border-color)', borderRadius: 12,
-                      fontSize: 15, background: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none'
-                    }}
+                    style={{ width: '100%', padding: '14px 16px 14px 48px', border: '1.5px solid var(--border-color)', borderRadius: 12, fontSize: 15, background: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none' }}
                   />
                 </div>
               </div>
@@ -217,34 +207,15 @@ const LoginPage = ({ setCurrentPage }) => {
                     placeholder="Enter your password"
                     value={form.password}
                     onChange={e => setForm({ ...form, password: e.target.value })}
-                    style={{
-                      width: '100%', padding: '14px 48px',
-                      border: '1.5px solid var(--border-color)', borderRadius: 12,
-                      fontSize: 15, background: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none'
-                    }}
+                    style={{ width: '100%', padding: '14px 48px', border: '1.5px solid var(--border-color)', borderRadius: 12, fontSize: 15, background: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none' }}
                   />
-                  <div 
-                    onClick={() => setShowPass(!showPass)} 
-                    style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: 'var(--text-muted)' }}
-                  >
+                  <div onClick={() => setShowPass(!showPass)} style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: 'var(--text-muted)' }}>
                     {showPass ? <EyeOff size={20} /> : <Eye size={20} />}
                   </div>
                 </div>
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="btn-shine"
-                style={{
-                  width: '100%', padding: '16px',
-                  background: 'linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%)',
-                  color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                  boxShadow: '0 4px 16px rgba(37,99,235,0.2)', cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.7 : 1
-                }}
-              >
+              <button type="submit" disabled={loading} className="btn-shine" style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%)', color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 16px rgba(37,99,235,0.2)', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
                 {loading ? 'Authenticating...' : 'Secure Login'} <ArrowRight size={18} />
               </button>
             </form>
@@ -260,29 +231,13 @@ const LoginPage = ({ setCurrentPage }) => {
                     type="tel"
                     placeholder="Enter your 10-digit number"
                     value={phone}
-                    onChange={e => setPhone(e.target.value)}
+                    onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                     required
-                    style={{
-                      width: '100%', padding: '14px 16px 14px 48px',
-                      border: '1.5px solid var(--border-color)', borderRadius: 12,
-                      fontSize: 15, background: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none'
-                    }}
+                    style={{ width: '100%', padding: '14px 16px 14px 48px', border: '1.5px solid var(--border-color)', borderRadius: 12, fontSize: 15, background: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none' }}
                   />
                 </div>
               </div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="btn-shine"
-                style={{
-                  width: '100%', padding: '16px',
-                  background: 'linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%)',
-                  color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                  boxShadow: '0 4px 16px rgba(37,99,235,0.2)', cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.7 : 1
-                }}
-              >
+              <button type="submit" disabled={loading} className="btn-shine" style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%)', color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 16px rgba(37,99,235,0.2)', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
                 {loading ? 'Sending OTP...' : 'Send OTP'} <ArrowRight size={18} />
               </button>
             </form>
@@ -296,16 +251,13 @@ const LoginPage = ({ setCurrentPage }) => {
                   <Key size={20} color="var(--text-muted)" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)' }} />
                   <input
                     type="text"
+                    inputMode="numeric"
+                    maxLength={6}
                     placeholder="Enter the OTP sent to your phone"
                     value={otp}
-                    onChange={e => setOtp(e.target.value)}
+                    onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     required
-                    style={{
-                      width: '100%', padding: '14px 16px 14px 48px',
-                      border: '1.5px solid var(--border-color)', borderRadius: 12,
-                      fontSize: 15, background: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none',
-                      letterSpacing: '2px', fontWeight: 'bold'
-                    }}
+                    style={{ width: '100%', padding: '14px 16px 14px 48px', border: '1.5px solid var(--border-color)', borderRadius: 12, fontSize: 15, background: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none', letterSpacing: '2px', fontWeight: 'bold' }}
                   />
                 </div>
                 <div style={{ marginTop: 12, textAlign: 'right', fontSize: 13 }}>
@@ -313,19 +265,7 @@ const LoginPage = ({ setCurrentPage }) => {
                    <span onClick={handleSendOTP} style={{ color: 'var(--blue)', cursor: loading ? 'default' : 'pointer', fontWeight: 600 }}>Resend OTP</span>
                 </div>
               </div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="btn-shine"
-                style={{
-                  width: '100%', padding: '16px',
-                  background: 'linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%)',
-                  color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                  boxShadow: '0 4px 16px rgba(37,99,235,0.2)', cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.7 : 1
-                }}
-              >
+              <button type="submit" disabled={loading || !isOtpReady} className="btn-shine" style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%)', color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 16px rgba(37,99,235,0.2)', cursor: loading || !isOtpReady ? 'not-allowed' : 'pointer', opacity: loading || !isOtpReady ? 0.7 : 1 }}>
                 {loading ? 'Verifying...' : 'Verify & Login'} <ArrowRight size={18} />
               </button>
             </form>
@@ -334,28 +274,18 @@ const LoginPage = ({ setCurrentPage }) => {
           <div style={{ marginTop: 24, textAlign: 'center', fontSize: 14, color: 'var(--text-secondary)' }}>
             Don't have an account?{' '}
             <span 
-              onClick={() => setCurrentPage("register")} 
+              onClick={() => { setLoginMethod('phone'); setOtpStep('phone'); }} 
               style={{ color: 'var(--blue)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}
             >
-              Register here
+              Register using Phone
             </span>
           </div>
         </div>
       </div>
 
-      {/* Success Popup */}
       {showSuccessPopup && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(8px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999,
-          animation: 'fadeIn 0.3s ease'
-        }}>
-          <div style={{
-            background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 24, padding: 40,
-            maxWidth: 400, width: '90%', textAlign: 'center', boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
-            animation: 'scaleUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
-          }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, animation: 'fadeIn 0.3s ease' }}>
+          <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 24, padding: 40, maxWidth: 400, width: '90%', textAlign: 'center', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', animation: 'scaleUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}>
             <div style={{ width: 80, height: 80, borderRadius: '50%', background: '#10b981', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
               <ShieldCheck size={40} />
             </div>

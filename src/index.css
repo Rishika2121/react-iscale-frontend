@@ -641,4 +641,35 @@ body {
   top: -3px; left: -3px; right: -3px; bottom: -3px;
 }
 
+/* --- Global Responsive Utility Classes --- */
 
+/* Switches from row to column on mobile */
+.responsive-flex {
+  display: flex;
+  flex-direction: row;
+}
+@media (max-width: 768px) {
+  .responsive-flex {
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+}
+
+/* Auto-fitting grid */
+.responsive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+/* Ensure images and iframes never cause horizontal scrolling */
+img, iframe, video {
+  max-width: 100%;
+}
+
+/* Mobile visibility helpers */
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}

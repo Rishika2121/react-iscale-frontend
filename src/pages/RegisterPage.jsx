@@ -3,9 +3,13 @@ import { ArrowRight, ShieldCheck, Mail, Lock, User, Phone, Eye, EyeOff } from 'l
 
 const RegisterPage = ({ setCurrentPage }) => {
   const [form, setForm] = useState({
-    name: '',
+    fname: '',
+    lname:'',
     email: '',
-    password: ''
+    password: '',
+    whatsapp:'',
+    gender:'' ,
+
   });
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -30,12 +34,13 @@ const RegisterPage = ({ setCurrentPage }) => {
       return;
     }
 
+    if (!form.fname || !form.email || !form.password || !form.whatsapp || !form.gender) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
     try {
       setLoading(true);
-
-      const nameParts = form.name.trim().split(" ");
-      const fname = nameParts[0] || "";
-      const lname = nameParts.slice(1).join(" ") || "";
 
       const res = await fetch(
         "https://iscale-backend.onrender.com/api/auth/register",
@@ -46,11 +51,12 @@ const RegisterPage = ({ setCurrentPage }) => {
             Authorization: `Bearer ${registerToken}`,
           },
           body: JSON.stringify({
-            fname,
-            lname,
+            fname: form.fname,
+            lname: form.lname,
             email: form.email,
             password: form.password,
-            gender: "other",
+            whatsapp: form.whatsapp,
+            gender: form.gender,
             c_current_state: "000000000000000000000000",
             c_current_city: "000000000000000000000000",
             c_user_refer_by: "000000000000000000000000",
@@ -107,21 +113,79 @@ const RegisterPage = ({ setCurrentPage }) => {
           </div>
 
           <form onSubmit={handleRegister}>
+            <div style={{ display: 'flex', gap: 16, marginBottom: 20 }}>
+              <div style={{ flex: 1 }}>
+                <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 600 }}>First Name *</label>
+                <div style={{ position: 'relative' }}>
+                  <User size={20} color="var(--text-muted)" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)' }} />
+                  <input
+                    type="text"
+                    placeholder="First name"
+                    value={form.fname}
+                    onChange={e => setForm({ ...form, fname: e.target.value })}
+                    style={{
+                      width: '100%', padding: '14px 16px 14px 48px',
+                      border: '1.5px solid var(--border-color)', borderRadius: 12,
+                      fontSize: 15, background: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none'
+                    }}
+                  />
+                </div>
+              </div>
+              <div style={{ flex: 1 }}>
+                <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 600 }}>Last Name</label>
+                <div style={{ position: 'relative' }}>
+                  <User size={20} color="var(--text-muted)" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)' }} />
+                  <input
+                    type="text"
+                    placeholder="Last name"
+                    value={form.lname}
+                    onChange={e => setForm({ ...form, lname: e.target.value })}
+                    style={{
+                      width: '100%', padding: '14px 16px 14px 48px',
+                      border: '1.5px solid var(--border-color)', borderRadius: 12,
+                      fontSize: 15, background: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none'
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
             <div style={{ marginBottom: 20 }}>
-              <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 600 }}>Full Name *</label>
+              <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 600 }}>WhatsApp Number *</label>
               <div style={{ position: 'relative' }}>
-                <User size={20} color="var(--text-muted)" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)' }} />
+                <Phone size={20} color="var(--text-muted)" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)' }} />
                 <input
-                  type="text"
-                  placeholder="Enter your full name"
-                  value={form.name}
-                  onChange={e => setForm({ ...form, name: e.target.value })}
+                  type="tel"
+                  placeholder="Enter your WhatsApp number"
+                  value={form.whatsapp}
+                  onChange={e => setForm({ ...form, whatsapp: e.target.value })}
                   style={{
                     width: '100%', padding: '14px 16px 14px 48px',
                     border: '1.5px solid var(--border-color)', borderRadius: 12,
                     fontSize: 15, background: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none'
                   }}
                 />
+              </div>
+            </div>
+
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 600 }}>Gender *</label>
+              <div style={{ position: 'relative' }}>
+                <User size={20} color="var(--text-muted)" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)' }} />
+                <select
+                  value={form.gender}
+                  onChange={e => setForm({ ...form, gender: e.target.value })}
+                  style={{
+                    width: '100%', padding: '14px 16px 14px 48px',
+                    border: '1.5px solid var(--border-color)', borderRadius: 12,
+                    fontSize: 15, background: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none', appearance: 'none'
+                  }}
+                >
+                  <option value="" disabled>Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
               </div>
             </div>
 

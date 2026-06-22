@@ -623,7 +623,7 @@ const CourseCard = ({ course, setCurrentPage }) => (
           )}
           <div style={{ flex: 1, padding: '20px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'center', zIndex: 1, marginTop: course.cssThumbnailConfig.badge ? 16 : 0 }}>
             {course.cssThumbnailConfig.lines.map((line, idx) => (
-              <div key={idx} style={line.style}>{line.text}</div>
+              <div key={idx} style={{...line.style, fontSize: `clamp(20px, 6vw, ${line.style.fontSize || 32}px)`}}>{line.text}</div>
             ))}
           </div>
           <div style={{ position: 'absolute', right: 0, top: 0, width: '60%', height: '100%', background: `url(${course.cssThumbnailConfig.bgImage}) center/cover`, opacity: 0.6, clipPath: 'polygon(20% 0, 100% 0, 100% 100%, 0 100%)' }} />
@@ -869,7 +869,7 @@ const ExploreCourses = ({ setCurrentPage }) => {
                   <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>Try adjusting your filters or search query.</p>
                 </div>
               ) : (
-                <div className={view === "grid" ? "courses-grid" : "courses-list"} style={view === "grid" ? { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' } : { display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <div className={view === "grid" ? "courses-grid" : "courses-list"} style={view === "grid" ? { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' } : { display: 'flex', flexDirection: 'column', gap: '24px' }}>
                   {filtered.map((course, idx) => (
                     <CourseCard key={course.id || idx} course={course} setCurrentPage={setCurrentPage} />
                   ))}

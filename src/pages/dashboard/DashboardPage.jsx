@@ -256,7 +256,7 @@ const DashboardPage = ({ setCurrentPage }) => {
   const [certCount, setCertCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [greeting, setGreeting] = useState('Welcome');
-  const [activeCourseId, setActiveCourseId] = useState('ai-engineer-advance-program');
+  const [activeCourseId, setActiveCourseId] = useState(null);
   const [premiumCount, setPremiumCount] = useState(0);
   const [freeCount, setFreeCount] = useState(0);
 
@@ -349,7 +349,10 @@ const DashboardPage = ({ setCurrentPage }) => {
             } catch(e) {}
             return c;
           }));
-          
+        }
+
+        // Do not inject any dummy fallback data
+        if (enrolledList.length > 0) {
           setActiveCourseId(enrolledList[0]._id || enrolledList[0].id);
         }
         
@@ -412,7 +415,7 @@ const DashboardPage = ({ setCurrentPage }) => {
           </div>
           
           <button
-              onClick={() => setCurrentPage(`enrolled-course-details/${activeCourseId}`)}
+              onClick={() => setCurrentPage(activeCourseId ? `enrolled-course-details/${activeCourseId}` : 'enrolled-courses')}
             style={{
               background: '#ffffff',
               color: '#0f172a',
@@ -518,17 +521,17 @@ const DashboardPage = ({ setCurrentPage }) => {
             </div>
             
             <button
-                onClick={() => setCurrentPage(`enrolled-course-details/${activeCourseId}`)}
+                onClick={() => activeCourseId && setCurrentPage(`enrolled-course-details/${activeCourseId}`)}
+                disabled={!activeCourseId}
               style={{
-                background: '#166534',
-                color: '#fff',
+                background: activeCourseId ? '#166534' : '#dcfce7',
+                color: activeCourseId ? '#fff' : '#86efac',
                 border: 'none',
                 borderRadius: 10,
                 padding: '10px 18px',
                 fontSize: 12,
                 fontWeight: 700,
-                cursor: 'pointer',
-                marginTop: 20,
+                cursor: activeCourseId ? 'pointer' : 'not-allowed',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 6

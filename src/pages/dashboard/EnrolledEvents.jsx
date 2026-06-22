@@ -33,8 +33,8 @@ const EnrolledEvents = () => {
           const data = await response.json();
           if (data.status && Array.isArray(data.data)) {
             const mapped = data.data.map(evt => {
-              // The backend might nest the event details inside an object, e.g., evt.eventId or just return the event details directly.
-              const actualEvt = evt.eventId || evt;
+              // The backend might nest the event details inside an object, e.g., evt.event_id or evt.eventId or just return the event details directly.
+              const actualEvt = evt.event_id || evt.eventId || evt;
               
               let d = new Date();
               if (actualEvt.m_event_date_start) {
@@ -45,12 +45,12 @@ const EnrolledEvents = () => {
               const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
               
               return {
-                id: actualEvt._id || actualEvt.id,
+                id: actualEvt._id || actualEvt.id || evt._id,
                 title: actualEvt.m_event_title || actualEvt.title || 'Event',
                 type: actualEvt.m_event_type || actualEvt.type || 'Webinar',
                 date: dateStr,
                 time: actualEvt.m_event_time_start || actualEvt.time || '10:00 AM',
-                instructor: actualEvt.m_event_speaker || actualEvt.speaker || 'iScale Experts',
+                instructor: actualEvt.m_event_speaker || actualEvt.m_event_host || actualEvt.speaker || 'iScale Experts',
                 status: 'Registered'
               };
             });

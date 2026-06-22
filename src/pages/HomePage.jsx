@@ -1793,7 +1793,7 @@ const HomePage = ({ setCurrentPage }) => {
               combined = [...combined, ...data.data];
             }
           }
-          
+          // Do not inject any dummy fallback data
           setEnrolledCourses(combined);
           localStorage.setItem('enrolled_courses', JSON.stringify(combined));
         } catch (e) {
@@ -1929,10 +1929,10 @@ const HomePage = ({ setCurrentPage }) => {
         }
       `}} />
       {/* Ambient Background Glows */}
-      <div style={{ position: 'absolute', top: '5%', left: '-10%', width: '50vw', height: '50vw', minWidth: 600, minHeight: 600, background: 'radial-gradient(circle, rgba(37,99,235,0.06) 0%, rgba(37,99,235,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
-      <div style={{ position: 'absolute', top: '25%', right: '-15%', width: '60vw', height: '60vw', minWidth: 800, minHeight: 800, background: 'radial-gradient(circle, rgba(59,130,246,0.05) 0%, rgba(59,130,246,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
-      <div style={{ position: 'absolute', top: '55%', left: '-5%', width: '55vw', height: '55vw', minWidth: 700, minHeight: 700, background: 'radial-gradient(circle, rgba(16,185,129,0.04) 0%, rgba(16,185,129,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
-      <div style={{ position: 'absolute', top: '80%', right: '-5%', width: '50vw', height: '50vw', minWidth: 600, minHeight: 600, background: 'radial-gradient(circle, rgba(217,70,239,0.04) 0%, rgba(217,70,239,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
+      <div style={{ position: 'absolute', top: '5%', left: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(37,99,235,0.06) 0%, rgba(37,99,235,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
+      <div style={{ position: 'absolute', top: '25%', right: '-15%', width: '60vw', height: '60vw', background: 'radial-gradient(circle, rgba(59,130,246,0.05) 0%, rgba(59,130,246,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
+      <div style={{ position: 'absolute', top: '55%', left: '-5%', width: '55vw', height: '55vw', background: 'radial-gradient(circle, rgba(16,185,129,0.04) 0%, rgba(16,185,129,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
+      <div style={{ position: 'absolute', top: '80%', right: '-5%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(217,70,239,0.04) 0%, rgba(217,70,239,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none', borderRadius: '50%' }} />
 
       <div style={{ position: 'relative', zIndex: 1 }}>
         <Hero setCurrentPage={setCurrentPage} />

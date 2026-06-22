@@ -445,7 +445,7 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
             box-sizing: border-box;
           }
           .sidebar {
-            position: absolute; left: -260px; top: 0; bottom: 0; z-index: 1000;
+            position: fixed; left: -320px; top: 0; bottom: 0; z-index: 1000;
             transition: left 0.3s ease; box-shadow: 4px 0 20px rgba(0,0,0,0.1);
           }
           .sidebar.open { left: 0; }

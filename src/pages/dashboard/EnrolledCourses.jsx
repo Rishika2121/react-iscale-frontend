@@ -45,23 +45,47 @@ const EnrolledCourses = () => {
         // Fetch true progress from the server for each course
         if (enrolledList.length > 0) {
           enrolledList = await Promise.all(enrolledList.map(async (c) => {
+            const actualCourse = c.course_id || c.courseId || c;
+            
+            let imgUrl = '';
+            if (actualCourse.banner && actualCourse.banner !== 'N/A') {
+              const cleanedPath = actualCourse.banner.replace(/\\/g, '/');
+              imgUrl = cleanedPath.startsWith('http') ? cleanedPath : `https://iscale-backend.onrender.com/${cleanedPath.replace(/^src\//, '')}`;
+            } else {
+              imgUrl = actualCourse.m_course_thumbnail || actualCourse.m_course_image || actualCourse.img || '';
+            }
+
+            const mappedCourse = {
+              ...c,
+              _id: actualCourse._id || actualCourse.id || c._id,
+              id: actualCourse._id || actualCourse.id || c._id,
+              title: actualCourse.title || actualCourse.m_course_title || 'Course',
+              img: imgUrl,
+              category: actualCourse.category || actualCourse.m_course_category?.m_cc_title || 'UPSKILLING',
+              progress: 0
+            };
+            
             try {
-              const courseId = c._id || c.id || c.courseId;
+              const courseId = mappedCourse.id;
               const progRes = await fetch(`https://iscale-backend.onrender.com/api/lecture-progress/course/${courseId}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
               });
               if (progRes.ok) {
                 const progData = await progRes.json();
                 if (progData.status && progData.data) {
-                  c.progress = progData.data.progress || 0;
+                  mappedCourse.progress = progData.data.progress || 0;
                 }
               }
             } catch(e) {}
-            return c;
+            return mappedCourse;
           }));
         }
-        
-        setCourses(enrolledList);
+        // Do not inject any dummy fallback data
+        if (enrolledList.length > 0) {
+          setCourses(enrolledList);
+        } else {
+          setCourses([]);
+        }
       } catch (e) {
         console.error(e);
       } finally {
@@ -216,7 +240,7 @@ const EnrolledCourses = () => {
                     Debug
                   </button>
                   <button 
-                    onClick={() => navigate(`/enrolled-course-details/${course.id || course._id}`)}
+                    onClick={() => navigate(`/enrolled-course-details/${course._id || course.id}`)}
                     className="compact-resume-btn"
                     style={{ flex: 1 }}
                   >

@@ -394,6 +394,9 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
           .nav-ctas { display: none; }
           .mobile-menu-btn { display: block; }
         }
+        @media (max-width: 768px) {
+          .main-navbar { position: relative !important; }
+        }
       `}</style>
       
       {/* Top Bar */}
@@ -406,12 +409,12 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
           <Youtube size={14} color="#ff0000" />
           <span>100k Community</span>
         </div>
-        <span>ðŸ“± +91-7880113112</span>
-        <span>ðŸ“ž +91 7880113112</span>
+        <span>+91-7880113112</span>
+        <span>+91 7880113112</span>
       </div>
 
       {/* Main Navbar */}
-      <nav style={{
+      <nav className="main-navbar" style={{
         background: scrolled ? 'var(--nav-bg)' : 'var(--bg-primary)',
         backdropFilter: scrolled ? 'blur(12px)' : 'none',
         boxShadow: scrolled ? 'var(--card-shadow)' : 'none',
