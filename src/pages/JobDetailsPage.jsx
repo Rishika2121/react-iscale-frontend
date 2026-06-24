@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { MapPin, Briefcase, IndianRupee, Clock, Globe, Linkedin, Twitter, Instagram } from 'lucide-react';
+import { MapPin, Briefcase, IndianRupee, Clock, Globe, Linkedin, Twitter, Instagram, CheckCircle } from 'lucide-react';
 import useReveal from '../hooks/useReveal';
 import '../assets/css/JobDetails.css';
 
@@ -13,6 +13,7 @@ const JobDetailsPage = ({ setCurrentPage }) => {
   const [error, setError] = useState('');
   const [applyLoading, setApplyLoading] = useState(false);
   const [applyMessage, setApplyMessage] = useState(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     const fetchJobDetails = async () => {
@@ -72,6 +73,9 @@ const JobDetailsPage = ({ setCurrentPage }) => {
       }
       
       setApplyMessage({ type: data.status ? 'success' : 'error', text: data.message || 'Applied successfully' });
+      if (data.status) {
+        setShowSuccessModal(true);
+      }
     } catch (err) {
       setApplyMessage({ type: 'error', text: 'Error applying for job' });
     } finally {
@@ -223,6 +227,58 @@ const JobDetailsPage = ({ setCurrentPage }) => {
           
         </div>
       </section>
+      
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(5px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 9999, padding: '20px'
+        }}>
+          <div style={{
+            background: 'var(--bg-primary)', border: '1px solid var(--border-color)',
+            borderRadius: '20px', padding: '40px', maxWidth: '400px', width: '100%',
+            textAlign: 'center', boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+            animation: 'zoomIn 0.3s ease forwards'
+          }}>
+            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+              <CheckCircle size={40} color="#10b981" />
+            </div>
+            <h2 style={{ fontSize: '24px', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '10px' }}>Application Submitted!</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '30px', lineHeight: '1.6' }}>
+              Your application for <strong>{job?.job_title}</strong> at <strong>{job?.company_name}</strong> has been successfully recorded.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <button 
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  if (setCurrentPage) setCurrentPage('applied-jobs');
+                  else navigate('/dashboard');
+                }}
+                className="btn-shine"
+                style={{
+                  padding: '14px', background: 'linear-gradient(135deg, #2563eb, #3b82f6)', 
+                  color: '#fff', borderRadius: '10px', fontWeight: '700', fontSize: '16px', 
+                  border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+                }}
+              >
+                <Briefcase size={18} /> Track Application
+              </button>
+              <button 
+                onClick={() => setShowSuccessModal(false)}
+                style={{
+                  padding: '14px', background: 'transparent', 
+                  color: 'var(--text-secondary)', borderRadius: '10px', fontWeight: '600', fontSize: '15px', 
+                  border: '1px solid var(--border-color)', cursor: 'pointer'
+                }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

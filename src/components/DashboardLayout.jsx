@@ -14,7 +14,8 @@ import {
   Menu,
   X,
   FileText,
-  Heart
+  Heart,
+  Briefcase
 } from 'lucide-react';
 
 
@@ -198,7 +199,7 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
           color: #2563eb;
         }
         .db-nav-link.active {
-          color: #2563eb;
+          color: var(--red);
           font-weight: 600;
         }
         .cohort-badge {
@@ -263,6 +264,8 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
           box-sizing: border-box;
           height: fit-content;
           transition: all 0.3s ease;
+          position: sticky;
+          top: 30px;
         }
         .sidebar.light-mode {
           background: #eff6ff;
@@ -301,9 +304,10 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
           transform: translateX(4px);
         }
         .sidebar-btn.active {
-          background: rgba(37, 99, 235, 0.1);
-          color: #2563eb;
+          background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(96, 165, 250, 0.1) 100%);
+          color: var(--red);
           font-weight: 600;
+          border-right: 4px solid var(--red);
           border-radius: 8px;
         }
         .sidebar-section-title {
@@ -436,7 +440,7 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
         }
         @media (max-width: 768px) {
           .main-layout { 
-            padding: 16px 10px; 
+            padding: 80px 10px 16px; 
             gap: 16px; 
             flex-direction: column;
             width: 100%;
@@ -447,6 +451,7 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
           .sidebar {
             position: fixed; left: -320px; top: 0; bottom: 0; z-index: 1000;
             transition: left 0.3s ease; box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            background: var(--bg-primary) !important;
           }
           .sidebar.open { left: 0; }
           .stats-grid { grid-template-columns: 1fr; gap: 16px; }
@@ -464,14 +469,13 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
       <header className="db-header">
         <div className="db-header-inner">
           <div className="db-nav-left">
+            {/* Hamburger menu hidden entirely as we are moving to a bottom nav for mobile */}
             <button 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'none', padding: 4 }}
+              style={{ display: 'none' }}
               className="md-menu-toggle-btn"
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
-            <style dangerouslySetInnerHTML={{__html: `@media (max-width: 768px) { .md-menu-toggle-btn { display: block !important; } }`}} />
 
             <ShieldLogo onClick={() => setCurrentPage('home')} />
 
@@ -682,6 +686,72 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
           </div>
         </div>
       </footer>
+
+      {/* Mobile Top Navigation */}
+      <style dangerouslySetInnerHTML={{__html: `
+        .mobile-top-nav {
+          display: none;
+        }
+        @media (max-width: 768px) {
+          .mobile-top-nav {
+            display: flex;
+            position: fixed;
+            top: 72px;
+            left: 0;
+            right: 0;
+            background: var(--nav-bg);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            z-index: 40;
+            justify-content: space-around;
+            align-items: center;
+            height: 64px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+          }
+          .top-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            color: var(--text-secondary);
+            font-size: 10px;
+            font-weight: 500;
+            background: none;
+            border: none;
+            flex: 1;
+            height: 100%;
+            cursor: pointer;
+          }
+          .top-nav-item.active {
+          color: var(--red);
+          font-weight: 700;
+          }
+          /* Remove the padding from previous bottom nav */
+          .dashboard-container {
+            padding-bottom: 0;
+          }
+        }
+      `}} />
+      <div className="mobile-top-nav">
+        <button onClick={() => setCurrentPage('home')} className="top-nav-item">
+          <Home size={22} />
+          <span>Home</span>
+        </button>
+        <button onClick={() => navigateToTab('dashboard')} className={`top-nav-item ${activeTab === 'dashboard' ? 'active' : ''}`}>
+          <User size={22} />
+          <span>Dashboard</span>
+        </button>
+        <button onClick={() => navigateToTab('explore-courses')} className={`top-nav-item ${activeTab === 'explore-courses' ? 'active' : ''}`}>
+          <Compass size={22} />
+          <span>Courses</span>
+        </button>
+        <button onClick={() => setMobileMenuOpen(true)} className={`top-nav-item ${mobileMenuOpen ? 'active' : ''}`}>
+          <Menu size={22} />
+          <span>More</span>
+        </button>
+      </div>
     </div>
   );
 };

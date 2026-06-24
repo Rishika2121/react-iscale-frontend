@@ -78,16 +78,26 @@ const marketingSlides = [
 
 const MarketingCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [slides, setSlides] = useState(marketingSlides);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % marketingSlides.length);
-    }, 4500);
-    return () => clearInterval(timer);
+    // Backend dev: update this endpoint when ready
+    fetch('https://iscale-backend.onrender.com/api/homepage/marketing-slides')
+      .then(res => res.json())
+      .then(data => { if(data.status && data.data && data.data.length > 0) setSlides(data.data) })
+      .catch(console.error);
   }, []);
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % marketingSlides.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev === 0 ? marketingSlides.length - 1 : prev - 1));
+  useEffect(() => {
+    if (slides.length === 0) return;
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [slides.length]);
+
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
 
   return (
     <div style={{ position: 'relative', width: '100%', maxWidth: 360, margin: '0 auto', animation: 'fadeUp 0.6s ease both' }}>
@@ -116,7 +126,9 @@ const MarketingCarousel = () => {
       <div className="animate-float" style={{
         position: 'relative',
         width: '100%',
-        height: 720,
+        aspectRatio: '9 / 19',
+        maxHeight: 720,
+        minHeight: 500,
         borderRadius: 48,
         background: 'linear-gradient(145deg, var(--card-bg) 0%, #0f172a 55%, #1e293b 100%)',
         padding: 12,
@@ -177,7 +189,7 @@ const MarketingCarousel = () => {
         transform: `translateX(-${currentSlide * 25}%)`,
         transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
       }}>
-        {marketingSlides.map((slide) => (
+        {slides.map((slide) => (
           <div key={slide.id} style={{
             width: '25%',
             height: '100%',
@@ -270,7 +282,7 @@ const MarketingCarousel = () => {
 
           {/* Slide Indicators / Dots */}
           <div style={{ position: 'absolute', bottom: 32, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 10, zIndex: 10 }}>
-            {marketingSlides.map((_, idx) => (
+            {slides.map((slide, idx) => (
               <button key={idx} onClick={() => setCurrentSlide(idx)} style={{ width: currentSlide === idx ? 28 : 10, height: 10, borderRadius: 5, background: currentSlide === idx ? 'var(--slide-text)' : 'var(--slide-badge-border)', border: 'none', cursor: 'pointer', transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)', padding: 0 }} />
             ))}
           </div>
@@ -286,6 +298,29 @@ const MarketingCarousel = () => {
 
 /* ── Hero Section ── */
 const Hero = ({ setCurrentPage }) => {
+  const [heroStats, setHeroStats] = useState([
+    { iconName: 'Users', val: '100K+', label: 'Community Members' },
+    { iconName: 'BookOpen', val: '50+', label: 'Courses Available' },
+    { iconName: 'Award', val: '95%', label: 'Placement Rate' },
+  ]);
+
+  useEffect(() => {
+    // Backend dev: update this endpoint when ready
+    fetch('https://iscale-backend.onrender.com/api/homepage/hero-stats')
+      .then(res => res.json())
+      .then(data => { if(data.status && data.data && data.data.length > 0) setHeroStats(data.data) })
+      .catch(console.error);
+  }, []);
+
+  const renderIcon = (iconName) => {
+    switch (iconName) {
+      case 'Users': return <Users size={20} />;
+      case 'BookOpen': return <BookOpen size={20} />;
+      case 'Award': return <Award size={20} />;
+      default: return <Sparkles size={20} />;
+    }
+  };
+
   const [form, setForm] = useState({ firstName: '', lastName: '', email: '', contact: '', whatsapp: '', gender: 'male', sameWA: false });
 
   const handleSubmit = (e) => {
@@ -301,9 +336,9 @@ const Hero = ({ setCurrentPage }) => {
         <div className="bg-shape" style={{ width: 500, height: 500, background: 'rgba(37, 99, 235, 0.08)', top: '-10%', left: '-5%', animationDelay: '0s' }} />
         <div className="bg-shape" style={{ width: 400, height: 400, background: 'rgba(15, 23, 42, 0.06)', bottom: '10%', right: '-5%', animationDelay: '2s', animationName: 'float-medium' }} />
       </div>
-      <div className="container mobile-col mobile-gap-fix hero-shell" style={{ position: 'relative', zIndex: 1, gap: 20 }}>
+      <div className="container mobile-col hero-shell" style={{ position: 'relative', zIndex: 1, gap: 20, width: '100%', minWidth: 0 }}>
         {/* Left content */}
-        <div className="hero-text-column" style={{ animation: 'fadeUp 0.7s ease forwards', width: '100%' }}>
+        <div className="hero-text-column" style={{ animation: 'fadeUp 0.7s ease forwards', width: '100%', minWidth: 0 }}>
           <div className="glass-card hover-glow" style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
             borderRadius: 100, padding: '7px 14px',
@@ -321,10 +356,10 @@ const Hero = ({ setCurrentPage }) => {
             <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>by 100K+ learners across India</span>
           </div>
 
-          <h1 style={{ fontSize: 'clamp(30px, 8vw, 56px)', fontWeight: 800, lineHeight: 1.12, marginBottom: 16, wordBreak: 'break-word', hyphens: 'auto', color: 'var(--text-primary)' }}>
+          <h1 style={{ fontSize: 'clamp(28px, 8vw, 56px)', fontWeight: 800, lineHeight: 1.15, marginBottom: 16, wordBreak: 'break-word', hyphens: 'auto', color: 'var(--text-primary)' }}>
             <span style={{ color: 'var(--text-primary)' }}>India's Trusted</span>{' '}
-            <span className="animated-text-gradient">Upskilling &<br />E-Learning</span>{' '}
-            <span style={{ color: 'var(--text-secondary)' }}>Platform for<br />Future Readiness.</span>
+            <span className="animated-text-gradient">Upskilling &amp; E-Learning</span>{' '}
+            <span style={{ color: 'var(--text-secondary)' }}>Platform for Future Readiness.</span>
           </h1>
 
           <p style={{ color: 'var(--text-secondary)', fontSize: 16, lineHeight: 1.6, marginBottom: 24, maxWidth: 560 }}>
@@ -351,13 +386,9 @@ const Hero = ({ setCurrentPage }) => {
 
           {/* Stats */}
           <div className="hero-stats-grid">
-            {[
-              { icon: <Users size={20} />, val: '100K+', label: 'Community Members' },
-              { icon: <BookOpen size={20} />, val: '50+', label: 'Courses Available' },
-              { icon: <Award size={20} />, val: '95%', label: 'Placement Rate' },
-            ].map(stat => (
-              <div key={stat.label} className="hero-stat-card">
-                <div className="hero-stat-icon">{stat.icon}</div>
+            {heroStats.map((stat, idx) => (
+              <div key={idx} className="hero-stat-card">
+                <div className="hero-stat-icon">{renderIcon(stat.iconName)}</div>
                 <div>
                   <div className="hero-stat-value">{stat.val}</div>
                   <div className="hero-stat-label">{stat.label}</div>
@@ -368,7 +399,7 @@ const Hero = ({ setCurrentPage }) => {
         </div>
 
         {/* Right form replaced by marketing slides carousel */}
-        <div className="hero-phone-column" style={{ width: '100%', maxWidth: 460, animation: 'fadeUp 0.7s 0.2s ease both', position: 'relative' }}>
+        <div className="hero-phone-column" style={{ width: '100%', maxWidth: 460, animation: 'fadeUp 0.7s 0.2s ease both', position: 'relative', minWidth: 0 }}>
           <MarketingCarousel />
         </div>
       </div>
@@ -377,7 +408,32 @@ const Hero = ({ setCurrentPage }) => {
 };
 
 /* ── About iScale Learning ── */
-const AboutSection = ({ setCurrentPage }) => (
+const AboutSection = ({ setCurrentPage }) => {
+  const [features, setFeatures] = useState([
+    { iconName: 'Star', title: 'Realtime Projects', desc: 'Dive into Industry-Oriented Projects, where learning meets real-world impact', bgColor: '#111827' },
+    { iconName: 'Play', title: 'LIVE Class', desc: 'Never face challenges alone, our instant Doubt support is always available.', bgColor: '#4b5563' },
+    { iconName: 'PlayGradient', title: 'Outcome Driven', desc: 'Elevate your learning journey with Outcome-Driven magic.', bgColor: 'linear-gradient(135deg, #2563eb, #3b82f6)' }
+  ]);
+
+  useEffect(() => {
+    // Backend dev: update this endpoint when ready
+    fetch('https://iscale-backend.onrender.com/api/homepage/features')
+      .then(res => res.json())
+      .then(data => { if(data.status && data.data && data.data.length > 0) setFeatures(data.data) })
+      .catch(console.error);
+  }, []);
+
+  const renderIcon = (iconName, bgColor) => {
+    let IconComp = Star;
+    if (iconName === 'Play' || iconName === 'PlayGradient') IconComp = Play;
+    return (
+      <div style={{ background: bgColor, color: '#fff', width: 44, height: 44, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+        <IconComp size={22} fill="currentColor" />
+      </div>
+    );
+  };
+
+  return (
   <section className="reveal" style={{ padding: '30px 0 40px', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)' }}>
     <div className="container-fluid about-grid">
       {/* Video card */}
@@ -407,23 +463,7 @@ const AboutSection = ({ setCurrentPage }) => (
           A well-organized and flexible program that takes care of you. You start as a Beginner, Intermediate, or Advanced learner based on your skills.
         </p>
         <div className="features-grid">
-          {[
-            { 
-              icon: <div style={{ background: '#111827', color: '#fff', width: 44, height: 44, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}><Star size={22} fill="currentColor" /></div>, 
-              title: 'Realtime Projects', 
-              desc: 'Dive into Industry-Oriented Projects, where learning meets real-world impact' 
-            },
-            { 
-              icon: <div style={{ background: '#4b5563', color: '#fff', width: 44, height: 44, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}><Play size={22} fill="currentColor" /></div>, 
-              title: 'LIVE Class', 
-              desc: 'Never face challenges alone, our instant Doubt support is always available.' 
-            },
-            { 
-              icon: <div style={{ background: 'linear-gradient(135deg, #2563eb, #3b82f6)', color: '#fff', width: 44, height: 44, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}><Play size={22} fill="currentColor" /></div>, 
-              title: 'Outcome Driven', 
-              desc: 'Elevate your learning journey with Outcome-Driven magic.' 
-            },
-          ].map(card => (
+          {features.map(card => (
             <div key={card.title} className="hover-glow glow-border" style={{
               background: 'var(--card-bg)', borderRadius: 16, padding: 24,
               display: 'flex', flexDirection: 'column',
@@ -431,7 +471,7 @@ const AboutSection = ({ setCurrentPage }) => (
               border: '1px solid var(--border-color)',
               cursor: 'pointer'
             }}>
-              {card.icon}
+              {renderIcon(card.iconName, card.bgColor)}
               <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 16, marginBottom: 10, color: 'var(--text-primary)' }}>{card.title}</h4>
               <p style={{ color: 'var(--text-secondary)', fontSize: 13, lineHeight: 1.6, marginBottom: 20 }}>{card.desc}</p>
               <button 
@@ -445,7 +485,8 @@ const AboutSection = ({ setCurrentPage }) => (
       </div>
     </div>
   </section>
-);
+  );
+};
 
 const getYtVideoId = (url) => {
   if (!url) return '';
@@ -1225,14 +1266,23 @@ export const SuccessStories = ({ setCurrentPage }) => {
 };
 
 /* ── India's Most Loved Learners Community ── */
-const communityStats = [
-  { val: '2+', label: 'Millions Views', icon: '👨‍🎓' },
-  { val: '1.55+', label: 'Lakh Watch Hours', icon: '📺' },
-  { val: '50,000+', label: 'Active Learners', icon: '📚' },
-  { val: '150+', label: 'Allied Companies', icon: '🤝' },
-];
+const LearnersCommunity = () => {
+  const [stats, setStats] = useState([
+    { val: '2+', label: 'Millions Views', icon: '👨‍🎓' },
+    { val: '1.55+', label: 'Lakh Watch Hours', icon: '📺' },
+    { val: '50,000+', label: 'Active Learners', icon: '📚' },
+    { val: '150+', label: 'Allied Companies', icon: '🤝' },
+  ]);
 
-const LearnersCommunity = () => (
+  useEffect(() => {
+  
+    fetch('https://iscale-backend.onrender.com/api/homepage/community-stats')
+      .then(res => res.json())
+      .then(data => { if(data.status && data.data && data.data.length > 0) setStats(data.data) })
+      .catch(console.error);
+  }, []);
+
+  return (
   <section style={{ padding: 'clamp(20px, 3vw, 40px) 0', background: 'var(--bg-primary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
     <style>{`
       .community-stats {
@@ -1276,7 +1326,7 @@ const LearnersCommunity = () => (
         {/* Connecting Red Line */}
         <div className="connecting-line" />
 
-        {communityStats.map((stat, idx) => (
+        {stats.map((stat, idx) => (
           <div key={idx} className="community-stat-item" style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             {/* Timeline Node */}
             <div style={{ width: 24, height: 24, borderRadius: '50%', border: '4px solid var(--red)', background: 'var(--bg-primary)', marginBottom: 24, position: 'relative' }}>
@@ -1295,7 +1345,8 @@ const LearnersCommunity = () => (
       </div>
     </div>
   </section>
-);
+  );
+};
 
 /* ── Latest News & Updates ── */
 const NewsUpdates = ({ setCurrentPage }) => {
@@ -1303,8 +1354,14 @@ const NewsUpdates = ({ setCurrentPage }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('https://iscale-backend.onrender.com/api/news&updates/public-all-news&updates?page=1&limit=1000')
-      .then(res => res.json())
+    const token = localStorage.getItem('token');
+    fetch('https://iscale-backend.onrender.com/api/news/public-all-news?page=1&limit=1000', {
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch news updates');
+        return res.json();
+      })
       .then(result => {
         const arr = result.data?.docs || result.data || [];
         if (Array.isArray(arr) && arr.length > 0) {
@@ -1316,17 +1373,17 @@ const NewsUpdates = ({ setCurrentPage }) => {
             };
             
             let dateStr = "Recent";
-            if (item.m_news_added_on || item.createdAt || item.date || item.m_news_date) {
-              const d = new Date(item.m_news_added_on || item.createdAt || item.date || item.m_news_date);
+            if (item.m_snews_added_on || item.m_news_added_on || item.createdAt || item.date || item.m_news_date) {
+              const d = new Date(item.m_snews_added_on || item.m_news_added_on || item.createdAt || item.date || item.m_news_date);
               dateStr = d.toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' });
             }
 
             return {
-              title: item.m_news_title || item.title || 'News Update',
+              title: item.m_snews_title || item.m_news_title || item.title || '',
               date: dateStr,
-              desc: item.m_news_intro || item.m_news_description || item.desc || item.description || 'Read more about this latest update.',
-              link: item.link || item.url || item.m_news_link || `/news-details/${item._id}`,
-              img: getImageUrl(item.m_news_image || item.image || item.img || item.m_news_images)
+              desc: item.m_snews_des || item.m_news_intro || item.m_news_description || item.desc || item.description || '',
+              link: item.m_snews_url || item.link || item.url || item.m_news_link || `/news-details/${item._id}`,
+              img: getImageUrl(item.m_snews_image || item.m_news_image || item.image || item.img || item.m_news_images)
             };
           });
           setNewsList(mapped);
@@ -1368,7 +1425,7 @@ const NewsUpdates = ({ setCurrentPage }) => {
             onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)'; e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.12)'; }}
             onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.04)'; }}
             >
-              <div className="news-card-image-wrap" style={{ width: '100%', height: 240, overflow: 'hidden', background: 'var(--bg-secondary)', position: 'relative', borderTopLeftRadius: 15, borderTopRightRadius: 15 }}>
+              <div className="news-card-image-wrap" style={{ width: '100%', height: 180, overflow: 'hidden', background: 'var(--bg-secondary)', position: 'relative', borderTopLeftRadius: 15, borderTopRightRadius: 15 }}>
                 {news.img ? (
                   <img src={news.img} alt={news.title} className="news-card-image" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', transition: 'transform 0.5s' }} onMouseEnter={e => e.target.style.transform = 'scale(1.05)'} onMouseLeave={e => e.target.style.transform = 'scale(1)'} />
                 ) : (
@@ -1378,16 +1435,16 @@ const NewsUpdates = ({ setCurrentPage }) => {
                 )}
               </div>
               
-              <div style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                  <span className="news-tag-badge" style={{ background: accent, color: '#fff', padding: '4px 12px', borderRadius: 100, fontSize: 11, fontWeight: 700, textTransform: 'uppercase' }}>Update</span>
-                  <span style={{ color: 'var(--text-muted)', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+              <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                  <span className="news-tag-badge" style={{ background: accent, color: '#fff', padding: '4px 10px', borderRadius: 100, fontSize: 10, fontWeight: 700, textTransform: 'uppercase' }}>Update</span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: 11, display: 'flex', alignItems: 'center', gap: 4 }}>
                     <Clock size={12} /> {news.date}
                   </span>
                 </div>
                 
-                <h3 style={{ fontSize: 18, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 12, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', minHeight: '44px' }}>{news.title}</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 20, flex: 1, lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{news.desc}</p>
+                <h3 style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 8, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', minHeight: '40px' }}>{news.title}</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 16, flex: 1, lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{news.desc}</p>
                 
                 <a href={news.link} onClick={(e) => handleLinkClick(e, news.link)} target={news.link.startsWith('http') ? "_blank" : "_self"} rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 6, color: accent, fontWeight: 800, fontSize: 14, textDecoration: 'none', transition: 'gap 0.2s', marginTop: 'auto', paddingTop: 16, borderTop: '1px solid rgba(0,0,0,0.05)' }}
                    onMouseEnter={e => e.currentTarget.style.gap = '10px'}
@@ -1673,10 +1730,10 @@ const EnrolledCoursesSection = ({ enrolledCourses, userName, setCurrentPage }) =
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 340px), 1fr))', gap: 24 }}>
-          {enrolledCourses.map(course => (
+          {enrolledCourses.map((course, index) => (
             <div 
-              key={course.id}
-              onClick={() => setCurrentPage(`course-details/${course.id}`)}
+              key={course._id || course.id || index}
+              onClick={() => setCurrentPage(`course-details/${course._id || course.id || ''}`)}
               className="premium-card hover-glow glow-border"
               style={{
                 background: 'var(--card-bg)',
@@ -1915,7 +1972,7 @@ const HomePage = ({ setCurrentPage }) => {
         }
         
         @media (max-width: 768px) {
-          .hero-shell { grid-template-columns: 1fr; text-align: center; }
+          .hero-shell { grid-template-columns: 1fr; text-align: center; gap: 32px; padding: 0; }
           .hero-text-column { max-width: 100%; }
           .hero-trust-row { justify-content: center; }
           .hero-stats-grid { justify-content: center; }
@@ -1937,9 +1994,7 @@ const HomePage = ({ setCurrentPage }) => {
       <div style={{ position: 'relative', zIndex: 1 }}>
         <Hero setCurrentPage={setCurrentPage} />
         
-        {isLoggedIn && enrolledCourses.length > 0 && (
-          <EnrolledCoursesSection enrolledCourses={enrolledCourses} userName={userName} setCurrentPage={setCurrentPage} />
-        )}
+        {/* Enrolled Courses Section removed per request */}
 
         <AboutSection setCurrentPage={setCurrentPage} />
         <PopularCourses setCurrentPage={setCurrentPage} />

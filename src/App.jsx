@@ -19,6 +19,7 @@ import CourseDetailsPage from './pages/CourseDetailsPage';
 import CohortPage from './pages/CohortPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
 import MyProfile from './pages/dashboard/MyProfile';
+import AppliedJobs from './pages/dashboard/AppliedJobs';
 import EnrolledCourses from './pages/dashboard/EnrolledCourses';
 import ExploreCourses from "./pages/dashboard/ExploreCourses";
 import EnrolledEvents from './pages/dashboard/EnrolledEvents';
@@ -113,6 +114,7 @@ const AppContent = () => {
               <Route path="/my-profile" element={<MyProfile />} />
               <Route path="/enrolled-courses" element={<EnrolledCourses />} />
               <Route path="/enrolled-events" element={<EnrolledEvents />} />
+              <Route path="/applied-jobs" element={<AppliedJobs />} />
               <Route path="/explore-courses" element={<ExploreCourses setCurrentPage={handleNavigate} />} />
               <Route path="/test-series-result" element={<TestSeriesResult />} />
               <Route path="/test-packages" element={<MyTestPackages setCurrentPage={handleNavigate} />} />

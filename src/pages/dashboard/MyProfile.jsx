@@ -2,36 +2,40 @@ import React, { useState, useEffect } from "react";
 
 const styles = `
 .save-toast {
-  background: #e8f8f0;
-  color: #27ae60;
-  border: 1px solid #c3e6cb;
+  background: rgba(39, 174, 96, 0.15);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.3);
   border-radius: 12px;
   padding: 12px 20px;
   margin-bottom: 20px;
   font-size: 0.9rem;
   font-weight: 600;
   animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 8px 30px rgba(39, 174, 96, 0.15);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
 }
 
 .profile-layout {
   display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 30px;
+  grid-template-columns: 1fr 340px;
+  gap: 32px;
   align-items: start;
 }
 
 .profile-card {
   padding: 32px;
-  background: #ffffff;
+  background: var(--card-bg);
   border-radius: 24px;
-  border: 1px solid #f1f5f9;
-  box-shadow: 0 4px 25px rgba(0,0,0,0.03);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transition: all 0.3s ease;
 }
 
 .profile-card:hover {
-  box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+  border-color: rgba(255,255,255,0.1);
 }
 
 .profile-card-header {
@@ -40,13 +44,14 @@ const styles = `
   justify-content: space-between;
   margin-bottom: 28px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .profile-card-header h2 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #0f172a;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
 }
 
 .profile-fields {
@@ -56,11 +61,11 @@ const styles = `
 
 .profile-field {
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 220px 1fr;
   gap: 16px;
   align-items: center;
-  padding: 16px 12px;
-  border-bottom: 1px dashed #f1f5f9;
+  padding: 16px 16px;
+  border-bottom: 1px solid var(--border-color);
   border-radius: 12px;
   transition: all 0.2s ease;
 }
@@ -70,50 +75,51 @@ const styles = `
 }
 
 .profile-field:hover {
-  background: #f8fafc;
+  background: rgba(255,255,255,0.03);
   transform: translateX(4px);
 }
 
 .field-label {
-  font-size: 0.85rem;
-  color: #64748b;
+  font-size: 1rem;
+  color: var(--text-secondary);
   font-weight: 600;
   letter-spacing: 0.3px;
 }
 
 .field-display {
-  font-size: 0.9rem;
-  color: #1e293b;
+  font-size: 1.1rem;
+  color: var(--text-primary);
   font-weight: 600;
 }
 
 .field-empty {
-  color: #94a3b8;
+  font-size: 1rem;
+  color: var(--text-muted);
   font-style: italic;
 }
 
 .field-input {
   width: 100%;
-  padding: 10px 14px;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  font-size: 0.9rem;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 1.05rem;
   outline: none;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   transition: all 0.2s;
-  color: #0f172a;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
 .field-input:focus {
-  background: #ffffff;
+  background: var(--bg-primary);
   border-color: #2563eb;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
 
 .field-textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 100px;
 }
 
 .profile-form-actions {
@@ -121,7 +127,7 @@ const styles = `
   gap: 12px;
   margin-top: 24px;
   padding-top: 24px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--border-color);
 }
 
 .profile-sidebar-card {
@@ -133,30 +139,33 @@ const styles = `
 }
 
 .avatar-card {
-  padding: 32px 24px;
+  padding: 36px 24px;
   text-align: center;
-  background: linear-gradient(145deg, #ffffff, #fafafa);
+  background: var(--card-bg);
   border-radius: 24px;
-  border: 1px solid #f1f5f9;
-  box-shadow: 0 4px 25px rgba(0,0,0,0.04);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transition: all 0.3s ease;
 }
 
 .avatar-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  border-color: rgba(255,255,255,0.1);
 }
 
 .avatar-circle {
-  width: 100px;
-  height: 100px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #2563eb, #b91c1c);
+  background: linear-gradient(135deg, var(--red) 0%, var(--red-light) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 16px;
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+  margin: 0 auto 20px;
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.25);
   transition: transform 0.3s ease;
 }
 
@@ -165,31 +174,31 @@ const styles = `
 }
 
 .avatar-circle span {
-  font-size: 2.2rem;
+  font-size: 2.5rem;
   font-weight: 800;
   color: white;
   letter-spacing: -1px;
 }
 
 .avatar-name {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--text-primary);
+  margin-bottom: 4px;
 }
 
 .avatar-email {
-  font-size: 0.8rem;
-  color: #64748b;
-  margin-top: 4px;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
 .avatar-upload-btn {
   width: 100%;
-  margin-top: 20px;
-  background: #f8fafc;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+  margin-top: 24px;
+  background: rgba(255,255,255,0.05);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
 }
 
 .avatar-upload-btn:hover {
@@ -199,40 +208,43 @@ const styles = `
 }
 
 .account-info-card {
-  padding: 24px;
-  background: #ffffff;
+  padding: 28px 24px;
+  background: var(--card-bg);
   border-radius: 24px;
-  border: 1px solid #f1f5f9;
-  box-shadow: 0 4px 25px rgba(0,0,0,0.03);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transition: all 0.3s ease;
 }
 
 .account-info-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  border-color: rgba(255,255,255,0.1);
 }
 
 .account-info-card h3 {
-  font-size: 0.95rem;
+  font-size: 1.2rem;
   font-weight: 800;
-  color: #0f172a;
-  margin-bottom: 20px;
+  color: var(--text-primary);
+  margin-bottom: 24px;
 }
 
 .account-detail {
   display: flex;
   justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px dashed #f1f5f9;
-  font-size: 0.85rem;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.95rem;
   transition: all 0.2s;
 }
 
 .account-detail:hover {
-  padding-left: 6px;
-  padding-right: 6px;
-  background: #f8fafc;
-  border-radius: 6px;
+  padding-left: 8px;
+  padding-right: 8px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 8px;
 }
 
 .account-detail:last-child {
@@ -240,13 +252,14 @@ const styles = `
 }
 
 .acct-label {
-  color: #64748b;
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
 .acct-val {
+  font-size: 1rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .acct-active {
@@ -273,7 +286,7 @@ const styles = `
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #2563eb, #c50e15);
+  background: linear-gradient(135deg, var(--red) 0%, var(--red-light) 100%);
   color: white;
   box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
 }
@@ -281,7 +294,7 @@ const styles = `
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
-  background: linear-gradient(135deg, #f72a32, #d1131a);
+  background: linear-gradient(135deg, var(--red-light) 0%, var(--red) 100%);
 }
 
 .btn-primary:active {
@@ -289,19 +302,19 @@ const styles = `
 }
 
 .btn-outline {
-  background: white;
-  border: 1px solid #e2e8f0;
-  color: #475569;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
 }
 
 .btn-outline:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-  color: #0f172a;
+  background: rgba(255,255,255,0.05);
+  border-color: var(--border-color);
+  color: var(--text-primary);
 }
 
 .page-wrapper {
-  padding: 0; /* Padding is handled by layout now */
+  padding: 0;
   animation: fadeSlideUp 0.4s ease-out;
 }
 
@@ -310,16 +323,16 @@ const styles = `
 }
 
 .page-header h1 {
-  font-size: 2.2rem;
-  font-weight: 800;
-  color: #0f172a;
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--text-primary);
   letter-spacing: -0.5px;
   margin-bottom: 8px;
 }
 
 .page-header p {
-  color: #64748b;
-  font-size: 1rem;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
   font-weight: 500;
 }
 
@@ -416,6 +429,12 @@ const fieldGroups = [
 ];
 
 const MyProfile = () => {
+  const formatDate = (dateString) => {
+    if (!dateString || dateString === "-") return "-";
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return dateString;
+    return new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).format(d);
+  };
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({ ...userData });
   const [saved, setSaved] = useState(false);
@@ -561,7 +580,7 @@ const MyProfile = () => {
 
       <div className="page-wrapper">
         <div className="page-header">
-          <h1>My Profile</h1>
+          <h1 className="animated-text-gradient" style={{ display: 'inline-block' }}>My Profile</h1>
           <p>Manage your personal information</p>
         </div>
 
@@ -575,7 +594,7 @@ const MyProfile = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
             <div className="profile-card">
               <div className="profile-card-header">
-                <h2>Personal Information</h2>
+                <h2 className="animated-text-gradient" style={{ display: 'inline-block' }}>Personal Information</h2>
 
               <button
                 className={
@@ -659,7 +678,9 @@ const MyProfile = () => {
                       )
                     ) : (
                       <span className="field-display">
-                        {formData[field.key] || "—"}
+                        {field.key === 'registrationDate' || field.key === 'createdAt' 
+                          ? formatDate(formData[field.key]) 
+                          : formData[field.key] || "-"}
                       </span>
                     )}
                   </div>
@@ -773,7 +794,7 @@ const MyProfile = () => {
                 </span>
 
                 <span className="acct-val">
-                  {userData.registrationDate}
+                  {formatDate(userData.registrationDate || userData.createdAt)}
                 </span>
               </div>
 

@@ -1250,7 +1250,24 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
 
   // In case activeCohortLecture is set, we use its videoUrl, else default preview
   const embedUrl = getEmbedUrl((activeCohortLecture && activeCohortLecture.videoUrl) ? activeCohortLecture.videoUrl : videoUrl);
-  const feesData = apiData?.fees ? JSON.parse(JSON.stringify(apiData.fees)) : null;
+  const dummyFeesData = {
+    basic: { price: "6999" },
+    premium: { price: "34999" },
+    pro: { price: "39999" },
+    features: [
+      { name: "Extended Access - Access to recorded content for 24 months", basic: true, premium: true, pro: true },
+      { name: "Delivery Mode - Recorded Lectures – Learn at your own pace with full access to pre-recorded modules.", basic: true, premium: false, pro: false },
+      { name: "Delivery mode - Virtual Live", basic: false, premium: true, pro: false },
+      { name: "Live Lectures - Weekend Live Sessions | Sat & Sun", basic: false, premium: false, pro: true },
+      { name: "Certification - PW Skills Certificate.", basic: true, premium: false, pro: false },
+      { name: "Certification - PW Skills and NSDC", basic: false, premium: true, pro: true },
+      { name: "Doubt Session", basic: false, premium: true, pro: true }
+    ]
+  };
+
+  const feesData = (apiData?.fees && apiData.fees.features && apiData.fees.basic) 
+    ? JSON.parse(JSON.stringify(apiData.fees)) 
+    : dummyFeesData;
   const dynamicOfferPrice = (apiData?.offer_price && apiData.offer_price !== 'N/A' && apiData.offer_price !== 0) 
     ? `₹${parseInt(apiData.offer_price).toLocaleString()}` 
     : (apiData?.price && apiData.price !== 'N/A' && apiData.price !== 0 ? `₹${parseInt(apiData.price).toLocaleString()}` : null);
@@ -1297,9 +1314,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
   ];
 
   const assignedInstructorsRaw = apiData?.m_course_trainee || apiData?.m_course_trainer || apiData?.instructors;
-  const assignedInstructors = (!assignedInstructorsRaw || assignedInstructorsRaw.length === 0) 
-    ? screenshotFallbackIds 
-    : assignedInstructorsRaw;
+  const assignedInstructors = assignedInstructorsRaw || [];
 
   const instructorsData = instructorsList && instructorsList.length > 0
     ? instructorsList
@@ -1339,11 +1354,12 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
 
   const tabsConfig = [
     { label: 'Curriculum', id: 'coursecontent' },
+    { label: 'Highlights', id: 'highlights' },
     { label: 'Projects', id: 'details' },
     { label: 'Tools', id: 'tools' },
     { label: 'Certificate', id: 'certificate' },
+    { label: 'Fees Structure', id: 'fees' },
     { label: 'Instructor', id: 'instructor' },
-    { label: 'Fees', id: 'fees' },
     { label: 'Testimonials', id: 'review' },
     { label: 'FAQ', id: 'faq' }
   ];
@@ -1692,6 +1708,26 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
 
           </div>
 
+          <div id="highlights" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)', marginBottom: 60 }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 40 }}>Highlights</h2>
+            {highlights && highlights.length > 0 ? (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px 64px' }}>
+                {highlights.map((h, idx) => (
+                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+                    <div style={{ width: 54, height: 54, borderRadius: '50%', border: '2px solid var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, padding: 10 }}>
+                      {h.img ? (
+                        <img src={h.img} alt={h.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }} />
+                      ) : null}
+                      <CheckCircle className="fallback-icon" style={{ display: h.img ? 'none' : 'block' }} size={24} color="var(--text-primary)" />
+                    </div>
+                    <span style={{ fontSize: 16, fontWeight: 500, color: 'var(--text-secondary)' }}>{h.title}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p style={{ color: 'var(--text-secondary)' }}>No highlights added for this course yet.</p>
+            )}
+          </div>
 
           {/* Projects & Portfolios / Case Studies */}
           <div id="details" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)' }}>
@@ -2118,13 +2154,99 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
             )}
           </div>
 
-          {/* Instructor — all data from API, no static/dummy */}
-          <div id="instructor" style={{ background: 'var(--card-bg)', borderRadius: 24, padding: 40, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)', borderTop: '6px solid #3b82f6' }}>
-            <div style={{ marginBottom: 32 }}>
-              <span style={{ color: 'var(--red)', fontSize: 11, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase' }}>Meet the Experts</span>
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 900, color: 'var(--text-primary)', marginTop: 6, marginBottom: 0 }}>Your <span className="animated-text-gradient">Instructors</span></h2>
+          {/* Fees Structure */}
+          {feesData && feesData.features && feesData.basic && (
+            <div id="fees" style={{ marginBottom: 60, background: 'var(--card-bg)', borderRadius: 16, border: '1px solid var(--border-color)', overflow: 'hidden' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', alignItems: 'stretch' }}>
+                {/* Basic Card */}
+                <div style={{ padding: '24px 32px', display: 'flex', flexDirection: 'column', position: 'relative', borderRight: '1px solid var(--border-color)' }}>
+                  <div style={{ marginBottom: 24, marginTop: 8 }}>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 22 20 2 20" /></svg>
+                  </div>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 16 }}>Basic</div>
+                  <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ fontSize: 24 }}>₹</span> {String(feesData.basic.price).replace(/[^0-9]/g, '')}
+                  </div>
+                  <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 24 }}>Enroll Now!</div>
+                  <button onClick={handleEnrollClick} style={{ background: '#fef2f2', border: 'none', color: '#f47b6a', padding: '14px 24px', borderRadius: 6, fontWeight: 600, fontSize: 16, cursor: 'pointer', width: '100%', marginBottom: 32, transition: 'all 0.2s' }}>Buy now</button>
+                  <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 24 }}>
+                    {feesData.features.filter(f => typeof f.basic === 'boolean' ? f.basic : true).map((feat, idx) => {
+                      const title = feat.name.includes('-') ? feat.name.split('-')[0].trim() : feat.name;
+                      const subtext = feat.name.includes('-') ? feat.name.split('-').slice(1).join('-').trim() : (typeof feat.basic !== 'boolean' ? feat.basic : '');
+                      return (
+                        <div key={idx} style={{ textAlign: 'left' }}>
+                          <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{title}</div>
+                          {subtext && <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{subtext}</div>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Premium Card */}
+                <div style={{ padding: '24px 32px', display: 'flex', flexDirection: 'column', position: 'relative', borderRight: '1px solid var(--border-color)' }}>
+                  <div style={{ marginBottom: 24, marginTop: 8 }}>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="#60a5fa" stroke="none"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /></svg>
+                  </div>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 16 }}>Premium</div>
+                  <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ fontSize: 24 }}>₹</span> {String(feesData.premium.price).replace(/[^0-9]/g, '')}
+                  </div>
+                  <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 24 }}>Enroll now</div>
+                  <button onClick={handleEnrollClick} style={{ background: '#fef2f2', border: 'none', color: '#f47b6a', padding: '14px 24px', borderRadius: 6, fontWeight: 600, fontSize: 16, cursor: 'pointer', width: '100%', marginBottom: 32, transition: 'all 0.2s' }}>Buy now</button>
+                  <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 24 }}>
+                    {feesData.features.filter(f => typeof f.premium === 'boolean' ? f.premium : true).map((feat, idx) => {
+                      const title = feat.name.includes('-') ? feat.name.split('-')[0].trim() : feat.name;
+                      const subtext = feat.name.includes('-') ? feat.name.split('-').slice(1).join('-').trim() : (typeof feat.premium !== 'boolean' ? feat.premium : '');
+                      return (
+                        <div key={idx} style={{ textAlign: 'left' }}>
+                          <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{title}</div>
+                          {subtext && <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{subtext}</div>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Pro Card */}
+                <div style={{ padding: '24px 32px', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                  <div style={{ marginBottom: 24, marginTop: 8 }}>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="#4ade80" stroke="none"><polygon points="12 2 22 12 12 22 2 12" /></svg>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                    <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)' }}>Pro</div>
+                    <div style={{ background: '#b894ff', color: '#fff', padding: '4px 12px', borderRadius: 100, fontSize: 12, fontWeight: 600 }}>Recommended</div>
+                  </div>
+                  <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ fontSize: 24 }}>₹</span> {String(feesData.pro.price).replace(/[^0-9]/g, '')}
+                  </div>
+                  <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 24 }}>Enroll now</div>
+                  <button onClick={handleEnrollClick} style={{ background: '#ef7b66', border: 'none', color: '#fff', padding: '14px 24px', borderRadius: 6, fontWeight: 600, fontSize: 16, cursor: 'pointer', width: '100%', marginBottom: 32, transition: 'all 0.2s' }}>Buy now</button>
+                  <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 24 }}>
+                    {feesData.features.filter(f => typeof f.pro === 'boolean' ? f.pro : true).map((feat, idx) => {
+                      const title = feat.name.includes('-') ? feat.name.split('-')[0].trim() : feat.name;
+                      const subtext = feat.name.includes('-') ? feat.name.split('-').slice(1).join('-').trim() : (typeof feat.pro !== 'boolean' ? feat.pro : '');
+                      return (
+                        <div key={idx} style={{ textAlign: 'left' }}>
+                          <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{title}</div>
+                          {subtext && <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{subtext}</div>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
             </div>
-            {instructorsData && instructorsData.length > 0 ? (
+          )}
+
+          {/* Instructor — all data from API, no static/dummy */}
+          {instructorsData && instructorsData.length > 0 && (
+            <div id="instructor" style={{ background: 'var(--card-bg)', borderRadius: 24, padding: 40, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)', borderTop: '6px solid #3b82f6', marginBottom: 40 }}>
+              <div style={{ marginBottom: 32 }}>
+                <span style={{ color: 'var(--red)', fontSize: 11, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase' }}>Meet the Experts</span>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 900, color: 'var(--text-primary)', marginTop: 6, marginBottom: 0 }}>Your <span className="animated-text-gradient">Instructors</span></h2>
+              </div>
+
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: 20 }}>
                 {instructorsData.map((inst, idx) => (
                   <div key={idx} className="hover-glow" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 24, padding: '32px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, textAlign: 'center', boxShadow: 'var(--card-shadow)', position: 'relative', transition: 'transform 0.3s' }} onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-6px)'} onMouseLeave={e => e.currentTarget.style.transform = 'none'}>
@@ -2201,13 +2323,8 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                   </div>
                 ))}
               </div>
-            ) : (
-              <div style={{ textAlign: 'center', padding: '32px 20px', color: 'var(--text-secondary)' }}>
-                <div style={{ fontSize: 36, marginBottom: 12 }}>👨‍🏫</div>
-                <p style={{ fontSize: 15, fontWeight: 600, margin: 0 }}>No instructors assigned to this course yet.</p>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* FAQ section placed after Instructor */}
           <div id="faq" style={{ background: 'var(--card-bg)', padding: 48, borderRadius: 24, boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)', borderTop: '6px solid #10b981', marginTop: 40 }}>
@@ -2232,142 +2349,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
       </section>
 
       {/* Fees Section */}
-      {feesData && (
-        <section id="fees" style={{ padding: '60px 0', background: 'var(--card-bg)', borderTop: '1px solid var(--border-color)' }}>
-          <div className="container">
-            <div style={{ textAlign: 'center', marginBottom: 40 }}>
-              <span style={{ color: 'var(--red)', fontSize: 12, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase' }}>Invest in Your Future</span>
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)', marginTop: 8 }}>Flexible <span className="animated-text-gradient">Pricing Plans</span></h2>
-            </div>
 
-            {(data.category?.toLowerCase().includes('foundation') || courseId.includes('python') || courseId.includes('excel') || courseId.includes('visualization')) ? (
-              /* Foundation Course: Single Price Card */
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <div style={{ background: 'var(--bg-secondary)', border: '1.5px solid var(--border-color)', borderRadius: 24, padding: 40, maxWidth: 500, width: '100%', boxShadow: 'var(--card-shadow)', textAlign: 'left' }}>
-                  <div style={{ display: 'inline-flex', background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', padding: '6px 12px', borderRadius: 8, fontSize: 11, fontWeight: 800, textTransform: 'uppercase', marginBottom: 16 }}>
-                    Foundation Program
-                  </div>
-                  <h3 style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 12 }}><span className="animated-text-gradient">{data.title}</span></h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>Get lifetime access to high-quality recorded video lectures, self-assessment tests, complete code notebooks, and direct mentor query support.</p>
-                  
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 24, borderTop: '1px solid var(--border-color)', paddingTop: 20 }}>
-                    <span style={{ fontSize: 36, fontWeight: 900, color: 'var(--text-primary)' }}>{dynamicOfferPrice || (apiData?.price ? `₹${parseInt(apiData.price).toLocaleString()}` : '₹1,199')}</span>
-                    {apiData?.price && apiData?.offer_price && apiData.price !== apiData.offer_price && (
-                      <span style={{ fontSize: 18, color: '#94a3b8', textDecoration: 'line-through' }}>₹{parseInt(apiData.price).toLocaleString()}</span>
-                    )}
-                  </div>
-
-                  <ul style={{ padding: 0, margin: '0 0 32px 0', listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    {['LMS Software Access (Web + Android)', 'Recorded Lectures with Notes & Materials', 'Lifetime Access & Free Updates', 'ISO 9001:2015 Verified Certificate', 'Dedicated Email Doubt Support'].map((f, i) => (
-                      <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: 'var(--text-secondary)', fontWeight: 600 }}>
-                        <CheckCircle size={16} color="#22c55e" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <button onClick={handleEnrollClick} style={{ width: '100%', background: 'var(--red)', color: '#fff', border: 'none', padding: '14px', borderRadius: 10, fontWeight: 700, fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 15px rgba(37, 99, 235, 0.3)' }}>
-                    Enroll & Start Learning <ArrowRight size={18} />
-                  </button>
-                </div>
-              </div>
-            ) : (data.category?.toLowerCase().includes('cohort') || data.title?.toLowerCase().includes('cohort') || courseId.includes('cohort')) ? (
-              /* Cohort / AI Course: Bundle and YouTube Preview Info Card */
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <div style={{ background: 'var(--bg-secondary)', border: '1.5px solid var(--border-color)', borderRadius: 24, padding: 40, maxWidth: 600, width: '100%', boxShadow: 'var(--card-shadow)', textAlign: 'left' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                    <div style={{ display: 'inline-flex', background: 'rgba(139, 92, 246, 0.1)', color: '#8b5cf6', padding: '6px 12px', borderRadius: 8, fontSize: 11, fontWeight: 800, textTransform: 'uppercase' }}>
-                      Live Cohort Batch
-                    </div>
-                    <div style={{ color: 'var(--red)', fontSize: 12, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <span style={{ width: 8, height: 8, background: 'var(--red)', borderRadius: '50%', display: 'inline-block' }}></span> LIVE + YouTube Preview
-                    </div>
-                  </div>
-
-                  <h3 style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 12 }}><span className="animated-text-gradient">{data.title}</span></h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>Learn dynamically in a group cohort. Get 30+ interactive lectures where **the first half of modules are completely free on YouTube** and the remaining advanced topics are exclusive to premium members.</p>
-                  
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 24, borderTop: '1px solid var(--border-color)', paddingTop: 20 }}>
-                    <span style={{ fontSize: 36, fontWeight: 900, color: 'var(--text-primary)' }}>{dynamicOfferPrice || (apiData?.price ? `₹${parseInt(apiData.price).toLocaleString()}` : '₹1,299')}</span>
-                    {apiData?.price && apiData?.offer_price && apiData.price !== apiData.offer_price && (
-                      <span style={{ fontSize: 18, color: '#94a3b8', textDecoration: 'line-through' }}>₹{parseInt(apiData.price).toLocaleString()}</span>
-                    )}
-                  </div>
-
-                  <ul style={{ padding: 0, margin: '0 0 32px 0', listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    {['First Half Video Modules Unlocked (Free Preview)', 'Second Half Live Interactive Sessions (Locked)', '1-on-1 Dedicated Support Slack Channel', 'Premium Capstone Projects & Submissions', 'Official Cohort Graduation Certificate'].map((f, i) => (
-                      <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: 'var(--text-secondary)', fontWeight: 600 }}>
-                        <CheckCircle size={16} color="#8b5cf6" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <button onClick={handleEnrollClick} style={{ width: '100%', background: 'linear-gradient(135deg, #8b5cf6, #ec4899)', color: '#fff', border: 'none', padding: '14px', borderRadius: 10, fontWeight: 700, fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 15px rgba(139, 92, 246, 0.3)' }}>
-                    Join Cohort Batch <ArrowRight size={18} />
-                  </button>
-                </div>
-              </div>
-            ) : (
-              /* Advance Course: 3-Plan Comparison Table */
-              <div style={{ background: 'var(--bg-secondary)', borderRadius: 24, border: '1px solid var(--border-color)', overflow: 'hidden', boxShadow: 'var(--card-shadow)' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
-                  <thead>
-                    <tr>
-                      <th style={{ padding: 24, textAlign: 'left', borderBottom: '2px solid var(--border-color)', color: 'var(--text-primary)', fontSize: 18, width: '40%' }}>
-                        FEATURES
-                      </th>
-                      <th style={{ padding: 24, borderBottom: '2px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
-                        <div style={{ color: '#2dd4bf', fontSize: 18, fontWeight: 800 }}>★ BASIC</div>
-                      </th>
-                      <th style={{ padding: 24, borderBottom: '2px solid var(--border-color)', borderLeft: '1px solid var(--border-color)', background: 'rgba(37, 99, 235, 0.03)', position: 'relative' }}>
-                        <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', background: 'var(--red)', color: '#fff', padding: '4px 12px', borderRadius: '0 0 12px 12px', fontSize: 10, fontWeight: 800, whiteSpace: 'nowrap' }}>RECOMMENDED</div>
-                        <div style={{ color: 'var(--red)', fontSize: 18, fontWeight: 800, marginTop: 12 }}>👑 PREMIUM</div>
-                      </th>
-                      <th style={{ padding: 24, borderBottom: '2px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
-                        <div style={{ color: '#8b5cf6', fontSize: 18, fontWeight: 800 }}>💎 PRO</div>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {feesData.features.map((feat, idx) => (
-                      <tr key={idx}>
-                        <td style={{ padding: '16px 24px', textAlign: 'left', borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)', fontSize: 14, fontWeight: 600 }}>
-                          {feat.name}
-                        </td>
-                        <td style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
-                          {typeof feat.basic === 'boolean' ? (feat.basic ? <CheckCircle color="#2dd4bf" size={20} /> : <XCircle color="#cbd5e1" size={20} />) : <span style={{ color: '#2dd4bf', fontWeight: 700 }}>{feat.basic}</span>}
-                        </td>
-                        <td style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)', background: 'rgba(37, 99, 235, 0.02)' }}>
-                          {typeof feat.premium === 'boolean' ? (feat.premium ? <CheckCircle color="var(--red)" size={20} /> : <XCircle color="#cbd5e1" size={20} />) : <span style={{ color: 'var(--red)', fontWeight: 700 }}>{feat.premium}</span>}
-                        </td>
-                        <td style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
-                          {typeof feat.pro === 'boolean' ? (feat.pro ? <CheckCircle color="#8b5cf6" size={20} /> : <XCircle color="#cbd5e1" size={20} />) : <span style={{ color: '#8b5cf6', fontWeight: 700 }}>{feat.pro}</span>}
-                        </td>
-                      </tr>
-                    ))}
-                    <tr>
-                      <td style={{ padding: 24, textAlign: 'left', borderBottom: '1px solid var(--border-color)' }}></td>
-                      <td style={{ padding: 24, borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
-                        <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)' }}>{feesData.basic.price}</div>
-                        <button onClick={handleEnrollClick} style={{ background: 'var(--card-bg)', border: '1px solid #2dd4bf', color: '#2dd4bf', padding: '8px 24px', borderRadius: 8, fontWeight: 700, marginTop: 12, cursor: 'pointer', width: '100%' }}>Get Started</button>
-                      </td>
-                      <td style={{ padding: 24, borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)', background: 'rgba(37, 99, 235, 0.03)' }}>
-                        <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)' }}>{feesData.premium.price}</div>
-                        <button onClick={handleEnrollClick} style={{ background: 'var(--red)', border: 'none', color: '#fff', padding: '8px 24px', borderRadius: 8, fontWeight: 700, marginTop: 12, cursor: 'pointer', width: '100%', boxShadow: '0 4px 12px rgba(37,99,235,0.2)' }}>Go Premium</button>
-                      </td>
-                      <td style={{ padding: 24, borderBottom: '1px solid var(--border-color)', borderLeft: '1px solid var(--border-color)' }}>
-                        <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)' }}>{feesData.pro.price}</div>
-                        <button onClick={handleEnrollClick} style={{ background: '#8b5cf6', border: 'none', color: '#fff', padding: '8px 24px', borderRadius: 8, fontWeight: 700, marginTop: 12, cursor: 'pointer', width: '100%' }}>Choose Pro</button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        </section>
-      )}
 
 
 
@@ -2482,7 +2464,46 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
         </div>
       </section>
 
-      {/* Related Courses Removed */}
+      {/* Foundation Course: Single Price Card */}
+      {apiData && (apiData.price || apiData.offer_price) && (
+        <section id="foundation" style={{ padding: '60px 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)' }}>
+          <div className="container">
+            <div style={{ textAlign: 'center', marginBottom: 40 }}>
+              <span style={{ color: 'var(--red)', fontSize: 12, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase' }}>Foundation Course</span>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, color: 'var(--text-primary)', marginTop: 8 }}>Begin Your <span className="animated-text-gradient">Journey</span></h2>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <div style={{ background: 'var(--card-bg)', border: '1.5px solid var(--border-color)', borderRadius: 24, padding: 40, maxWidth: 500, width: '100%', boxShadow: 'var(--card-shadow)', textAlign: 'left' }}>
+                <div style={{ display: 'inline-flex', background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', padding: '6px 12px', borderRadius: 8, fontSize: 11, fontWeight: 800, textTransform: 'uppercase', marginBottom: 16 }}>
+                  Foundation Program
+                </div>
+                <h3 style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 12 }}><span className="animated-text-gradient">{data.title}</span></h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>Get lifetime access to high-quality recorded video lectures, self-assessment tests, complete code notebooks, and direct mentor query support.</p>
+                
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 24, borderTop: '1px solid var(--border-color)', paddingTop: 20 }}>
+                  <span style={{ fontSize: 36, fontWeight: 900, color: 'var(--text-primary)' }}>{dynamicOfferPrice || (apiData?.price ? `₹${parseInt(apiData.price).toLocaleString()}` : '₹1,199')}</span>
+                  {apiData?.price && apiData?.offer_price && apiData.price !== apiData.offer_price && (
+                    <span style={{ fontSize: 18, color: '#94a3b8', textDecoration: 'line-through' }}>₹{parseInt(apiData.price).toLocaleString()}</span>
+                  )}
+                </div>
+
+                <ul style={{ padding: 0, margin: '0 0 32px 0', listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {['LMS Software Access (Web + Android)', 'Recorded Lectures with Notes & Materials', 'Lifetime Access & Free Updates', 'ISO 9001:2015 Verified Certificate', 'Dedicated Email Doubt Support'].map((f, i) => (
+                    <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: 'var(--text-secondary)', fontWeight: 600 }}>
+                      <CheckCircle size={16} color="#22c55e" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+
+                <button onClick={handleEnrollClick} style={{ width: '100%', background: 'var(--red)', color: '#fff', border: 'none', padding: '14px', borderRadius: 10, fontWeight: 700, fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 15px rgba(37, 99, 235, 0.3)' }}>
+                  Enroll & Start Learning <ArrowRight size={18} />
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
     </div>
   );

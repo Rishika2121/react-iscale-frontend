@@ -11,6 +11,7 @@ import {
   Sparkles,
   BookOpen
 } from 'lucide-react';
+import AppliedJobs from './AppliedJobs';
 
 const ProfileBadge = () => (
   <div style={{
@@ -541,6 +542,11 @@ const DashboardPage = ({ setCurrentPage }) => {
             </button>
           </div>
 
+        </div>
+
+        {/* Applied Jobs Section inside Dashboard */}
+        <div style={{ marginTop: '40px' }}>
+          <AppliedJobs />
         </div>
 
       </div>
