@@ -20,6 +20,7 @@
   --card-shadow: 0 10px 30px rgba(0,0,0,0.06);
   --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(0, 0, 0, 0.06);
+  --primary-gradient: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
   --gradient-hero: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
   --gradient-pink: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
   --dots-color: rgba(0,0,0,0.06);
@@ -59,6 +60,7 @@
   --card-shadow: 0 10px 30px rgba(0,0,0,0.35);
   --glass-bg: rgba(255, 255, 255, 0.04);
   --glass-border: rgba(255, 255, 255, 0.08);
+  --primary-gradient: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
   --gradient-hero: linear-gradient(135deg, #020617 0%, #0f172a 100%);
   --gradient-pink: #0f172a;
   --dots-color: rgba(255,255,255,0.05);

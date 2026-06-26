@@ -18,18 +18,11 @@ import {
   Briefcase
 } from 'lucide-react';
 
+import iscaleLogo from '../assets/images/iscale-logo.jpeg';
 
 const ShieldLogo = ({ onClick }) => (
-  <div onClick={onClick} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
-    <svg width="38" height="42" viewBox="0 0 100 110" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M50 0L10 20V55C10 77.2 27.2 97.4 50 105C72.8 97.4 90 77.2 90 55V20L50 0Z" fill="#2563eb" />
-      <path d="M50 8L18 24V55C18 73.2 31.8 89.8 50 96.5C68.2 89.8 82 73.2 82 55V24L50 8Z" fill="#2563eb" stroke="white" strokeWidth="4" />
-      <text x="50" y="68" fill="white" fontSize="45" fontWeight="900" textAnchor="middle" fontFamily="sans-serif">I</text>
-    </svg>
-    <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
-      <span style={{ fontSize: 9, textTransform: 'uppercase', color: '#666', letterSpacing: 1.5, fontWeight: 700 }}>The</span>
-      <span style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 900, fontSize: 22, color: '#2563eb', letterSpacing: '-0.5px' }}>iSCALE</span>
-    </div>
+  <div onClick={onClick} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+    <img src={iscaleLogo} alt="iSCALE Logo" style={{ height: 44, objectFit: 'contain' }} />
   </div>
 );
 
@@ -185,7 +178,7 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
           background: none;
           border: none;
           color: var(--text-secondary);
-          font-size: 15px;
+          font-size: 17px;
           font-weight: 500;
           padding: 8px 16px;
           border-radius: 8px;
@@ -194,6 +187,7 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
           display: flex;
           align-items: center;
           gap: 4px;
+          white-space: nowrap;
         }
         .db-nav-link:hover {
           color: #2563eb;

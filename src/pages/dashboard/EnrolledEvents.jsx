@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle, Calendar, Clock, User } from 'lucide-react';
+import { CheckCircle, Calendar, Clock, User, Plus } from 'lucide-react';
 
 const colors = [
   { bg: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)', border: '#bfdbfe', badgeBg: '#3b82f6', badgeText: '#fff', accent: '#2563eb' }, // Light Pink
@@ -15,62 +15,96 @@ const colors = [
 const EnrolledEvents = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [enrollEventId, setEnrollEventId] = useState('');
+  const [enrolling, setEnrolling] = useState(false);
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          setLoading(false);
-          return;
-        }
-        
-        const response = await fetch('https://iscale-backend.onrender.com/api/enrolled-events/my-enrolled-events', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          if (data.status && Array.isArray(data.data)) {
-            const mapped = data.data.map(evt => {
-              // The backend might nest the event details inside an object, e.g., evt.event_id or evt.eventId or just return the event details directly.
-              const actualEvt = evt.event_id || evt.eventId || evt;
-              
-              let d = new Date();
-              if (actualEvt.m_event_date_start) {
-                d = new Date(actualEvt.m_event_date_start);
-              } else if (actualEvt.date) {
-                d = new Date(actualEvt.date);
-              }
-              const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-              
-              return {
-                id: actualEvt._id || actualEvt.id || evt._id,
-                title: actualEvt.m_event_title || actualEvt.title || 'Event',
-                type: actualEvt.m_event_type || actualEvt.type || 'Webinar',
-                date: dateStr,
-                time: actualEvt.m_event_time_start || actualEvt.time || '10:00 AM',
-                instructor: actualEvt.m_event_speaker || actualEvt.m_event_host || actualEvt.speaker || 'iScale Experts',
-                status: 'Registered'
-              };
-            });
-            setEvents(mapped);
-          } else {
-            setEvents([]);
-          }
+  const fetchEvents = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+      
+      const response = await fetch('https://iscale-backend.onrender.com/api/enrolled-events/my-enrolled-events', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.status && Array.isArray(data.data)) {
+          const mapped = data.data.map(evt => {
+            const actualEvt = evt.event_id || evt.eventId || evt;
+            
+            let d = new Date();
+            if (actualEvt.m_event_date_start) {
+              d = new Date(actualEvt.m_event_date_start);
+            } else if (actualEvt.date) {
+              d = new Date(actualEvt.date);
+            }
+            const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            
+            return {
+              id: actualEvt._id || actualEvt.id || evt._id,
+              title: actualEvt.m_event_title || actualEvt.title || 'Event',
+              type: actualEvt.m_event_type || actualEvt.type || 'Webinar',
+              date: dateStr,
+              time: actualEvt.m_event_time_start || actualEvt.time || '10:00 AM',
+              instructor: actualEvt.m_event_speaker || actualEvt.m_event_host || actualEvt.speaker || 'iScale Experts',
+              status: 'Registered'
+            };
+          });
+          setEvents(mapped);
         } else {
           setEvents([]);
         }
-      } catch (err) {
-        console.error('Failed to fetch events:', err);
+      } else {
         setEvents([]);
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (err) {
+      console.error('Failed to fetch events:', err);
+      setEvents([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchEvents();
   }, []);
+
+  const handleEnrollEvent = async (e) => {
+    e.preventDefault();
+    if (!enrollEventId.trim()) {
+      alert('Please enter an Event ID to enroll.');
+      return;
+    }
+    
+    try {
+      setEnrolling(true);
+      const token = localStorage.getItem('token');
+      const res = await fetch('https://iscale-backend.onrender.com/api/enrolled-events/enroll-event', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify({ event_id: enrollEventId.trim() })
+      });
+      const data = await res.json();
+      if (data.status) {
+        alert('Enrolled in event successfully!');
+        setEnrollEventId('');
+        fetchEvents(); // Refresh the list
+      } else {
+        alert(data.message || 'Failed to enroll in event.');
+      }
+    } catch (err) {
+      alert('Error connecting to server.');
+    } finally {
+      setEnrolling(false);
+    }
+  };
 
   if (loading) return <div style={{ padding: '40px 32px' }}>Loading Events...</div>;
 
@@ -153,6 +187,24 @@ const EnrolledEvents = () => {
       <div style={{ marginBottom: 32 }}>
         <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.5px', marginBottom: 8 }}>Enrolled Events & Webinars</h1>
         <p style={{ color: '#64748b', fontSize: '1rem', fontWeight: 500 }}>Join upcoming live sessions, workshops, and exclusive talks.</p>
+      </div>
+
+      <div className="enroll-box" style={{ background: 'var(--card-bg)', padding: '24px', borderRadius: '16px', marginBottom: '32px', border: '1px solid var(--border-color)', boxShadow: '0 4px 15px rgba(0,0,0,0.02)' }}>
+        <h3 style={{ margin: '0 0 16px 0', fontSize: 18, color: '#6d28d9' }}>Enroll in a New Event</h3>
+        <form onSubmit={handleEnrollEvent} style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+          <input 
+            type="text" 
+            placeholder="Enter Event ID"
+            className="text-input" 
+            value={enrollEventId} 
+            onChange={(e) => setEnrollEventId(e.target.value)}
+            required
+            style={{ flex: 1, padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border-color)', outline: 'none', background: 'var(--bg-color)', color: 'var(--text-primary)', fontSize: '15px', minWidth: '200px' }}
+          />
+          <button type="submit" className="event-btn" disabled={enrolling || !enrollEventId.trim()} style={{ width: 'auto', background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)', boxShadow: '0 4px 15px rgba(139, 92, 246, 0.3)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {enrolling ? 'Enrolling...' : <>Enroll Now <Plus size={18} /></>}
+          </button>
+        </form>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>

@@ -9,7 +9,11 @@ const EnrollCourseDetailsList = () => {
   const [searchParams] = useSearchParams();
   const [courseTitle, setCourseTitle] = useState('Course Topics');
   const [category, setCategory] = useState('Enrolled Course');
-  const [isCertificateApproved, setIsCertificateApproved] = useState(false);
+  
+  const [certificateStatus, setCertificateStatus] = useState('locked');
+  const [requestingCert, setRequestingCert] = useState(false);
+  const [certMessage, setCertMessage] = useState('');
+  const [realCourseId, setRealCourseId] = useState(id);
   
   const [topics, setTopics] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -52,6 +56,24 @@ const EnrollCourseDetailsList = () => {
           }
         } catch (err) {
           console.error("Failed to fetch course details:", err);
+        }
+
+        setRealCourseId(realCourseId);
+
+        // Fetch Certificate Status
+        try {
+          const certRes = await fetch(`https://iscale-backend.onrender.com/api/certificate/status/${realCourseId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (certRes.ok) {
+            const certData = await certRes.json();
+            if (certData.status && certData.data) {
+              setCertificateStatus(certData.data.status || 'locked');
+              if (certData.data.message) setCertMessage(certData.data.message);
+            }
+          }
+        } catch (e) {
+          console.error("Failed to fetch cert status:", e);
         }
 
         // Fetch subjects first, because topics belong to subjects, not directly to courses
@@ -110,6 +132,64 @@ const EnrollCourseDetailsList = () => {
 
     resolveSlugAndFetch();
   }, [id, navigate]);
+
+  const handleRequestCertificate = async () => {
+    try {
+      setRequestingCert(true);
+      const token = localStorage.getItem('token');
+      const res = await fetch(`https://iscale-backend.onrender.com/api/certificate/request`, {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ course_id: realCourseId })
+      });
+      const data = await res.json();
+      if (data.status) {
+        alert('Certificate request submitted successfully!');
+        setCertificateStatus('requested');
+      } else {
+        alert(data.message || 'Failed to request certificate.');
+      }
+    } catch (err) {
+      alert('Server error.');
+    } finally {
+      setRequestingCert(false);
+    }
+  };
+
+  const handleDownloadCertificate = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`https://iscale-backend.onrender.com/api/certificate/download/${realCourseId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        const data = await res.json();
+        if (data.status && data.url) {
+          window.open(data.url, '_blank');
+        } else {
+          alert('Certificate download link not available.');
+        }
+      } else {
+        // Blob download fallback
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Certificate_${realCourseId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (err) {
+      alert('Failed to download certificate.');
+    }
+  };
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#ffffff', fontFamily: '"Inter", sans-serif', animation: 'fadeSlideUp 0.4s ease-out' }}>
@@ -305,20 +385,41 @@ const EnrollCourseDetailsList = () => {
         <div className="hero-actions">
           <div className="progress-container progress-wrapper">
             <div className="progress-bar-bg">
-              <div className="progress-bar-fill" style={{ width: '0%' }}>
-                <div className="progress-knob">0%</div>
+              <div 
+                className="progress-bar-fill" 
+                style={{ width: `${topics.length > 0 ? Math.round((topics.filter(t => t.is_completed || t.isCompleted).length / topics.length) * 100) : 0}%` }}
+              >
+                <div className="progress-knob">
+                  {topics.length > 0 ? Math.round((topics.filter(t => t.is_completed || t.isCompleted).length / topics.length) * 100) : 0}%
+                </div>
               </div>
             </div>
           </div>
           
-          {isCertificateApproved && (
-            <button 
-              className="certificate-btn"
-              onClick={() => alert('Downloading certificate...')}
-            >
-              <Award size={20} /> Download Official Certificate
-            </button>
-          )}
+          {(() => {
+            const prog = topics.length > 0 ? Math.round((topics.filter(t => t.is_completed || t.isCompleted).length / topics.length) * 100) : 0;
+            if (certificateStatus === 'approved') {
+              return (
+                <button className="certificate-btn" onClick={handleDownloadCertificate}>
+                  <Award size={20} /> Download Official Certificate
+                </button>
+              );
+            } else if (certificateStatus === 'requested') {
+              return (
+                <button className="certificate-btn" style={{ background: '#e2e8f0', color: '#64748b' }} disabled>
+                  <CheckCircle size={20} /> Certificate Requested (Pending)
+                </button>
+              );
+            } else if (prog >= 100) {
+              return (
+                <button className="certificate-btn" style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' }} onClick={handleRequestCertificate} disabled={requestingCert}>
+                  <FileText size={20} /> {requestingCert ? 'Requesting...' : 'Request Certificate'}
+                </button>
+              );
+            } else {
+              return null;
+            }
+          })()}
         </div>
       </div>
       
@@ -343,9 +444,15 @@ const EnrollCourseDetailsList = () => {
                   key={topic._id || index} 
                   className={`topic-item ${activeTopic?._id === topic._id ? 'active' : ''}`}
                   onClick={() => setActiveTopic(topic)}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}
                 >
-                  {topic.video_url ? <PlayCircle size={20} color={activeTopic?._id === topic._id ? 'var(--blue)' : 'var(--text-secondary)'} /> : <FileText size={20} color="var(--text-secondary)" />}
-                  <span className="topic-item-title">{topic.title || `Topic ${index + 1}`}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    {topic.video_url ? <PlayCircle size={20} color={activeTopic?._id === topic._id ? 'var(--blue)' : 'var(--text-secondary)'} /> : <FileText size={20} color="var(--text-secondary)" />}
+                    <span className="topic-item-title">{topic.title || `Topic ${index + 1}`}</span>
+                  </div>
+                  {(topic.is_completed || topic.isCompleted) && (
+                    <CheckCircle size={18} color="var(--blue)" />
+                  )}
                 </div>
               ))
             )}
@@ -407,6 +514,15 @@ const EnrollCourseDetailsList = () => {
                       const data = await res.json();
                       if (data.status) {
                         alert('Lecture marked as completed!');
+                        const topicId = activeTopic._id || activeTopic.id;
+                        
+                        // Update local state instantly so the UI progress updates without refresh
+                        setTopics(prev => prev.map(t => 
+                          (t._id === topicId || t.id === topicId) 
+                            ? { ...t, is_completed: true, isCompleted: true } 
+                            : t
+                        ));
+                        setActiveTopic(prev => ({ ...prev, is_completed: true, isCompleted: true }));
                       } else {
                         alert(data.message || 'Error marking lecture complete');
                       }

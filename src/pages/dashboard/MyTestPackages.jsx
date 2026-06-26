@@ -2,58 +2,64 @@ import React, { useState, useEffect } from 'react';
 import { BookOpen, Search, ArrowRight, CheckCircle, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const TEST_CATEGORY_DROPDOWN_URL = 'https://iscale-backend.onrender.com/api/test-category/test-category-dropdown';
+// ── API endpoints ────────────────────────────────────────────────────────────
+// The enroll endpoint expects a real test-package _id, NOT a category id.
+// We fetch actual packages from the test-packages list endpoint so the user
+// can pick the right thing.
+const TEST_PACKAGES_LIST_URL    = 'https://iscale-backend.onrender.com/api/test-packages';
+const TEST_PACKAGES_DROPDOWN_URL= 'https://iscale-backend.onrender.com/api/test-packages/dropdown';
+const TEST_CATEGORY_DROPDOWN_URL= 'https://iscale-backend.onrender.com/api/test-category/test-category-dropdown';
 
 const MyTestPackages = ({ setCurrentPage }) => {
   const navigate = useNavigate();
   const [packages, setPackages] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [availablePackages, setAvailablePackages] = useState([]); // for enroll dropdown
+  const [selectedPackageId, setSelectedPackageId] = useState('');
   const [loading, setLoading] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
 
+  const resolveEntity = (value) => {
+    if (!value) return null;
+    if (typeof value === 'string') return { _id: value };
+    if (typeof value === 'object') return value;
+    return null;
+  };
+
+  const resolveEntityId = (value) => {
+    if (!value) return undefined;
+    if (typeof value === 'string') return value;
+    return value._id || value.id;
+  };
+
   useEffect(() => {
-    fetchCategories();
+    fetchAvailablePackages();
     fetchMyPackages();
   }, []);
 
-  const fetchCategories = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setCategories([]);
-        return;
-      }
+  // Fetch the list of test packages the user can enroll in.
+  // Tries multiple endpoints until one succeeds.
+  const fetchAvailablePackages = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) { setAvailablePackages([]); return; }
 
-      const res = await fetch(TEST_CATEGORY_DROPDOWN_URL, {
-        headers: {
-          'Authorization': `Bearer ${token}`
+    const endpoints = [TEST_PACKAGES_DROPDOWN_URL, TEST_PACKAGES_LIST_URL];
+
+    for (const url of endpoints) {
+      try {
+        const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+        if (!res.ok) continue;
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : null);
+        if (list && list.length > 0) {
+          setAvailablePackages(list);
+          return; // success – stop trying
         }
-      });
-
-      if (!res.ok) {
-        if (res.status === 401) {
-          setCategories([]);
-          return;
-        }
-        throw new Error(`Failed to load test categories: ${res.status}`);
-      }
-
-      const data = await res.json();
-      if (data.status && Array.isArray(data.data)) {
-        setCategories(data.data);
-      } else {
-        setCategories([]);
-      }
-    } catch (err) {
-      if (err?.message?.includes('401')) {
-        setCategories([]);
-        return;
-      }
-
-      console.error(err);
-      setCategories([]);
+      } catch (_) { /* try next endpoint */ }
     }
+
+    // If both test package endpoints fail, keep the dropdown empty.
+    // Do not fall back to categories here, because enrollment expects a real test package ID.
+    setAvailablePackages([]);
   };
 
   const fetchMyPackages = async () => {
@@ -82,36 +88,48 @@ const MyTestPackages = ({ setCurrentPage }) => {
 
   const handleEnroll = async (e) => {
     e.preventDefault();
-    if (!selectedCategory) {
-      alert('Please select a test package or category first.');
+    if (!selectedPackageId) {
+      alert('Please select a test package first.');
       return;
     }
-    
+
     try {
       setEnrolling(true);
       const token = localStorage.getItem('token');
+
+      // Send ALL common field names so the backend finds the right one
+      const body = {
+        test_package_id:  selectedPackageId,
+        testPackageId:    selectedPackageId,
+        package_id:       selectedPackageId,
+        test_category_id: selectedPackageId,
+        category_id:      selectedPackageId,
+      };
+
       const res = await fetch('https://iscale-backend.onrender.com/api/enrolled-test-packages/enroll', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        // We pass the ID mapping common backend expectation patterns
-        body: JSON.stringify({ 
-          test_category_id: selectedCategory,
-          category_id: selectedCategory,
-          package_id: selectedCategory 
-        })
+        body: JSON.stringify(body)
       });
+
       const data = await res.json();
+
       if (data.status) {
         alert('Enrolled successfully!');
-        fetchMyPackages(); // Refresh the list
+        setSelectedPackageId('');
+        fetchMyPackages(); // Refresh the enrolled list
       } else {
-        alert(data.message || 'Failed to enroll.');
+        // Show helpful message
+        const msg = data.message || 'Enrollment failed. The selected item may not be a valid test package.';
+        alert(msg);
+        console.error('Enroll response:', data);
       }
     } catch (err) {
-      alert('An error occurred during enrollment.');
+      alert('A network error occurred. Please try again.');
+      console.error(err);
     } finally {
       setEnrolling(false);
     }
@@ -198,20 +216,25 @@ const MyTestPackages = ({ setCurrentPage }) => {
       <div className="enroll-box">
         <h3 style={{ margin: '0 0 16px 0', fontSize: 18, color: '#0369a1' }}>Enroll in a New Test Package</h3>
         <form onSubmit={handleEnroll} style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
-          <select 
-            className="select-input" 
-            value={selectedCategory} 
-            onChange={(e) => setSelectedCategory(e.target.value)}
+          <select
+            className="select-input"
+            value={selectedPackageId}
+            onChange={(e) => setSelectedPackageId(e.target.value)}
             required
           >
-            <option value="">-- Select a Test Category --</option>
-            {categories.map(cat => (
-              <option key={cat._id || cat.id} value={cat._id || cat.id}>
-                {cat.m_test_category_title || cat.title || cat.name || 'Category'}
-              </option>
-            ))}
+            <option value="">-- Select a Test Package --</option>
+            {availablePackages.map(pkg => {
+              const optionPackage = resolveEntity(pkg);
+              const optionId = resolveEntityId(optionPackage);
+              if (!optionId) return null;
+              return (
+                <option key={optionId} value={optionId}>
+                  {optionPackage?.title || optionPackage?.name || optionPackage?.m_test_category_title || optionPackage?.m_test_package_title || 'Test Package'}
+                </option>
+              );
+            })}
           </select>
-          <button type="submit" className="enroll-btn" disabled={enrolling || !selectedCategory}>
+          <button type="submit" className="enroll-btn" disabled={enrolling || !selectedPackageId}>
             {enrolling ? 'Enrolling...' : <>Enroll Now <Plus size={18} /></>}
           </button>
         </form>
@@ -226,13 +249,16 @@ const MyTestPackages = ({ setCurrentPage }) => {
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 20 }}>
           {packages.map((pkg, idx) => {
-            const actualPkg = pkg.packageId || pkg.testId || pkg;
-            const pId = actualPkg._id || actualPkg.id || idx;
+            const displayPkg = resolveEntity(pkg.test_package_id) || resolveEntity(pkg.packageId) || resolveEntity(pkg.testId) || resolveEntity(pkg);
+            const enrollmentId = pkg._id || pkg.id || resolveEntityId(displayPkg) || idx;
+            console.log('package item:', pkg);
+            console.log('display package:', displayPkg);
+            console.log('navigate id:', enrollmentId);
             return (
-              <div key={pId} className="pkg-card" onClick={() => handleNavigate(pId)}>
+              <div key={enrollmentId} className="pkg-card" onClick={() => enrollmentId && handleNavigate(enrollmentId)}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <h3 style={{ margin: 0, fontSize: 18, color: 'var(--text-primary)', lineHeight: 1.4 }}>
-                    {actualPkg.title || actualPkg.name || actualPkg.m_test_category_title || `Test Package ${idx + 1}`}
+                    {displayPkg?.title || displayPkg?.name || displayPkg?.m_test_category_title || `Test Package ${idx + 1}`}
                   </h3>
                   <div style={{ background: '#ecfdf5', color: '#10b981', padding: '4px 8px', borderRadius: 4, fontSize: 12, fontWeight: 600 }}>
                     Enrolled
@@ -240,7 +266,7 @@ const MyTestPackages = ({ setCurrentPage }) => {
                 </div>
                 
                 <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 14, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                  {actualPkg.description || actualPkg.short_description || 'Click to view full details and start testing your knowledge.'}
+                  {displayPkg?.description || displayPkg?.short_description || 'Click to view full details and start testing your knowledge.'}
                 </p>
                 
                 <div style={{ display: 'flex', alignItems: 'center', color: '#3b82f6', fontSize: 14, fontWeight: 600, marginTop: 'auto', paddingTop: 8 }}>

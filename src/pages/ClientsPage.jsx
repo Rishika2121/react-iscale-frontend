@@ -7,7 +7,7 @@ const ClientsPage = () => {
   useEffect(() => { 
     window.scrollTo(0, 0); 
     
-    fetch('https://iscale-backend.onrender.com/api/client/public-get-all-client?page=1&limit=1000')
+    fetch('https://iscale-backend.onrender.com/api/client/public-get-all-client?page=1&limit=20')
       .then(res => {
         if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
         return res.json();

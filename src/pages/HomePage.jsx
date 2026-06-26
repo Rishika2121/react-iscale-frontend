@@ -345,7 +345,7 @@ const Hero = ({ setCurrentPage }) => {
             marginBottom: 18, border: '1px solid rgba(37, 99, 235, 0.22)',
             boxShadow: '0 4px 14px rgba(37, 99, 235, 0.08)'
           }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'linear-gradient(135deg, #2563eb, #3b82f6)', boxShadow: '0 0 10px var(--red)' }} />
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--primary-gradient)', boxShadow: '0 0 10px var(--red)' }} />
             <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: 0.5, color: 'var(--text-primary)' }}>
               <span className="animated-text-gradient">iSCALE Upskilling</span>
             </span>
@@ -372,7 +372,7 @@ const Hero = ({ setCurrentPage }) => {
               onClick={() => setCurrentPage('courses')}
               style={{
                 display: 'flex', alignItems: 'center', gap: 8,
-                padding: '14px 28px', background: 'linear-gradient(135deg, #2563eb, #3b82f6)', color: '#fff',
+                padding: '14px 28px', background: 'var(--primary-gradient)', color: '#fff',
                 borderRadius: 10, fontWeight: 600, fontSize: 16,
                 boxShadow: '0 4px 20px rgba(37, 99, 235, 0.35)',
                 transition: 'all 0.3s'
@@ -412,7 +412,7 @@ const AboutSection = ({ setCurrentPage }) => {
   const [features, setFeatures] = useState([
     { iconName: 'Star', title: 'Realtime Projects', desc: 'Dive into Industry-Oriented Projects, where learning meets real-world impact', bgColor: '#111827' },
     { iconName: 'Play', title: 'LIVE Class', desc: 'Never face challenges alone, our instant Doubt support is always available.', bgColor: '#4b5563' },
-    { iconName: 'PlayGradient', title: 'Outcome Driven', desc: 'Elevate your learning journey with Outcome-Driven magic.', bgColor: 'linear-gradient(135deg, #2563eb, #3b82f6)' }
+    { iconName: 'PlayGradient', title: 'Outcome Driven', desc: 'Elevate your learning journey with Outcome-Driven magic.', bgColor: 'var(--primary-gradient)' }
   ]);
 
   useEffect(() => {
@@ -515,7 +515,7 @@ const TestimonialVideoCard = ({ item }) => {
   
   const playBtnStyle = {
     position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-    background: 'linear-gradient(135deg, #2563eb, #3b82f6)', color: '#fff', width: 48, height: 48, borderRadius: '50%',
+    background: 'var(--primary-gradient)', color: '#fff', width: 48, height: 48, borderRadius: '50%',
     display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(37, 99, 235, 0.4)'
   };
 
@@ -862,9 +862,24 @@ const PopularCourses = ({ setCurrentPage }) => {
                   <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, color: 'var(--text-primary)' }}>
                     {course.price}
                   </span>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: '#fff', background: cardColor, padding: '8px 16px', borderRadius: '100px', display: 'flex', alignItems: 'center', gap: 6, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-                    Learn More <ArrowRight size={14} />
-                  </span>
+                  
+                  {(() => {
+                    let isAlreadyEnrolled = false;
+                    try {
+                      const localEnrolled = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
+                      isAlreadyEnrolled = localEnrolled.some(c => c.id === course.id || c._id === course.id);
+                    } catch(e) {}
+                    
+                    return isAlreadyEnrolled ? (
+                      <span style={{ fontSize: 14, fontWeight: 700, color: '#fff', background: '#22c55e', padding: '8px 16px', borderRadius: '100px', display: 'flex', alignItems: 'center', gap: 6, boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)', pointerEvents: 'none' }}>
+                        Enrolled <CheckCircle size={14} />
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: 14, fontWeight: 700, color: '#fff', background: cardColor, padding: '8px 16px', borderRadius: '100px', display: 'flex', alignItems: 'center', gap: 6, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                        Learn More <ArrowRight size={14} />
+                      </span>
+                    );
+                  })()}
                 </div>
               </div>
               );
@@ -957,7 +972,7 @@ const ExpertsSection = ({ setCurrentPage }) => {
               {/* Vibrant Instagram-style Gradient Ring */}
               <div style={{
                 width: 96, height: 96, borderRadius: '50%',
-                background: `linear-gradient(135deg, hsl(${i * 45}, 90%, 65%), hsl(${(i * 45) + 60}, 90%, 55%))`,
+                background: 'var(--primary-gradient)',
                 padding: 4, margin: '0 auto 20px',
                 boxShadow: `0 10px 24px hsla(${i * 45}, 90%, 60%, 0.3)`
               }}>
@@ -1000,7 +1015,7 @@ const CompanyMarquee = ({ setCurrentPage }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('https://iscale-backend.onrender.com/api/client/public-get-all-client?page=1&limit=1000')
+    fetch('https://iscale-backend.onrender.com/api/client/public-get-all-client?page=1&limit=20')
       .then(res => res.json())
       .then(result => {
         const arr = result.data?.docs || result.data || [];
@@ -1099,7 +1114,7 @@ const SuccessStoryGridCard = ({ item }) => {
       {item.package && item.package !== 'N/A' && (
         <div style={{ 
           position: 'absolute', top: 16, right: 16, 
-          background: 'linear-gradient(135deg, #10b981, #059669)', 
+          background: 'var(--primary-gradient)', 
           color: '#fff', fontSize: 12, fontWeight: 800, 
           padding: '6px 14px', borderRadius: 100, 
           boxShadow: '0 4px 10px rgba(16, 185, 129, 0.3)',
@@ -1122,7 +1137,7 @@ const SuccessStoryGridCard = ({ item }) => {
         {item.ytLink && (
           <div style={{
             position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-            background: 'linear-gradient(135deg, #2563eb, #3b82f6)', color: '#fff', width: 56, height: 56, borderRadius: '50%',
+            background: 'var(--primary-gradient)', color: '#fff', width: 56, height: 56, borderRadius: '50%',
             display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 20px rgba(37, 99, 235, 0.5)'
           }}>
             <Play size={22} fill="#fff" style={{ marginLeft: 3 }} />
@@ -1244,7 +1259,7 @@ export const SuccessStories = ({ setCurrentPage }) => {
             onClick={() => setCurrentPage('success-story')}
             style={{ 
               padding: '14px 40px', 
-              background: 'linear-gradient(135deg, #2563eb, #3b82f6)', 
+              background: 'var(--primary-gradient)', 
               color: '#fff', 
               borderRadius: 10, 
               fontWeight: 700, 
@@ -1330,7 +1345,7 @@ const LearnersCommunity = () => {
           <div key={idx} className="community-stat-item" style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             {/* Timeline Node */}
             <div style={{ width: 24, height: 24, borderRadius: '50%', border: '4px solid var(--red)', background: 'var(--bg-primary)', marginBottom: 24, position: 'relative' }}>
-               <div style={{ position: 'absolute', top: 24, left: '50%', transform: 'translateX(-50%)', width: 2, height: 40, background: 'linear-gradient(135deg, #2563eb, #3b82f6)', zIndex: -1 }} />
+               <div style={{ position: 'absolute', top: 24, left: '50%', transform: 'translateX(-50%)', width: 2, height: 40, background: 'var(--primary-gradient)', zIndex: -1 }} />
             </div>
 
             {/* Stat Card */}
@@ -1415,45 +1430,35 @@ const NewsUpdates = ({ setCurrentPage }) => {
       ) : newsList.length > 0 ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 28, justifyContent: 'center' }}>
           {newsList.slice(0, 3).map((news, idx) => {
-            const colors = ['#1e3a8a', '#065f46', '#5b21b6'];
-            const accent = colors[idx % colors.length];
             return (
-            <div key={idx} className="news-card-interactive colorful-glow-border" style={{ 
-              background: 'var(--card-bg)', border: '1px solid rgba(255,255,255,0.05)', borderBottom: `6px solid ${accent}`, borderRadius: 16, overflow: 'visible',
-              boxShadow: 'var(--card-shadow)', display: 'flex', flexDirection: 'column', transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
-            }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)'; e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.12)'; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.04)'; }}
-            >
-              <div className="news-card-image-wrap" style={{ width: '100%', height: 180, overflow: 'hidden', background: 'var(--bg-secondary)', position: 'relative', borderTopLeftRadius: 15, borderTopRightRadius: 15 }}>
-                {news.img ? (
-                  <img src={news.img} alt={news.title} className="news-card-image" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', transition: 'transform 0.5s' }} onMouseEnter={e => e.target.style.transform = 'scale(1.05)'} onMouseLeave={e => e.target.style.transform = 'scale(1)'} />
-                ) : (
-                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(59, 130, 246, 0.05))', color: 'var(--text-muted)' }}>
-                    <Calendar size={36} strokeWidth={1.5} />
-                  </div>
-                )}
-              </div>
-              
-              <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                  <span className="news-tag-badge" style={{ background: accent, color: '#fff', padding: '4px 10px', borderRadius: 100, fontSize: 10, fontWeight: 700, textTransform: 'uppercase' }}>Update</span>
-                  <span style={{ color: 'var(--text-muted)', fontSize: 11, display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <Clock size={12} /> {news.date}
-                  </span>
+              <div key={news.id || idx} style={{ display: 'flex', flexDirection: 'column', background: 'var(--card-bg)', borderRadius: 16, overflow: 'hidden', boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)', transition: 'transform 0.3s, box-shadow 0.3s' }} onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 30px rgba(0,0,0,0.08)'; }} onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--card-shadow)'; }}>
+                <div style={{ width: '100%', height: 220, flexShrink: 0, position: 'relative', background: '#fff', borderBottom: '1px solid var(--border-color)' }}>
+                  {news.img ? (
+                    <img src={news.img} alt={news.title} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '12px' }} />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(59, 130, 246, 0.05))', color: 'var(--text-muted)' }}>
+                      <Calendar size={36} strokeWidth={1.5} />
+                    </div>
+                  )}
                 </div>
                 
-                <h3 style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 8, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', minHeight: '40px' }}>{news.title}</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 16, flex: 1, lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{news.desc}</p>
-                
-                <a href={news.link} onClick={(e) => handleLinkClick(e, news.link)} target={news.link.startsWith('http') ? "_blank" : "_self"} rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 6, color: accent, fontWeight: 800, fontSize: 14, textDecoration: 'none', transition: 'gap 0.2s', marginTop: 'auto', paddingTop: 16, borderTop: '1px solid rgba(0,0,0,0.05)' }}
-                   onMouseEnter={e => e.currentTarget.style.gap = '10px'}
-                   onMouseLeave={e => e.currentTarget.style.gap = '6px'}
-                >
-                  Learn More <ArrowRight size={16} />
-                </a>
+                <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <div style={{ marginBottom: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span className="news-tag-badge" style={{ padding: '4px 10px', fontSize: 10 }}>Update</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text-secondary)', fontSize: 11 }}>
+                      <Clock size={12} />
+                      {news.date}
+                    </span>
+                  </div>
+                  <h2 style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 8, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', minHeight: '44px' }}>{news.title}</h2>
+                  
+                  <p style={{ color: 'var(--text-secondary)', fontSize: 13, lineHeight: 1.5, marginBottom: 16, flex: 1, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{news.desc}</p>
+                  
+                  <a href={news.link} onClick={(e) => handleLinkClick(e, news.link)} target={news.link.startsWith('http') ? "_blank" : "_self"} rel="noopener noreferrer" style={{ color: 'var(--red)', fontWeight: 700, fontSize: 13, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6, transition: 'gap 0.2s', marginTop: 'auto', paddingTop: 16, borderTop: '1px solid rgba(0,0,0,0.05)' }} onMouseEnter={e => e.currentTarget.style.gap = '10px'} onMouseLeave={e => e.currentTarget.style.gap = '6px'}>
+                    Learn More <ArrowRight size={16} />
+                  </a>
+                </div>
               </div>
-            </div>
             );
           })}
         </div>
@@ -1571,7 +1576,7 @@ const InTheNews = () => {
                   target="_blank" 
                   rel="noopener noreferrer" 
                   style={{ 
-                    display: 'inline-block', background: 'linear-gradient(135deg, #2563eb, #3b82f6)', color: '#fff', 
+                    display: 'inline-block', background: 'var(--primary-gradient)', color: '#fff', 
                     padding: '8px 18px', borderRadius: 8, fontWeight: 700, fontSize: 12, 
                     textDecoration: 'none', transition: 'all 0.3s', alignSelf: 'flex-start' 
                   }}
@@ -1605,7 +1610,7 @@ const TalkToTeam = ({ setCurrentPage }) => (
         
         <button 
           onClick={() => setCurrentPage('contact')}
-          style={{ padding: '14px 32px', background: 'linear-gradient(135deg, #2563eb, #3b82f6)', color: '#fff', borderRadius: 8, fontWeight: 700, fontSize: 16, border: 'none', cursor: 'pointer', boxShadow: '0 4px 15px rgba(37, 99, 235, 0.3)', transition: 'background 0.2s' }}
+          style={{ padding: '14px 32px', background: 'var(--primary-gradient)', color: '#fff', borderRadius: 8, fontWeight: 700, fontSize: 16, border: 'none', cursor: 'pointer', boxShadow: '0 4px 15px rgba(37, 99, 235, 0.3)', transition: 'background 0.2s' }}
           onMouseEnter={e => e.target.style.background = 'var(--red-dark)'}
           onMouseLeave={e => e.target.style.background = 'var(--red)'}
         >
@@ -1625,7 +1630,7 @@ const AlliedCollegesSection = ({ setCurrentPage }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('https://iscale-backend.onrender.com/api/allied/public-all-allied?page=1&limit=1000')
+    fetch('https://iscale-backend.onrender.com/api/allied/public-all-allied?page=1&limit=20')
       .then(res => res.json())
       .then(result => {
         const arr = result.data?.docs || result.data || [];
@@ -1637,7 +1642,7 @@ const AlliedCollegesSection = ({ setCurrentPage }) => {
               return cleaned.startsWith('http') ? cleaned : `https://iscale-backend.onrender.com/${cleaned.replace(/^src\//, '')}`;
             };
             return {
-              name: item.m_allied_title || item.name || 'Allied College',
+              name: item.m_allied_title || item.name || '',
               img: getImageUrl(item.m_allied_image || item.m_allied_logo || item.image || item.logo)
             };
           });
@@ -1680,9 +1685,9 @@ const AlliedCollegesSection = ({ setCurrentPage }) => {
             }}
           >
             <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', marginBottom: 16 }}>
-              <img src={college.img} alt={college.name} style={{ maxWidth: '100%', maxHeight: '110px', objectFit: 'contain' }} />
+              {college.img && <img src={college.img} alt={college.name} style={{ maxWidth: '100%', maxHeight: '110px', objectFit: 'contain' }} />}
             </div>
-            <h4 style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-primary)', textAlign: 'center', margin: 0, zIndex: 1 }}>{college.name}</h4>
+            {college.name && <h4 style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-primary)', textAlign: 'center', margin: 0, zIndex: 1 }}>{college.name}</h4>}
           </div>
         )}
       />
@@ -1749,7 +1754,7 @@ const EnrolledCoursesSection = ({ enrolledCourses, userName, setCurrentPage }) =
             >
               <div style={{ height: 160, overflow: 'hidden', position: 'relative' }}>
                 <img src={course.img || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80'} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                <span style={{ position: 'absolute', top: 12, right: 12, background: 'linear-gradient(135deg, #2563eb, #3b82f6)', color: '#fff', fontSize: 9, fontWeight: 800, padding: '4px 8px', borderRadius: 4 }}>
+                <span style={{ position: 'absolute', top: 12, right: 12, background: 'var(--primary-gradient)', color: '#fff', fontSize: 9, fontWeight: 800, padding: '4px 8px', borderRadius: 4 }}>
                   ENROLLED
                 </span>
               </div>
@@ -1779,7 +1784,7 @@ const EnrolledCoursesSection = ({ enrolledCourses, userName, setCurrentPage }) =
                   style={{
                     width: '100%',
                     padding: '12px',
-                    background: 'linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%)',
+                    background: 'var(--primary-gradient)',
                     color: '#fff',
                     borderRadius: 10,
                     fontWeight: 700,

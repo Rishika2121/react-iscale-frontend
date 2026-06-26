@@ -53,7 +53,7 @@ const NewsPage = () => {
         position: 'relative', overflow: 'hidden',
         display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingLeft: '10%'
       }}>
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(135deg, rgba(236,72,153,0.8), rgba(99,102,241,0.8))', mixBlendMode: 'multiply' }}></div>
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'var(--primary-gradient)', mixBlendMode: 'multiply' }}></div>
         <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="News Banner" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.3 }} />
         
         <div style={{ position: 'relative', zIndex: 1, color: '#fff' }}>
@@ -74,10 +74,10 @@ const NewsPage = () => {
             <div style={{ padding: '40px 0', color: 'var(--text-secondary)' }}>No news updates available.</div>
           ) : (
             newsItems.map((news, idx) => (
-              <div key={news.id} style={{ display: 'flex', flexDirection: window.innerWidth < 768 ? 'column' : 'row', background: 'var(--card-bg)', borderRadius: 16, overflow: 'hidden', boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)', transition: 'transform 0.3s, box-shadow 0.3s' }} onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 30px rgba(0,0,0,0.08)'; }} onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--card-shadow)'; }}>
-                <div style={{ width: window.innerWidth < 768 ? '100%' : 280, height: window.innerWidth < 768 ? 200 : 'auto', flexShrink: 0, position: 'relative' }}>
+              <div key={news.id} style={{ display: 'flex', flexDirection: 'column', background: 'var(--card-bg)', borderRadius: 16, overflow: 'hidden', boxShadow: 'var(--card-shadow)', border: '1px solid var(--border-color)', transition: 'transform 0.3s, box-shadow 0.3s' }} onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 30px rgba(0,0,0,0.08)'; }} onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--card-shadow)'; }}>
+                <div style={{ width: '100%', height: 220, flexShrink: 0, position: 'relative', background: '#fff', borderBottom: '1px solid var(--border-color)' }}>
                   {news.img ? (
-                    <img src={news.img} alt={news.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={news.img} alt={news.title} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '12px' }} />
                   ) : (
                     <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(59, 130, 246, 0.05))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <span style={{ color: 'var(--text-muted)' }}>
@@ -121,7 +121,7 @@ const NewsPage = () => {
               const content = (
                 <>
                   {post.img ? (
-                    <img src={post.img} alt={post.title} style={{ width: 64, height: 64, borderRadius: 8, objectFit: 'cover' }} />
+                    <img src={post.img} alt={post.title} style={{ width: 64, height: 64, borderRadius: 8, objectFit: 'contain', background: '#fff', padding: 4 }} />
                   ) : (
                     <div style={{ width: 64, height: 64, background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(59, 130, 246, 0.05))', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>

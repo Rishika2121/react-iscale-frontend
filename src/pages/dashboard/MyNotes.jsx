@@ -52,7 +52,8 @@ const MyNotes = () => {
         headers: { 
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({ note_id: enrollNoteId.trim() })
       });
       const data = await res.json();
       if (data.status) {
@@ -194,11 +195,12 @@ const MyNotes = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {notes.map((note, idx) => {
             const actualNote = note.noteId || note.note || note;
+            const noteId = actualNote?._id || actualNote?.id || idx;
             return (
               <div 
-                key={actualNote._id || actualNote.id || idx} 
+                key={noteId} 
                 className="note-card"
-                onClick={() => navigate(`/note-details/${actualNote._id || actualNote.id}`)}
+                onClick={() => navigate(`/note-details/${noteId}`)}
               >
                 <div className="note-icon-wrapper">
                   <FileText size={28} />

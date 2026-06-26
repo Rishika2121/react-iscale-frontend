@@ -237,7 +237,7 @@ const RegisterPage = ({ setCurrentPage }) => {
               className="btn-shine"
               style={{
                 width: '100%', padding: '16px',
-                background: 'linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%)',
+                background: 'var(--primary-gradient)',
                 color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                 boxShadow: '0 4px 16px rgba(37,99,235,0.2)', cursor: loading ? 'not-allowed' : 'pointer',

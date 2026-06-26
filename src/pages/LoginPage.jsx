@@ -13,6 +13,14 @@ const LoginPage = ({ setCurrentPage }) => {
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
 
+  // Forgot Password States
+  const [forgotStep, setForgotStep] = useState(null); // 'email', 'otp', 'reset'
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotOtp, setForgotOtp] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [resetToken, setResetToken] = useState('');
+
   const cleanPhone = (p) => String(p || "").replace(/\D/g, "").slice(-10);
 
   const normalizeUser = (user) => {
@@ -84,10 +92,115 @@ const LoginPage = ({ setCurrentPage }) => {
       if (data.status) {
         setOtpStep('otp');
       } else {
-        alert(data.message || "Failed to send OTP.");
+        alert(data.message || "Invalid OTP");
       }
     } catch (error) {
-      alert("Server Error. Unable to send OTP.");
+      alert("Server Error. Unable to verify OTP.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // --- FORGOT PASSWORD API HANDLERS ---
+  const getIdentifierPayload = () => {
+    const isPhone = /^\d{10}$/.test(forgotEmail.replace(/\D/g, ''));
+    if (isPhone) {
+      return { mobile: Number(forgotEmail.replace(/\D/g, '')) };
+    }
+    return { email: forgotEmail.trim() };
+  };
+
+  const handleSendForgotOtp = async (e) => {
+    e.preventDefault();
+    if (!forgotEmail) return alert("Please enter your email or phone");
+    try {
+      setLoading(true);
+      const res = await fetch("https://iscale-backend.onrender.com/api/auth/send-forgot-password-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(getIdentifierPayload())
+      });
+      const data = await res.json();
+      if (data.status || res.ok) {
+        setForgotStep('otp');
+        alert("OTP Sent! Check your email or phone.");
+      } else {
+        alert(data.message || "Failed to send OTP");
+      }
+    } catch (err) {
+      alert("Error sending OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyForgotOtp = async (e) => {
+    e.preventDefault();
+    if (!forgotOtp) return alert("Enter OTP");
+    try {
+      setLoading(true);
+      const payload = { ...getIdentifierPayload(), otp: forgotOtp };
+      const res = await fetch("https://iscale-backend.onrender.com/api/auth/verify-forgot-password-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.status || res.ok) {
+        setResetToken(data.token || data.resetToken || '');
+        setForgotStep('reset');
+      } else {
+        alert(data.message || "Invalid OTP");
+      }
+    } catch (err) {
+      alert("Error verifying OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    if (!newPassword || newPassword !== confirmPassword) return alert("Passwords must match");
+    try {
+      setLoading(true);
+      const payload = { 
+        ...getIdentifierPayload(), 
+        otp: forgotOtp, 
+        newPassword: newPassword, 
+        password: newPassword,
+        confirmPassword: confirmPassword,
+        passwordConfirm: confirmPassword,
+        confirm_password: confirmPassword,
+        password_confirmation: confirmPassword,
+        token: resetToken,
+        resetToken: resetToken
+      };
+      
+      const headers = { "Content-Type": "application/json" };
+      if (resetToken) {
+        headers["Authorization"] = `Bearer ${resetToken}`;
+      }
+
+      const res = await fetch("https://iscale-backend.onrender.com/api/auth/reset-password", {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.status || res.ok) {
+        alert("Password reset successfully! You can now log in.");
+        setForgotStep(null);
+        setForgotEmail('');
+        setForgotOtp('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setResetToken('');
+      } else {
+        alert(data.message || "Failed to reset password");
+      }
+    } catch (err) {
+      alert("Error resetting password");
     } finally {
       setLoading(false);
     }
@@ -165,24 +278,30 @@ const LoginPage = ({ setCurrentPage }) => {
             <div style={{ display: 'inline-flex', padding: 12, background: 'rgba(37,99,235,0.08)', borderRadius: 16, color: 'var(--red)', marginBottom: 16 }}>
               <ShieldCheck size={32} />
             </div>
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 800, marginBottom: 8, color: 'var(--text-primary)' }}>Welcome Back</h1>
-            <p style={{ color: 'var(--text-secondary)', fontSize: 15 }}>Login to access your personalized dashboard.</p>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 800, marginBottom: 8, color: 'var(--text-primary)' }}>
+              {forgotStep ? 'Reset Password' : 'Welcome Back'}
+            </h1>
+            <p style={{ color: 'var(--text-secondary)', fontSize: 15 }}>
+              {forgotStep ? 'Follow the steps to recover your account.' : 'Login to access your personalized dashboard.'}
+            </p>
           </div>
 
-          <div style={{ display: 'flex', background: 'var(--bg-secondary)', borderRadius: 12, padding: 4, marginBottom: 24, border: '1px solid var(--border-color)' }}>
-            <div 
-              onClick={() => { setLoginMethod('email'); setOtpStep('phone'); }}
-              style={{ flex: 1, textAlign: 'center', padding: '12px 0', borderRadius: 8, cursor: 'pointer', fontWeight: 600, fontSize: 14, background: loginMethod === 'email' ? 'var(--card-bg)' : 'transparent', color: loginMethod === 'email' ? 'var(--text-primary)' : 'var(--text-secondary)', boxShadow: loginMethod === 'email' ? '0 2px 8px rgba(0,0,0,0.08)' : 'none', transition: 'all 0.2s' }}>
-              Email & Password
+          {!forgotStep && (
+            <div style={{ display: 'flex', background: 'var(--bg-secondary)', borderRadius: 12, padding: 4, marginBottom: 24, border: '1px solid var(--border-color)' }}>
+              <div 
+                onClick={() => { setLoginMethod('email'); setOtpStep('phone'); }}
+                style={{ flex: 1, textAlign: 'center', padding: '12px 0', borderRadius: 8, cursor: 'pointer', fontWeight: 600, fontSize: 14, background: loginMethod === 'email' ? 'var(--card-bg)' : 'transparent', color: loginMethod === 'email' ? 'var(--text-primary)' : 'var(--text-secondary)', boxShadow: loginMethod === 'email' ? '0 2px 8px rgba(0,0,0,0.08)' : 'none', transition: 'all 0.2s' }}>
+                Login with Pass
+              </div>
+              <div 
+                onClick={() => { setLoginMethod('phone'); setOtpStep('phone'); }}
+                style={{ flex: 1, textAlign: 'center', padding: '12px 0', borderRadius: 8, cursor: 'pointer', fontWeight: 600, fontSize: 14, background: loginMethod === 'phone' ? 'var(--card-bg)' : 'transparent', color: loginMethod === 'phone' ? 'var(--text-primary)' : 'var(--text-secondary)', boxShadow: loginMethod === 'phone' ? '0 2px 8px rgba(0,0,0,0.08)' : 'none', transition: 'all 0.2s' }}>
+                Login with OTP
+              </div>
             </div>
-            <div 
-              onClick={() => { setLoginMethod('phone'); setOtpStep('phone'); }}
-              style={{ flex: 1, textAlign: 'center', padding: '12px 0', borderRadius: 8, cursor: 'pointer', fontWeight: 600, fontSize: 14, background: loginMethod === 'phone' ? 'var(--card-bg)' : 'transparent', color: loginMethod === 'phone' ? 'var(--text-primary)' : 'var(--text-secondary)', boxShadow: loginMethod === 'phone' ? '0 2px 8px rgba(0,0,0,0.08)' : 'none', transition: 'all 0.2s' }}>
-              Phone & OTP
-            </div>
-          </div>
+          )}
 
-          {loginMethod === 'email' && (
+          {!forgotStep && loginMethod === 'email' && (
             <form onSubmit={handleLogin}>
               <div style={{ marginBottom: 20 }}>
                 <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 600 }}>Email Address *</label>
@@ -213,15 +332,18 @@ const LoginPage = ({ setCurrentPage }) => {
                     {showPass ? <EyeOff size={20} /> : <Eye size={20} />}
                   </div>
                 </div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
+                  <span onClick={() => setForgotStep('email')} style={{ fontSize: 13, color: 'var(--red)', cursor: 'pointer', fontWeight: 600 }}>Forgot Password?</span>
+                </div>
               </div>
 
-              <button type="submit" disabled={loading} className="btn-shine" style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%)', color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 16px rgba(37,99,235,0.2)', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
+              <button type="submit" disabled={loading} className="btn-shine" style={{ width: '100%', padding: '16px', background: 'var(--primary-gradient)', color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 16px rgba(37,99,235,0.2)', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
                 {loading ? 'Authenticating...' : 'Secure Login'} <ArrowRight size={18} />
               </button>
             </form>
           )}
 
-          {loginMethod === 'phone' && otpStep === 'phone' && (
+          {!forgotStep && loginMethod === 'phone' && otpStep === 'phone' && (
             <form onSubmit={handleSendOTP}>
               <div style={{ marginBottom: 24 }}>
                 <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 600 }}>Phone Number *</label>
@@ -237,13 +359,13 @@ const LoginPage = ({ setCurrentPage }) => {
                   />
                 </div>
               </div>
-              <button type="submit" disabled={loading} className="btn-shine" style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%)', color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 16px rgba(37,99,235,0.2)', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
+              <button type="submit" disabled={loading} className="btn-shine" style={{ width: '100%', padding: '16px', background: 'var(--primary-gradient)', color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 16px rgba(37,99,235,0.2)', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
                 {loading ? 'Sending OTP...' : 'Send OTP'} <ArrowRight size={18} />
               </button>
             </form>
           )}
 
-          {loginMethod === 'phone' && otpStep === 'otp' && (
+          {!forgotStep && loginMethod === 'phone' && otpStep === 'otp' && (
             <form onSubmit={handleVerifyOTP}>
               <div style={{ marginBottom: 24 }}>
                 <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 600 }}>Enter Verification Code *</label>
@@ -265,21 +387,85 @@ const LoginPage = ({ setCurrentPage }) => {
                    <span onClick={handleSendOTP} style={{ color: 'var(--blue)', cursor: loading ? 'default' : 'pointer', fontWeight: 600 }}>Resend OTP</span>
                 </div>
               </div>
-              <button type="submit" disabled={loading || !isOtpReady} className="btn-shine" style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%)', color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 16px rgba(37,99,235,0.2)', cursor: loading || !isOtpReady ? 'not-allowed' : 'pointer', opacity: loading || !isOtpReady ? 0.7 : 1 }}>
+              <button type="submit" disabled={loading || !isOtpReady} className="btn-shine" style={{ width: '100%', padding: '16px', background: 'var(--primary-gradient)', color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 16px rgba(37,99,235,0.2)', cursor: loading || !isOtpReady ? 'not-allowed' : 'pointer', opacity: loading || !isOtpReady ? 0.7 : 1 }}>
                 {loading ? 'Verifying...' : 'Verify & Login'} <ArrowRight size={18} />
               </button>
             </form>
           )}
 
-          <div style={{ marginTop: 24, textAlign: 'center', fontSize: 14, color: 'var(--text-secondary)' }}>
-            Don't have an account?{' '}
-            <span 
-              onClick={() => { setLoginMethod('phone'); setOtpStep('phone'); }} 
-              style={{ color: 'var(--blue)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}
-            >
-              Register using Phone
-            </span>
-          </div>
+          {/* FORGOT PASSWORD VIEWS */}
+          {forgotStep === 'email' && (
+            <form onSubmit={handleSendForgotOtp}>
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 600 }}>Email or Phone *</label>
+                <div style={{ position: 'relative' }}>
+                  <Mail size={20} color="var(--text-muted)" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)' }} />
+                  <input type="text" placeholder="Enter your email or phone" value={forgotEmail} onChange={e => setForgotEmail(e.target.value)} required style={{ width: '100%', padding: '14px 16px 14px 48px', border: '1.5px solid var(--border-color)', borderRadius: 12, fontSize: 15, background: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none' }} />
+                </div>
+              </div>
+              <button type="submit" disabled={loading} className="btn-shine" style={{ width: '100%', padding: '16px', background: 'var(--primary-gradient)', color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
+                {loading ? 'Sending OTP...' : 'Send Reset OTP'} <ArrowRight size={18} />
+              </button>
+              <div style={{ textAlign: 'center', marginTop: 16 }}>
+                <span onClick={() => setForgotStep(null)} style={{ fontSize: 14, color: 'var(--text-secondary)', cursor: 'pointer', fontWeight: 500 }}>Back to Login</span>
+              </div>
+            </form>
+          )}
+
+          {forgotStep === 'otp' && (
+            <form onSubmit={handleVerifyForgotOtp}>
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 600 }}>Enter OTP Sent to {forgotEmail} *</label>
+                <div style={{ position: 'relative' }}>
+                  <Key size={20} color="var(--text-muted)" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)' }} />
+                  <input type="text" placeholder="Enter 6-digit OTP" value={forgotOtp} onChange={e => setForgotOtp(e.target.value.replace(/\D/g, '').slice(0, 6))} required style={{ width: '100%', padding: '14px 16px 14px 48px', border: '1.5px solid var(--border-color)', borderRadius: 12, fontSize: 15, background: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none', letterSpacing: 4, fontWeight: 700 }} />
+                </div>
+              </div>
+              <button type="submit" disabled={loading} className="btn-shine" style={{ width: '100%', padding: '16px', background: 'var(--primary-gradient)', color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
+                {loading ? 'Verifying...' : 'Verify OTP'} <ArrowRight size={18} />
+              </button>
+              <div style={{ textAlign: 'center', marginTop: 16 }}>
+                <span onClick={() => setForgotStep('email')} style={{ fontSize: 14, color: 'var(--text-secondary)', cursor: 'pointer', fontWeight: 500 }}>Back</span>
+              </div>
+            </form>
+          )}
+
+          {forgotStep === 'reset' && (
+            <form onSubmit={handleResetPassword}>
+              <div style={{ marginBottom: 20 }}>
+                <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 600 }}>New Password *</label>
+                <div style={{ position: 'relative' }}>
+                  <Lock size={20} color="var(--text-muted)" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)' }} />
+                  <input type={showPass ? "text" : "password"} placeholder="Enter new password" value={newPassword} onChange={e => setNewPassword(e.target.value)} required style={{ width: '100%', padding: '14px 48px', border: '1.5px solid var(--border-color)', borderRadius: 12, fontSize: 15, background: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none' }} />
+                  <div onClick={() => setShowPass(!showPass)} style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: 'var(--text-muted)' }}>
+                    {showPass ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </div>
+                </div>
+              </div>
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 600 }}>Confirm New Password *</label>
+                <div style={{ position: 'relative' }}>
+                  <Lock size={20} color="var(--text-muted)" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)' }} />
+                  <input type={showPass ? "text" : "password"} placeholder="Confirm new password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required style={{ width: '100%', padding: '14px 48px', border: '1.5px solid var(--border-color)', borderRadius: 12, fontSize: 15, background: 'var(--bg-secondary)', color: 'var(--text-primary)', outline: 'none' }} />
+                </div>
+              </div>
+              <button type="submit" disabled={loading} className="btn-shine" style={{ width: '100%', padding: '16px', background: 'var(--primary-gradient)', color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
+                {loading ? 'Resetting...' : 'Create New Password'} <ArrowRight size={18} />
+              </button>
+            </form>
+          )}
+
+          {!forgotStep && (
+            <div style={{ marginTop: 24, textAlign: 'center', fontSize: 14, color: 'var(--text-secondary)' }}>
+              Don't have an account?{' '}
+              <span 
+                onClick={() => { setLoginMethod('phone'); setOtpStep('phone'); }} 
+                style={{ color: 'var(--blue)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}
+              >
+                Register using Phone
+              </span>
+            </div>
+          )}
         </div>
       </div>
 

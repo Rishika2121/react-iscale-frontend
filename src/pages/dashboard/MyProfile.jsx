@@ -48,7 +48,7 @@ const styles = `
 }
 
 .profile-card-header h2 {
-  font-size: 1.25rem;
+  font-size: 1.8rem;
   font-weight: 800;
   color: var(--text-primary);
   letter-spacing: -0.3px;
@@ -61,10 +61,10 @@ const styles = `
 
 .profile-field {
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 260px 1fr;
   gap: 16px;
   align-items: center;
-  padding: 16px 16px;
+  padding: 20px 16px;
   border-bottom: 1px solid var(--border-color);
   border-radius: 12px;
   transition: all 0.2s ease;
@@ -80,35 +80,35 @@ const styles = `
 }
 
 .field-label {
-  font-size: 1rem;
+  font-size: 1.3rem;
   color: var(--text-secondary);
   font-weight: 600;
   letter-spacing: 0.3px;
 }
 
 .field-display {
-  font-size: 1.1rem;
+  font-size: 1.4rem;
   color: var(--text-primary);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .field-empty {
-  font-size: 1rem;
+  font-size: 1.3rem;
   color: var(--text-muted);
   font-style: italic;
 }
 
 .field-input {
   width: 100%;
-  padding: 12px 16px;
+  padding: 14px 18px;
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  font-size: 1.05rem;
+  font-size: 1.3rem;
   outline: none;
   background: var(--bg-secondary);
   transition: all 0.2s;
   color: var(--text-primary);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .field-input:focus {
@@ -119,7 +119,7 @@ const styles = `
 
 .field-textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 120px;
 }
 
 .profile-form-actions {
@@ -174,23 +174,23 @@ const styles = `
 }
 
 .avatar-circle span {
-  font-size: 2.5rem;
+  font-size: 3.5rem;
   font-weight: 800;
   color: white;
   letter-spacing: -1px;
 }
 
 .avatar-name {
-  font-size: 1.25rem;
+  font-size: 1.8rem;
   font-weight: 800;
   color: var(--text-primary);
   margin-bottom: 4px;
 }
 
 .avatar-email {
-  font-size: 0.95rem;
+  font-size: 1.3rem;
   color: var(--text-secondary);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .avatar-upload-btn {
@@ -199,6 +199,9 @@ const styles = `
   background: rgba(255,255,255,0.05);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 12px;
 }
 
 .avatar-upload-btn:hover {
@@ -225,7 +228,7 @@ const styles = `
 }
 
 .account-info-card h3 {
-  font-size: 1.2rem;
+  font-size: 1.8rem;
   font-weight: 800;
   color: var(--text-primary);
   margin-bottom: 24px;
@@ -236,8 +239,9 @@ const styles = `
   justify-content: space-between;
   padding: 14px 0;
   border-bottom: 1px solid var(--border-color);
-  font-size: 0.95rem;
+  font-size: 1.3rem;
   transition: all 0.2s;
+  font-weight: 600;
 }
 
 .account-detail:hover {
@@ -749,12 +753,12 @@ const MyProfile = () => {
                   </div>
                 </div>
                 {passMsg && (
-                  <div style={{ color: passStatus === 'success' ? '#10b981' : '#ef4444', fontSize: '14px', fontWeight: '600', marginTop: '8px' }}>
+                  <div style={{ color: passStatus === 'success' ? '#10b981' : '#ef4444', fontSize: '1.2rem', fontWeight: '600', marginTop: '8px' }}>
                     {passMsg}
                   </div>
                 )}
                 <div style={{ marginTop: '16px' }}>
-                  <button className="btn-primary" onClick={handlePasswordSave} style={{ padding: '10px 20px', width: 'auto' }}>
+                  <button className="btn-primary" onClick={handlePasswordSave} style={{ padding: '12px 24px', width: 'auto', fontSize: '1.2rem' }}>
                     Update Password
                   </button>
                 </div>

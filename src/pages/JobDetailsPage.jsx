@@ -258,7 +258,7 @@ const JobDetailsPage = ({ setCurrentPage }) => {
                 }}
                 className="btn-shine"
                 style={{
-                  padding: '14px', background: 'linear-gradient(135deg, #2563eb, #3b82f6)', 
+                  padding: '14px', background: 'var(--primary-gradient)', 
                   color: '#fff', borderRadius: '10px', fontWeight: '700', fontSize: '16px', 
                   border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
                 }}

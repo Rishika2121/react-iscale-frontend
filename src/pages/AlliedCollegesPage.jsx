@@ -6,7 +6,7 @@ const AlliedCollegesPage = () => {
 
   useEffect(() => { 
     window.scrollTo(0, 0); 
-    fetch('https://iscale-backend.onrender.com/api/allied/public-all-allied?page=1&limit=1000')
+    fetch('https://iscale-backend.onrender.com/api/allied/public-all-allied?page=1&limit=20')
       .then(res => res.json())
       .then(result => {
         const arr = result.data?.docs || result.data || [];
@@ -18,7 +18,7 @@ const AlliedCollegesPage = () => {
               return cleaned.startsWith('http') ? cleaned : `https://iscale-backend.onrender.com/${cleaned.replace(/^src\//, '')}`;
             };
             return {
-              name: item.m_allied_title || item.name || 'Allied College',
+              name: item.m_allied_title || item.name || '',
               img: getImageUrl(item.m_allied_image || item.m_allied_logo || item.image || item.logo)
             };
           });
@@ -41,11 +41,7 @@ const AlliedCollegesPage = () => {
         position: 'relative', overflow: 'hidden',
         borderBottom: '1px solid var(--border-color)'
       }}>
-        <img 
-          src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" 
-          alt="Banner" 
-          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.15 }}
-        />
+        {/* Banner image removed as per user request to use no dummy images */}
         <div style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
           <h1 style={{ fontSize: 40, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 8 }}>Allied Colleges</h1>
           <div style={{ color: 'var(--text-secondary)', fontSize: 13, fontWeight: 500 }}>

@@ -305,9 +305,24 @@ const CoursesPage = ({ setCurrentPage }) => {
                     <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, color: 'var(--text-primary)' }}>
                       {course.price}
                     </span>
-                    <span className="public-enroll-btn">
-                      Learn More <ArrowRight size={14} />
-                    </span>
+                    
+                    {(() => {
+                      let isAlreadyEnrolled = false;
+                      try {
+                        const localEnrolled = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
+                        isAlreadyEnrolled = localEnrolled.some(c => c.id === course.id || c._id === course.id);
+                      } catch(e) {}
+                      
+                      return isAlreadyEnrolled ? (
+                        <span className="public-enroll-btn" style={{ background: '#22c55e', pointerEvents: 'none' }}>
+                          Enrolled <CheckCircle size={14} />
+                        </span>
+                      ) : (
+                        <span className="public-enroll-btn">
+                          Learn More <ArrowRight size={14} />
+                        </span>
+                      );
+                    })()}
                   </div>
                 </div>
                 );

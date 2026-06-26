@@ -1,21 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, ChevronDown, ChevronRight, Youtube, Sun, Moon, Calendar, Trophy, MessageSquare, Briefcase, Mic, ShieldCheck, TrendingUp, Award, Sparkles } from 'lucide-react';
+import iscaleLogo from '../assets/images/iscale-logo.jpeg';
 
 const Logo = () => (
-  <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-    <div style={{
-      width: 44, height: 44,
-      background: 'var(--red)',
-      borderRadius: 8,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      position: 'relative'
-    }}>
-      <span style={{ color: '#fff', fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20 }}>i</span>
-    </div>
-    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, letterSpacing: -0.5, color: 'var(--text-primary)', position: 'relative' }}>
-      <span style={{ color: 'var(--red)' }}>i</span>SCALE
-      <sup style={{ fontSize: '10px', color: 'var(--text-muted)', marginLeft: '2px', fontWeight: 600 }}>TM</sup>
-    </span>
+  <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+    <img src={iscaleLogo} alt="iSCALE Logo" style={{ height: 44, objectFit: 'contain' }} />
   </div>
 );
 
@@ -202,7 +191,7 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
           to { opacity: 1; transform: translateY(0); }
         }
         .highlights-ribbon {
-          background: linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%);
+          background: var(--primary-gradient);
           color: #fff;
           padding: 8px 0;
           font-size: 11px;

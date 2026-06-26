@@ -856,11 +856,22 @@ const CourseDetailsPage = ({ courseId, setCurrentPage }) => {
                 const currentlyEnrolled = enrolled.some(c => c.id === realCourseId);
                 
                 let topicRes;
-                if (token && currentlyEnrolled) {
-                  topicRes = await fetch(`https://iscale-backend.onrender.com/api/lecture-progress/lectures/${subjectId}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                  });
-                } else {
+                let fetchSuccess = false;
+                
+                if (token) {
+                  try {
+                    topicRes = await fetch(`https://iscale-backend.onrender.com/api/lecture-progress/lectures/${subjectId}`, {
+                      headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (topicRes.ok) {
+                      fetchSuccess = true;
+                    }
+                  } catch (e) {
+                    // Ignore and let it fall back
+                  }
+                }
+                
+                if (!fetchSuccess) {
                   topicRes = await fetch(`https://iscale-backend.onrender.com/api/topics/public/${subjectId}?page=1&limit=1000`);
                 }
 
@@ -884,7 +895,7 @@ const CourseDetailsPage = ({ courseId, setCurrentPage }) => {
                         videoUrl: t.video || t.video_link || t.ml_video_id || t.url || t.link || null,
                         isDummy: false,
                         isFree: t.is_free || t.isFree || false,
-                        isCompleted: t.is_completed || false,
+                        isCompleted: t.is_completed || t.isCompleted || false,
                         subtopics: mappedSubtopics
                       };
                     });
@@ -1040,24 +1051,61 @@ const [studentName, setStudentName] = useState(() => {
       if (u && u.name) return u.name;
     }
   } catch(e) {}
-  return 'Ridhi Mishra';
+return 'Ridhi Mishra';
 });
 
 useEffect(() => {
-  try {
-    const enrolled = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
-    setIsEnrolled(enrolled.some(c => c.id === data.id));
-  } catch (e) {
-    setIsEnrolled(false);
-  }
-  try {
-    // Rely completely on API backend data loaded into curriculumData instead of dummy local cache.
-    setCompletedLectures([]);
-  } catch (e) {
+    // Read from localStorage instantly to avoid flash of red button
+    try {
+      const enrolled = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
+      setIsEnrolled(enrolled.some(c => c.id === data.id || c._id === data.id));
+    } catch (e) {
+      setIsEnrolled(false);
+    }
+    
+    // Background fetch to ensure it perfectly matches the database!
+    const syncEnrollment = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      try {
+        const [premiumRes, freeRes] = await Promise.all([
+          fetch('https://iscale-backend.onrender.com/api/enrolled-courses/premium-courses', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('https://iscale-backend.onrender.com/api/enrolled-courses/free-courses', { headers: { 'Authorization': `Bearer ${token}` } })
+        ]);
+        
+        let combined = [];
+        if (premiumRes.ok) {
+          const pData = await premiumRes.json();
+          if (pData.status && Array.isArray(pData.data)) combined = [...combined, ...pData.data];
+        }
+        if (freeRes.ok) {
+          const fData = await freeRes.json();
+          if (fData.status && Array.isArray(fData.data)) combined = [...combined, ...fData.data];
+        }
+        
+        localStorage.setItem('enrolled_courses', JSON.stringify(combined));
+        setIsEnrolled(combined.some(c => c.id === data.id || c._id === data.id));
+      } catch (err) {
+        console.error("Failed to sync enrollment", err);
+      }
+    };
+    syncEnrollment();
+  }, [data.id]);
+
+useEffect(() => {
+  if (curriculumData && curriculumData.length > 0) {
+    try {
+      const allLecturesList = curriculumData.flatMap(subj => subj.modules).filter(m => !m.isDummy);
+      const apiCompleted = allLecturesList.filter(l => l.isCompleted).map(l => l.id);
+      setCompletedLectures([...new Set(apiCompleted)]);
+    } catch (e) {
+      setCompletedLectures([]);
+    }
+  } else {
     setCompletedLectures([]);
   }
   setPlaylistSearch('');
-}, [data.id]);
+}, [data.id, curriculumData]);
 
 useEffect(() => {
   if (currentLectures && currentLectures.length > 0) {
@@ -1139,34 +1187,79 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
         return;
       }
 
-      const res = await fetch('https://iscale-backend.onrender.com/api/enroll-course/enroll', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+      // Extract real course price from DB (apiData)
+      let actualPriceInINR = 0;
+      if (apiData?.offer_price && apiData.offer_price !== 'N/A' && apiData.offer_price != 0) {
+        actualPriceInINR = parseInt(String(apiData.offer_price).replace(/,/g, ''));
+      } else if (apiData?.price && apiData.price !== 'N/A' && apiData.price != 0) {
+        actualPriceInINR = parseInt(String(apiData.price).replace(/,/g, ''));
+      }
+      if (!actualPriceInINR || isNaN(actualPriceInINR) || actualPriceInINR <= 0) {
+        actualPriceInINR = 500; // Absolute fallback just in case DB price is missing
+      }
+      // Razorpay expects the amount in PAISE (multiply INR by 100)
+      const computedAmountInPaise = actualPriceInINR * 100;
+
+      const userStr = localStorage.getItem('user');
+      const userObj = userStr ? JSON.parse(userStr) : {};
+      
+      const options = {
+        key: "rzp_live_2NpvqTEtpK89Xv", // Restored your Live Key!
+        amount: computedAmountInPaise, 
+        currency: "INR",
+        name: "iSCALE",
+        description: "Course Enrollment",
+        handler: async function (response) {
+            try {
+              // 1. PAYMENT SUCCESSFUL! Now officially save it to the Backend Database!
+              const enrollRes = await fetch('https://iscale-backend.onrender.com/api/enroll-course/enroll', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ course_id: apiData?._id || courseId })
+              });
+              
+              const enrollData = await enrollRes.json();
+              
+              if (enrollRes.ok || enrollData.status) {
+                // 2. Backend successfully registered the purchase!
+                setIsEnrolled(true);
+                
+                // 3. Save locally to reflect immediately before they visit Home
+                const enrolledList = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
+                if (!enrolledList.some(c => c.id === data.id)) {
+                  enrolledList.push({ id: data.id, title: data.title, date: new Date().toISOString() });
+                  localStorage.setItem('enrolled_courses', JSON.stringify(enrolledList));
+                }
+                
+                alert(`Successfully enrolled and saved to database! All lectures are now unlocked.`);
+              } else {
+                alert("Payment succeeded, but backend failed to save enrollment: " + (enrollData.message || "Error"));
+              }
+              
+            } catch (err) {
+              console.error(err);
+              alert('Error connecting to backend database after payment.');
+            }
         },
-        body: JSON.stringify({ course_id: apiData?._id || courseId })
-      });
-      const resData = await res.json();
-
-      if (res.status === 401) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        localStorage.setItem('redirectAfterLogin', `course-details/${courseId}`);
-        if (setCurrentPage) {
-          setCurrentPage('login');
-        } else {
-          window.location.href = '/login';
+        prefill: {
+          name: userObj.name || userObj.m_name || "Student",
+          email: userObj.email || userObj.m_email || "test@iscale.com",
+          contact: userObj.phone || userObj.m_phone || "9999999999"
+        },
+        theme: {
+          color: "#2563eb"
         }
-        return;
-      }
+      };
 
-      if (resData.status) {
-        setIsEnrolled(true);
-        alert(resData.message || `Successfully enrolled in "${data.title}"! All lectures are now unlocked.`);
-      } else {
-        alert(resData.message || 'Failed to enroll. Please try again.');
-      }
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (response) {
+        alert(response.error.description || 'Payment Failed');
+      });
+      rzp.open();
+
     } catch (e) {
       console.error(e);
       alert('Error enrolling. Please try again later.');
@@ -1317,16 +1410,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
   const assignedInstructors = assignedInstructorsRaw || [];
 
   const instructorsData = instructorsList && instructorsList.length > 0
-    ? instructorsList
-        .filter(i => {
-          if (!assignedInstructors || !Array.isArray(assignedInstructors) || assignedInstructors.length === 0) return false;
-          const iId = String(i._id || i.id);
-          return assignedInstructors.some(t => {
-            const tId = String(t && typeof t === 'object' ? (t._id || t.id || t) : t);
-            return tId === iId;
-          });
-        })
-        .map(i => ({
+    ? instructorsList.map(i => ({
           name: i.m_instructor_name || 'Instructor',
           bio: i.m_instructor_bio || '',
           experience: i.m_instructor_experience || '',
@@ -1399,7 +1483,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
               )}
             </div>
             {/* Mark Complete functionality inside the modal if it's a real lecture */}
-            {activeCohortLecture && activeCohortLecture.id && !completedLectures.includes(activeCohortLecture.id) && (
+            {activeCohortLecture && activeCohortLecture.id && (
               <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
                 <button 
                   onClick={async () => {
@@ -1414,6 +1498,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                       if (rData.status) {
                         const newCompleted = [...completedLectures, activeCohortLecture.id];
                         setCompletedLectures(newCompleted);
+                        localStorage.setItem(`completed_lectures_${data.id}`, JSON.stringify(newCompleted));
                         alert('Lecture marked as completed!');
                         // Also automatically update enrolled course progress if possible
                         try {

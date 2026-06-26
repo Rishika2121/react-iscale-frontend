@@ -72,14 +72,14 @@ const SuccessStoryPage = ({ setCurrentPage }) => {
           const mapped = arr.map(item => {
             const rawVideoUrl = item.m_ss_youtube_url || item.m_ss_video || item.videoUrl || item.url || item.video || item.c_ss_video_url || item.c_ss_link || '';
             const videoUrl = getEmbedUrl(rawVideoUrl);
-            const studentName = item.m_ss_name || item.name || item.studentName || item.c_ss_name || item.c_ss_student_name || 'Student';
+            const studentName = item.m_ss_name || item.name || item.studentName || item.c_ss_name || item.c_ss_student_name || '';
             const imgUrl = getImageUrl(item.m_ss_image || item.image || item.c_ss_image);
 
             return {
               videoId: videoUrl,
               name: studentName,
-              company: item.m_ss_placed || item.company || item.companyName || item.c_ss_company || 'Partner Company',
-              package: item.m_ss_package || item.package || item.c_ss_package || 'N/A',
+              company: item.m_ss_placed || item.company || item.companyName || item.c_ss_company || '',
+              package: item.m_ss_package || item.package || item.c_ss_package || '',
               img: imgUrl
             };
           });
@@ -141,10 +141,10 @@ const SuccessStoryPage = ({ setCurrentPage }) => {
                         <img src={story.img} alt={story.name} className="student-avatar" />
                       )}
                       <div className="student-info">
-                        <h5 className="student-name">{story.name}</h5>
+                        {story.name && <h5 className="student-name">{story.name}</h5>}
                         <div className="student-details">
-                          Placed at: <strong>{story.company}</strong> <br />
-                          Package: <strong>{story.package}</strong>
+                          {story.company && <>Placed at: <strong>{story.company}</strong> <br /></>}
+                          {story.package && <>Package: <strong>{story.package}</strong></>}
                         </div>
                       </div>
                     </div>
