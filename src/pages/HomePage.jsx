@@ -1855,9 +1855,25 @@ const HomePage = ({ setCurrentPage }) => {
               combined = [...combined, ...data.data];
             }
           }
+          const normalizeCourse = (apiCourse) => {
+            const cObj = apiCourse.course_id || apiCourse;
+            return {
+              id: cObj._id || cObj.id || apiCourse._id,
+              title: cObj.title || apiCourse.title || 'Enrolled Course',
+              category: cObj.category || apiCourse.category || 'Course',
+              img: cObj.thumbnail || cObj.banner || apiCourse.thumbnail || apiCourse.img || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80',
+              progress: apiCourse.progress || cObj.progress || 0,
+              date: apiCourse.createdAt || new Date().toISOString()
+            };
+          };
+          
+          const normalized = combined.map(normalizeCourse);
+
           // Do not inject any dummy fallback data
-          setEnrolledCourses(combined);
-          localStorage.setItem('enrolled_courses', JSON.stringify(combined));
+          setEnrolledCourses(normalized);
+          localStorage.setItem('enrolled_courses', JSON.stringify(normalized));
+          const ids = normalized.map(c => c.id).filter(Boolean);
+          localStorage.setItem('enrolled_course_ids', JSON.stringify(ids));
         } catch (e) {
           console.error("Failed to fetch enrolled courses", e);
         }

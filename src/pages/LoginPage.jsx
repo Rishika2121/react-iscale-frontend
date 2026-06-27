@@ -36,6 +36,52 @@ const LoginPage = ({ setCurrentPage }) => {
     };
   };
 
+  const fetchAndStoreEnrolledCourses = async (token) => {
+    try {
+      const [premiumRes, freeRes] = await Promise.all([
+        fetch('https://iscale-backend.onrender.com/api/enrolled-courses/premium-courses', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }),
+        fetch('https://iscale-backend.onrender.com/api/enrolled-courses/free-courses', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        })
+      ]);
+      
+      let combined = [];
+      if (premiumRes.ok) {
+        const data = await premiumRes.json();
+        if (data.status && Array.isArray(data.data)) {
+          combined = [...combined, ...data.data];
+        }
+      }
+      if (freeRes.ok) {
+        const data = await freeRes.json();
+        if (data.status && Array.isArray(data.data)) {
+          combined = [...combined, ...data.data];
+        }
+      }
+      const normalizeCourse = (apiCourse) => {
+        const cObj = apiCourse.course_id || apiCourse;
+        return {
+          id: cObj._id || cObj.id || apiCourse._id,
+          title: cObj.title || apiCourse.title || 'Enrolled Course',
+          category: cObj.category || apiCourse.category || 'Course',
+          img: cObj.thumbnail || cObj.banner || apiCourse.thumbnail || apiCourse.img || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80',
+          progress: apiCourse.progress || cObj.progress || 0,
+          date: apiCourse.createdAt || new Date().toISOString()
+        };
+      };
+      
+      const normalized = combined.map(normalizeCourse);
+      
+      localStorage.setItem('enrolled_courses', JSON.stringify(normalized));
+      const ids = normalized.map(c => c.id).filter(Boolean);
+      localStorage.setItem('enrolled_course_ids', JSON.stringify(ids));
+    } catch (e) {
+      console.error("Failed to fetch enrolled courses", e);
+    }
+  };
+
   const handleLogin = async (e) => {
     if (e) e.preventDefault();
     if (!form.credential || !form.password) {
@@ -55,6 +101,8 @@ const LoginPage = ({ setCurrentPage }) => {
       if (data.status) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(normalizeUser(data.user)));
+        
+        await fetchAndStoreEnrolledCourses(data.token);
         
         setPopupMessage(`Welcome back! Preparing your customized dashboard...`);
         setShowSuccessPopup(true);
@@ -238,6 +286,7 @@ const LoginPage = ({ setCurrentPage }) => {
         if (data.user) {
           localStorage.setItem("user", JSON.stringify(normalizeUser(data.user)));
         }
+        await fetchAndStoreEnrolledCourses(authToken);
         setPopupMessage("Welcome back!");
         setShowSuccessPopup(true);
         setTimeout(() => setCurrentPage("dashboard"), 1500);
@@ -250,6 +299,7 @@ const LoginPage = ({ setCurrentPage }) => {
       } 
       else {
         localStorage.setItem("token", authToken);
+        await fetchAndStoreEnrolledCourses(authToken);
         setPopupMessage("Login Successful!");
         setShowSuccessPopup(true);
         setTimeout(() => setCurrentPage("dashboard"), 1500);

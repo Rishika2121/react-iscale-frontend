@@ -47,12 +47,13 @@ const EnrolledCourses = () => {
           enrolledList = await Promise.all(enrolledList.map(async (c) => {
             const actualCourse = c.course_id || c.courseId || c;
             
+            let rawImg = actualCourse.thumbnail || actualCourse.banner || actualCourse.m_course_thumbnail || actualCourse.m_course_image || actualCourse.img || c.thumbnail || c.img || '';
             let imgUrl = '';
-            if (actualCourse.banner && actualCourse.banner !== 'N/A') {
-              const cleanedPath = actualCourse.banner.replace(/\\/g, '/');
+            if (rawImg && rawImg !== 'N/A') {
+              const cleanedPath = rawImg.replace(/\\/g, '/');
               imgUrl = cleanedPath.startsWith('http') ? cleanedPath : `https://iscale-backend.onrender.com/${cleanedPath.replace(/^src\//, '')}`;
             } else {
-              imgUrl = actualCourse.m_course_thumbnail || actualCourse.m_course_image || actualCourse.img || '';
+              imgUrl = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80';
             }
 
             const mappedCourse = {
@@ -217,32 +218,11 @@ const EnrolledCourses = () => {
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button 
-                    onClick={() => handleDebugClick(course._id || course.id)}
-                    style={{
-                      flex: 0.3,
-                      padding: '10px',
-                      background: 'var(--bg-secondary)',
-                      color: 'var(--text-secondary)',
-                      border: '1.5px solid var(--border-color)',
-                      borderRadius: '8px',
-                      fontSize: '11px',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      transition: 'all 0.2s ease'
-                    }}
-                    title="Detailed Progress (Debug)"
-                  >
-                    Debug
-                  </button>
+                <div style={{ display: 'flex' }}>
                   <button 
                     onClick={() => navigate(`/enrolled-course-details/${course._id || course.id}`)}
                     className="compact-resume-btn"
-                    style={{ flex: 1 }}
+                    style={{ flex: 1, width: '100%' }}
                   >
                     Resume Player <ArrowRight size={13} />
                   </button>

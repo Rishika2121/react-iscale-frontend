@@ -222,7 +222,17 @@ const Settings = () => {
               <div>
                 <label className="settings-label">Upload Profile Picture</label>
                 <div style={{ border: "1px solid #e2e8f0", borderRadius: 12, padding: "11px 16px", background: "#f8fafc", display: "flex", alignItems: "center" }}>
-                  <input type="file" style={{ fontSize: 13, width: '100%' }} />
+                  <input 
+                    type="file" 
+                    accept="image/png, image/jpeg, image/jpg, image/webp, image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        setFormData(prev => ({ ...prev, profileImage: file }));
+                      }
+                    }}
+                    style={{ fontSize: 13, width: '100%' }} 
+                  />
                 </div>
               </div>
               <div>

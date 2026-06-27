@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 
 import iscaleLogo from '../assets/images/iscale-logo-v3.png';
+import Footer from './Footer';
 
 const MegaDropdown = ({ type, isOpen, onClose, setCurrentPage, categories }) => {
   const [activeCategory, setActiveCategory] = useState(
@@ -961,42 +962,7 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
         </div>
       </div>
 
-      <footer className="db-footer">
-        <div className="footer-grid">
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-              <ShieldLogo onClick={() => {}} />
-            </div>
-            <p style={{ fontSize: 14, color: '#94A3B8', lineHeight: 1.6, marginBottom: 20 }}>Mastering Skills, Scaling Success.</p>
-          </div>
-          <div>
-            <h3 className="footer-heading">Quick Links</h3>
-            <ul className="footer-links-list">
-              <li><button className="footer-link-btn" onClick={() => setCurrentPage('home')}>About Us</button></li>
-              <li><button className="footer-link-btn">Our Clients</button></li>
-              <li><button className="footer-link-btn">Allied Colleges</button></li>
-              <li><button className="footer-link-btn" onClick={() => setCurrentPage('hire-with-us')}>Hire with Us</button></li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="footer-heading">Helpful Links</h3>
-            <ul className="footer-links-list">
-              <li><button className="footer-link-btn">Contact Us</button></li>
-              <li><button className="footer-link-btn">Terms & Conditions</button></li>
-              <li><button className="footer-link-btn">Privacy Policy</button></li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="footer-heading">Reach Us Out</h3>
-            <ul className="footer-links-list" style={{ gap: 16 }}>
-              <li style={{ fontSize: 14, display: 'flex', gap: 8 }}><span style={{ color: '#2563eb' }}>Phone:</span> +91 7880113112</li>
-              <li style={{ fontSize: 14, display: 'flex', gap: 8 }}><span style={{ color: '#2563eb' }}>Whatsapp:</span> +91 7880113112</li>
-              <li style={{ fontSize: 14, display: 'flex', gap: 8 }}><span style={{ color: '#2563eb' }}>E-mail:</span> contact@theiscale.com | info@theiscale.com</li>
-              <li style={{ fontSize: 14, display: 'flex', gap: 8, lineHeight: 1.5 }}><span style={{ color: '#2563eb' }}>Working Location:</span> Bangalore || Chhattisgarh</li>
-            </ul>
-          </div>
-        </div>
-      </footer>
+      <Footer setCurrentPage={setCurrentPage} theme="light" />
 
       {/* Mobile Top Navigation */}
       <style dangerouslySetInnerHTML={{__html: `

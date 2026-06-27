@@ -26,8 +26,17 @@ const MegaDropdown = ({ type, isOpen, onClose, setCurrentPage, categories }) => 
   const activeCategories = type === 'cohort' ? ['Cohort Courses'] : Object.keys(categories).filter(c => c !== 'Cohort Courses');
 
   return (
-    <div className="mega-dropdown-overlay" onMouseLeave={onClose} onClick={onClose}>
-      <div className="mega-dropdown-inner-bg" onClick={e => e.stopPropagation()}>
+    <>
+      <div 
+        className="mega-dropdown-overlay" 
+        onMouseEnter={onClose} 
+        onClick={onClose} 
+      />
+      <div 
+        className="mega-dropdown-inner-bg" 
+        onMouseLeave={onClose} 
+        onClick={e => e.stopPropagation()}
+      >
         <div className="container-fluid mega-dropdown-content" style={{ padding: '24px' }}>
           <div className={type === 'cohort' ? 'mega-grid-cohort' : 'mega-grid-all'}>
             {/* Left Column: Categories List (Only for All Courses) */}
@@ -71,7 +80,7 @@ const MegaDropdown = ({ type, isOpen, onClose, setCurrentPage, categories }) => 
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
@@ -202,10 +211,12 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
           cursor: default;
         }
         .mega-dropdown-inner-bg {
+          position: fixed;
+          top: 70px;
+          left: 4%;
           background: var(--bg-primary);
-          width: 100%;
+          width: calc(100% - 8%);
           max-width: 1060px;
-          margin-left: 4%;
           display: flex;
           flex-direction: column;
           box-shadow: 0 10px 40px rgba(0,0,0,0.15);
@@ -213,6 +224,7 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
           border-top: none;
           border-radius: 0 0 12px 12px;
           overflow: hidden;
+          z-index: 1001;
           animation: navSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         @keyframes navFadeIn {
@@ -436,19 +448,25 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
       </div>
 
       {/* Main Navbar */}
-      <nav className="main-navbar" style={{
-        background: scrolled ? 'var(--nav-bg)' : 'var(--bg-primary)',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
-        boxShadow: scrolled ? 'var(--card-shadow)' : 'none',
-        borderBottom: `1px solid var(--border-color)`,
-        position: 'sticky', top: 0, zIndex: 100,
-        transition: 'all 0.3s ease'
-      }}>
+      <nav className="main-navbar" 
+        onMouseLeave={() => { setDropdownAllOpen(false); setDropdownCohortOpen(false); }}
+        style={{
+          background: scrolled ? 'var(--nav-bg)' : 'var(--bg-primary)',
+          backdropFilter: scrolled ? 'blur(12px)' : 'none',
+          boxShadow: scrolled ? 'var(--card-shadow)' : 'none',
+          borderBottom: `1px solid var(--border-color)`,
+          position: 'sticky', top: 0, zIndex: 100,
+          transition: 'all 0.3s ease'
+        }}
+      >
         <div style={{
           width: '100%', margin: '0 auto', padding: '0 4%',
           display: 'flex', alignItems: 'center', height: 70, gap: '2%', justifyContent: 'space-between'
         }}>
-          <div onClick={() => { setCurrentPage('home'); setDropdownAllOpen(false); setDropdownCohortOpen(false); }}>
+          <div 
+            onClick={() => { setCurrentPage('home'); setDropdownAllOpen(false); setDropdownCohortOpen(false); }}
+            onMouseEnter={() => { setDropdownAllOpen(false); setDropdownCohortOpen(false); }}
+          >
             <Logo />
           </div>
 
@@ -486,7 +504,11 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
                   borderRadius: 8, transition: 'all 0.2s',
                   cursor: 'pointer', whiteSpace: 'nowrap'
                 }}
-                onMouseEnter={e => e.target.style.color = 'var(--red)'}
+                onMouseEnter={e => {
+                  e.target.style.color = 'var(--red)';
+                  setDropdownAllOpen(false);
+                  setDropdownCohortOpen(false);
+                }}
                 onMouseLeave={e => e.target.style.color = currentPage === item.toLowerCase().replace(' ', '-') ? 'var(--red)' : 'var(--text-primary)'}
               >
                 {item}
@@ -518,7 +540,11 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
                 color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4,
                 position: 'relative', whiteSpace: 'nowrap'
               }}
-              onMouseEnter={() => setMoreOpen(true)}
+              onMouseEnter={() => {
+                setMoreOpen(true);
+                setDropdownAllOpen(false);
+                setDropdownCohortOpen(false);
+              }}
               onMouseLeave={() => setMoreOpen(false)}
             >
               More <ChevronDown size={20} />
@@ -550,7 +576,7 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
             </div>
           </div>
 
-          <div className="nav-ctas">
+          <div className="nav-ctas" onMouseEnter={() => { setDropdownAllOpen(false); setDropdownCohortOpen(false); }}>
             {/* Dark Mode Switcher */}
             <button
               onClick={toggleTheme}

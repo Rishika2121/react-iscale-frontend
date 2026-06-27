@@ -810,9 +810,30 @@ const CourseDetailsPage = ({ courseId, setCurrentPage }) => {
       }
 
       if (!matchedCourse && !/^[0-9a-fA-F]{24}$/.test(realCourseId)) {
-        setFetchError("Course not found");
-        setLoading(false);
-        return;
+        if (coursesDatabase[realCourseId]) {
+          matchedCourse = coursesDatabase[realCourseId];
+          setApiData(matchedCourse);
+          setCurriculumData((matchedCourse.curriculum || []).map((subj, i) => ({
+            id: `subj-${i}`,
+            title: subj.title,
+            modules: (subj.modules || []).map((m, j) => ({
+              id: `mod-${i}-${j}`,
+              title: typeof m === 'string' ? m : m.title,
+              isDummy: false,
+              videoUrl: null
+            }))
+          })));
+          setFeatures(matchedCourse.details || []);
+          setTrainingHighlights(matchedCourse.highlights || []);
+          setLoading(false);
+          setSubjectsLoading(false);
+          setFeaturesLoading(false);
+          return;
+        } else {
+          setFetchError("Course not found");
+          setLoading(false);
+          return;
+        }
       }
 
       if (!matchedCourse) {
@@ -1015,14 +1036,14 @@ const getImageUrl = (url) => {
 };
 
 const data = {
-  id: apiData?._id || courseId,
+  id: apiData?._id || apiData?.id || courseId,
   title: apiData?.title || '',
   description: apiData?.description || '',
   category: apiData?.category || '',
-  thumbnail: getImageUrl(apiData?.banner) || `https://ui-avatars.com/api/?name=${encodeURIComponent(apiData?.title || 'Course')}&background=random&size=800`,
-  videoUrl: apiData?.video || apiData?.video_link,
+  thumbnail: apiData?.thumbnail || getImageUrl(apiData?.banner) || `https://ui-avatars.com/api/?name=${encodeURIComponent(apiData?.title || 'Course')}&background=random&size=800`,
+  videoUrl: apiData?.video || apiData?.video_link || apiData?.videoUrl,
   views: apiData?.views || 0,
-  lastUpdated: apiData?.updated_at ? new Date(apiData.updated_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : '',
+  lastUpdated: apiData?.lastUpdated || (apiData?.updated_at ? new Date(apiData.updated_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : ''),
   language: apiData?.language || 'Hinglish',
 };
 
@@ -1054,43 +1075,86 @@ const [studentName, setStudentName] = useState(() => {
 return 'Ridhi Mishra';
 });
 
-useEffect(() => {
-    // Read from localStorage instantly to avoid flash of red button
+  // Check if this course is enrolled — reads from simple persistent ID list
+  const checkEnrolledLocally = (id) => {
     try {
-      const enrolled = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
-      setIsEnrolled(enrolled.some(c => c.id === data.id || c._id === data.id));
-    } catch (e) {
-      setIsEnrolled(false);
+      const ids = JSON.parse(localStorage.getItem('enrolled_course_ids') || '[]');
+      return ids.includes(id);
+    } catch (e) { return false; }
+  };
+
+  // Save enrollment permanently to localStorage
+  const saveEnrolledLocally = (id) => {
+    try {
+      const ids = JSON.parse(localStorage.getItem('enrolled_course_ids') || '[]');
+      if (!ids.includes(id)) {
+        ids.push(id);
+        localStorage.setItem('enrolled_course_ids', JSON.stringify(ids));
+      }
+    } catch (e) {}
+  };
+
+  useEffect(() => {
+    const id = apiData?._id || courseId;
+    if (id && checkEnrolledLocally(id)) {
+      setIsEnrolled(true);
     }
-    
-    // Background fetch to ensure it perfectly matches the database!
-    const syncEnrollment = async () => {
+
+    const checkDbEnrollment = async () => {
       const token = localStorage.getItem('token');
       if (!token) return;
       try {
         const [premiumRes, freeRes] = await Promise.all([
-          fetch('https://iscale-backend.onrender.com/api/enrolled-courses/premium-courses', { headers: { 'Authorization': `Bearer ${token}` } }),
-          fetch('https://iscale-backend.onrender.com/api/enrolled-courses/free-courses', { headers: { 'Authorization': `Bearer ${token}` } })
+          fetch('https://iscale-backend.onrender.com/api/enrolled-courses/premium-courses', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          }),
+          fetch('https://iscale-backend.onrender.com/api/enrolled-courses/free-courses', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          })
         ]);
         
         let combined = [];
         if (premiumRes.ok) {
-          const pData = await premiumRes.json();
-          if (pData.status && Array.isArray(pData.data)) combined = [...combined, ...pData.data];
+          const resData = await premiumRes.json();
+          if (resData.status && Array.isArray(resData.data)) {
+            combined = [...combined, ...resData.data];
+          }
         }
         if (freeRes.ok) {
-          const fData = await freeRes.json();
-          if (fData.status && Array.isArray(fData.data)) combined = [...combined, ...fData.data];
+          const resData = await freeRes.json();
+          if (resData.status && Array.isArray(resData.data)) {
+            combined = [...combined, ...resData.data];
+          }
         }
         
-        localStorage.setItem('enrolled_courses', JSON.stringify(combined));
-        setIsEnrolled(combined.some(c => c.id === data.id || c._id === data.id));
-      } catch (err) {
-        console.error("Failed to sync enrollment", err);
+        const normalizeCourse = (apiCourse) => {
+          const cObj = apiCourse.course_id || apiCourse;
+          return {
+            id: cObj._id || cObj.id || apiCourse._id,
+            title: cObj.title || apiCourse.title || 'Enrolled Course',
+            category: cObj.category || apiCourse.category || 'Course',
+            img: cObj.thumbnail || cObj.banner || apiCourse.thumbnail || apiCourse.img || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80',
+            progress: apiCourse.progress || cObj.progress || 0,
+            date: apiCourse.createdAt || new Date().toISOString()
+          };
+        };
+        
+        const normalized = combined.map(normalizeCourse);
+        
+        localStorage.setItem('enrolled_courses', JSON.stringify(normalized));
+        const ids = normalized.map(c => c.id).filter(Boolean);
+        localStorage.setItem('enrolled_course_ids', JSON.stringify(ids));
+        
+        if (id && ids.includes(id)) {
+          setIsEnrolled(true);
+        }
+      } catch (e) {
+        console.error("Failed to fetch enrolled courses", e);
       }
     };
-    syncEnrollment();
-  }, [data.id]);
+    
+    checkDbEnrollment();
+  }, [apiData?._id, courseId]);
 
 useEffect(() => {
   if (curriculumData && curriculumData.length > 0) {
@@ -1176,6 +1240,7 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
 
   const handleEnrollClick = async () => {
     if (isEnrolled) {
+      // Already enrolled — scroll to curriculum
       const element = document.getElementById('coursecontent');
       if (element) {
         const y = element.getBoundingClientRect().top + window.scrollY - 150;
@@ -1183,17 +1248,49 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
       }
       return;
     }
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        localStorage.setItem('redirectAfterLogin', `course-details/${courseId}`);
-        if (setCurrentPage) {
-          setCurrentPage('login');
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      localStorage.setItem('redirectAfterLogin', `course-details/${courseId}`);
+      if (setCurrentPage) setCurrentPage('login');
+      else window.location.href = '/login';
+      return;
+    }
+
+    // ── FREE COURSE: enroll directly, no Razorpay ──
+    const isFree = apiData?.course_type === 1 || apiData?.price === 0 || apiData?.price === 'N/A' || !apiData?.price;
+    const realCourseId = apiData?._id || courseId;
+
+    if (isFree) {
+      try {
+        const res = await fetch('https://iscale-backend.onrender.com/api/enroll-course/enroll', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ course_id: realCourseId })
+        });
+        const json = await res.json();
+        // Accept any 2xx response or status:true or any message containing 'enroll'
+        const ok = res.ok || json?.status === true ||
+          (typeof json?.message === 'string' && json.message.toLowerCase().includes('enroll'));
+        if (ok) {
+          saveEnrolledLocally(realCourseId);
+          setIsEnrolled(true);
+          const enrolledList = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
+          if (!enrolledList.some(c => c.id === data.id || c._id === data.id)) {
+            enrolledList.push({ id: data.id, title: data.title, date: new Date().toISOString() });
+            localStorage.setItem('enrolled_courses', JSON.stringify(enrolledList));
+          }
         } else {
-          window.location.href = '/login';
+          alert('Could not enroll: ' + (json?.message || 'Please try again'));
         }
-        return;
+      } catch (err) {
+        alert('Network error, please try again.');
       }
+      return;
+    }
+
+    // ── PAID COURSE: open Razorpay ──
+    try {
 
       // Extract real course price from DB (apiData)
       let actualPriceInINR = 0;
@@ -1237,10 +1334,11 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
                 
                 // 3. Save locally to reflect immediately before they visit Home
                 const enrolledList = JSON.parse(localStorage.getItem('enrolled_courses') || '[]');
-                if (!enrolledList.some(c => c.id === data.id)) {
+                if (!enrolledList.some(c => c.id === data.id || c._id === data.id)) {
                   enrolledList.push({ id: data.id, title: data.title, date: new Date().toISOString() });
                   localStorage.setItem('enrolled_courses', JSON.stringify(enrolledList));
                 }
+                saveEnrolledLocally(apiData?._id || courseId);
                 
                 alert(`Successfully enrolled and saved to database! All lectures are now unlocked.`);
               } else {
@@ -1398,9 +1496,9 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
 
   const details = features && features.length > 0
     ? features.map(f => ({
-        title: f.m_feature_title || 'Feature',
-        desc: f.m_feature_desc || '',
-        img: getImageUrl(f.m_feature_image)
+        title: f.m_feature_title || f.title || 'Feature',
+        desc: f.m_feature_desc || f.desc || '',
+        img: getImageUrl(f.m_feature_image || f.img)
       }))
     : defaultProjects;
   const highlights = trainingHighlights && trainingHighlights.length > 0 
@@ -1419,17 +1517,17 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
 
   const instructorsData = instructorsList && instructorsList.length > 0
     ? instructorsList.map(i => ({
-          name: i.m_instructor_name || 'Instructor',
-          bio: i.m_instructor_bio || '',
-          experience: i.m_instructor_experience || '',
-          skills: Array.isArray(i.m_instructor_skills) ? i.m_instructor_skills : [],
-          rating: i.m_instructor_rating || 0,
-          reviews: i.m_instructor_reviews || 0,
-          totalCourses: i.m_instructor_total_courses || 0,
-          linkedin: i.m_linkedin_profile || '',
-          img: i.m_instructor_profile
-                 ? getImageUrl(i.m_instructor_profile)
-                 : `https://ui-avatars.com/api/?name=${encodeURIComponent(i.m_instructor_name || 'I')}&background=2563eb&color=fff&bold=true&size=200`
+          name: i.m_instructor_name || i.name || 'Instructor',
+          bio: i.m_instructor_bio || i.bio || i.role || '',
+          experience: i.m_instructor_experience || i.experience || '',
+          skills: Array.isArray(i.m_instructor_skills) ? i.m_instructor_skills : (Array.isArray(i.skills) ? i.skills : []),
+          rating: i.m_instructor_rating || i.rating || 0,
+          reviews: i.m_instructor_reviews || i.reviews || 0,
+          totalCourses: i.m_instructor_total_courses || i.totalCourses || 0,
+          linkedin: i.m_linkedin_profile || i.linkedin || '',
+          img: i.m_instructor_profile || i.img
+                 ? getImageUrl(i.m_instructor_profile || i.img)
+                 : `https://ui-avatars.com/api/?name=${encodeURIComponent(i.m_instructor_name || i.name || 'I')}&background=2563eb&color=fff&bold=true&size=200`
         }))
     : [];
   const reviewsData = reviewsList && reviewsList.length > 0

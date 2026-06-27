@@ -17,32 +17,81 @@ const MyWishlist = ({ setCurrentPage }) => {
   const fetchWishlists = async () => {
     try {
       const token = localStorage.getItem('token');
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-      
+      if (!token) { setLoading(false); return; }
       const headers = { 'Authorization': `Bearer ${token}` };
 
-      // Fetch Courses
+      // Extract the raw ID string from any field shape the DB might use
+      const extractId = (item, possibleKeys) => {
+        for (const k of possibleKeys) {
+          const val = item[k];
+          if (val && typeof val === 'string') return val;           // plain ID string
+          if (val && typeof val === 'object') {
+            const nested = val._id || val.id;
+            if (nested) return nested;                             // nested object with _id
+          }
+        }
+        return item._id || item.id || null;
+      };
+
+      // Fetch full course details from public API using ID
+      const fetchCourseById = async (id) => {
+        try {
+          const r = await fetch(`https://iscale-backend.onrender.com/api/course/public-course/${id}`);
+          const j = await r.json();
+          if (j.status && j.data) return j.data;
+        } catch (e) {}
+        return null;
+      };
+
+      // ── COURSES ──
       const coursesRes = await fetch('https://iscale-backend.onrender.com/api/user-wishlist/course/my', { headers });
       const coursesData = await coursesRes.json();
       if (coursesData.status && Array.isArray(coursesData.data)) {
-        setCourseWishlist(coursesData.data);
+        const resolved = await Promise.all(
+          coursesData.data.map(async (item) => {
+            const courseId = extractId(item, ['course_id', 'courseId', 'course']);
+            if (!courseId) return { ...item, _courseData: null };
+            const courseData = await fetchCourseById(courseId);
+            return { ...item, _courseData: courseData };
+          })
+        );
+        setCourseWishlist(resolved);
       }
 
-      // Fetch Test Packs
+      // ── TEST PACKAGES ──
       const testsRes = await fetch('https://iscale-backend.onrender.com/api/user-wishlist/test-pack/my', { headers });
       const testsData = await testsRes.json();
       if (testsData.status && Array.isArray(testsData.data)) {
-        setTestPackWishlist(testsData.data);
+        const resolved = await Promise.all(
+          testsData.data.map(async (item) => {
+            const packId = extractId(item, ['test_pack_id', 'testPackId', 'packageId', 'pack_id']);
+            if (!packId) return { ...item, _packData: null };
+            try {
+              const r = await fetch(`https://iscale-backend.onrender.com/api/test-pack/public/${packId}`);
+              const j = await r.json();
+              return { ...item, _packData: j.status && j.data ? j.data : null };
+            } catch (e) { return { ...item, _packData: null }; }
+          })
+        );
+        setTestPackWishlist(resolved);
       }
 
-      // Fetch Notes
+      // ── NOTES ──
       const notesRes = await fetch('https://iscale-backend.onrender.com/api/user-wishlist/notes/my', { headers });
       const notesData = await notesRes.json();
       if (notesData.status && Array.isArray(notesData.data)) {
-        setNotesWishlist(notesData.data);
+        const resolved = await Promise.all(
+          notesData.data.map(async (item) => {
+            const noteId = extractId(item, ['note_id', 'noteId', 'note']);
+            if (!noteId) return { ...item, _noteData: null };
+            try {
+              const r = await fetch(`https://iscale-backend.onrender.com/api/notes/public/${noteId}`);
+              const j = await r.json();
+              return { ...item, _noteData: j.status && j.data ? j.data : null };
+            } catch (e) { return { ...item, _noteData: null }; }
+          })
+        );
+        setNotesWishlist(resolved);
       }
     } catch (err) {
       console.error('Failed to fetch wishlists:', err);
@@ -173,21 +222,25 @@ const MyWishlist = ({ setCurrentPage }) => {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 20 }}>
             {courseWishlist.map((item, idx) => {
-              const course = item.courseId || item.course || item;
+              const course = item._courseData;
+              const id = course?._id || item.course_id || item.courseId;
+              if (!course) return null; // skip if DB fetch failed
               return (
-                <div key={course._id || course.id || idx} className="wishlist-card" onClick={() => handleCourseClick(course.slug, course._id || course.id)}>
+                <div key={id || idx} className="wishlist-card" onClick={() => handleCourseClick(course.slug, id)}>
                   <div className="heart-icon-wrapper"><Heart size={16} fill="#ec4899" /></div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <div style={{ width: 48, height: 48, borderRadius: 8, background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <PlayCircle size={24} color="#64748b" />
                     </div>
                     <h3 style={{ margin: 0, fontSize: 16, color: 'var(--text-primary)', lineHeight: 1.4, paddingRight: 32 }}>
-                      {course.title || course.name || `Course ${idx + 1}`}
+                      {course.title || course.name}
                     </h3>
                   </div>
-                  <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 14, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                    {course.description || course.short_description || 'View course details...'}
-                  </p>
+                  {(course.description || course.short_description) && (
+                    <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 14, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {course.description || course.short_description}
+                    </p>
+                  )}
                   <div style={{ display: 'flex', alignItems: 'center', color: '#ec4899', fontSize: 14, fontWeight: 600, marginTop: 'auto', paddingTop: 8 }}>
                     View Details <ArrowRight size={16} style={{ marginLeft: 6 }} />
                   </div>
@@ -208,21 +261,25 @@ const MyWishlist = ({ setCurrentPage }) => {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 20 }}>
             {testPackWishlist.map((item, idx) => {
-              const pack = item.packageId || item.testPackId || item.testPack || item;
+              const pack = item._packData;
+              const id = pack?._id || item.test_pack_id || item.packageId;
+              if (!pack) return null;
               return (
-                <div key={pack._id || pack.id || idx} className="wishlist-card" onClick={() => handleTestPackClick(pack._id || pack.id)}>
+                <div key={id || idx} className="wishlist-card" onClick={() => handleTestPackClick(id)}>
                   <div className="heart-icon-wrapper"><Heart size={16} fill="#ec4899" /></div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <div style={{ width: 48, height: 48, borderRadius: 8, background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <BookOpen size={24} color="#64748b" />
                     </div>
                     <h3 style={{ margin: 0, fontSize: 16, color: 'var(--text-primary)', lineHeight: 1.4, paddingRight: 32 }}>
-                      {pack.title || pack.name || pack.m_test_category_title || `Test Package ${idx + 1}`}
+                      {pack.title || pack.name || pack.m_test_category_title}
                     </h3>
                   </div>
-                  <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 14, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                    {pack.description || pack.short_description || 'View test package details...'}
-                  </p>
+                  {(pack.description || pack.short_description) && (
+                    <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 14, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {pack.description || pack.short_description}
+                    </p>
+                  )}
                   <div style={{ display: 'flex', alignItems: 'center', color: '#ec4899', fontSize: 14, fontWeight: 600, marginTop: 'auto', paddingTop: 8 }}>
                     View Package Details <ArrowRight size={16} style={{ marginLeft: 6 }} />
                   </div>
@@ -243,21 +300,25 @@ const MyWishlist = ({ setCurrentPage }) => {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 20 }}>
             {notesWishlist.map((item, idx) => {
-              const note = item.noteId || item.note || item;
+              const note = item._noteData;
+              const id = note?._id || item.note_id || item.noteId;
+              if (!note) return null;
               return (
-                <div key={note._id || note.id || idx} className="wishlist-card" onClick={() => handleNoteClick(note._id || note.id)}>
+                <div key={id || idx} className="wishlist-card" onClick={() => handleNoteClick(id)}>
                   <div className="heart-icon-wrapper"><Heart size={16} fill="#ec4899" /></div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <div style={{ width: 48, height: 48, borderRadius: 8, background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <BookOpen size={24} color="#64748b" />
                     </div>
                     <h3 style={{ margin: 0, fontSize: 16, color: 'var(--text-primary)', lineHeight: 1.4, paddingRight: 32 }}>
-                      {note.title || note.name || `Study Note ${idx + 1}`}
+                      {note.title || note.name}
                     </h3>
                   </div>
-                  <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 14, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                    {note.description || note.short_description || 'View note details...'}
-                  </p>
+                  {(note.description || note.short_description) && (
+                    <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 14, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {note.description || note.short_description}
+                    </p>
+                  )}
                   <div style={{ display: 'flex', alignItems: 'center', color: '#ec4899', fontSize: 14, fontWeight: 600, marginTop: 'auto', paddingTop: 8 }}>
                     View Note Details <ArrowRight size={16} style={{ marginLeft: 6 }} />
                   </div>

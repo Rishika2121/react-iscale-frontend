@@ -80,7 +80,7 @@ const CohortPage = ({ setCurrentPage }) => {
                   <div className="cohort-access-badge">COHORT ACCESS</div>
                 </div>
 
-                <button className="cohort-start-btn" onClick={() => setCurrentPage('course-details/ai-for-everyone-complete-guide')}>
+                <button className="cohort-start-btn" onClick={() => setCurrentPage('course-details/69f342d8b881d75839a4ab14')}>
                   START NOW
                   <div className="cohort-start-btn-icon">
                     <ArrowRight size={14} />

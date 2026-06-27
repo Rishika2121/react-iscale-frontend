@@ -30,6 +30,7 @@ import TestPackageDetails from './pages/dashboard/TestPackageDetails';
 import MyNotes from './pages/dashboard/MyNotes';
 import NoteDetails from './pages/dashboard/NoteDetails';
 import MyWishlist from './pages/dashboard/MyWishlist';
+import ToastContainer from './components/ToastContainer';
 
 // Newly added detailed pages
 import AboutPage from './pages/AboutPage';
@@ -45,6 +46,10 @@ import CertificateVerificationPage from './pages/CertificateVerificationPage';
 import EnrolledCourseDetails from './pages/EnrolledCourseDetails';
 import EnrollCourseDetailsList from './pages/EnrollCourseDetailsList';
 import HireWithUsPage from './pages/HireWithUsPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/TermsOfServicePage';
+import RefundPolicyPage from './pages/RefundPolicyPage';
+import CommunityPage from './pages/CommunityPage';
 
 
 const CourseDetailsWrapper = ({ setCurrentPage }) => {
@@ -98,6 +103,7 @@ const AppContent = () => {
 
   return (
     <div style={{ minHeight: '100vh', display: 'block' }}>
+      <ToastContainer />
       {showNavAndFooter && (
         <Navbar 
           currentPage={currentPage} 
@@ -155,6 +161,10 @@ const AppContent = () => {
             <Route path="/student-testimonials" element={<StudentTestimonialPage setCurrentPage={handleNavigate} />} />
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/verify-certificate" element={<CertificateVerificationPage setCurrentPage={handleNavigate} />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+            <Route path="/refund-policy" element={<RefundPolicyPage />} />
+            <Route path="/community" element={<CommunityPage />} />
 
             <Route path="*" element={<HomePage setCurrentPage={handleNavigate} />} />
           </Routes>

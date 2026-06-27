@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, Mail, Phone, Globe, MapPin, Facebook, Twitter, Linkedin, Instagram, Youtube, ChevronRight } from 'lucide-react';
+import iscaleLogo from '../assets/images/iscale-logo-v3.png';
 
 const Footer = ({ setCurrentPage, theme }) => {
   const [isMobile, setIsMobile] = useState(false);
@@ -29,9 +30,8 @@ const Footer = ({ setCurrentPage, theme }) => {
     }
   };
 
-  const handleCourseClick = (linkName) => {
-    // Dynamic courses don't have static slugs anymore, so redirect to explore
-    setCurrentPage('explore-courses');
+  const handleCourseClick = (slug) => {
+    setCurrentPage(`course-details/${slug}`);
   };
 
   const handleQuickLink = (link) => {
@@ -42,11 +42,12 @@ const Footer = ({ setCurrentPage, theme }) => {
       'About Us': 'about-us',
       'Contact': 'contact',
       'FAQ': 'faq',
-      'Privacy Policy': 'about-us',
-      'Terms of Service': 'about-us',
-      'Refund Policy': 'about-us',
-      'Community': 'about-us',
-      'Verify Certificate': 'verify-certificate'
+      'Privacy Policy': 'privacy-policy',
+      'Terms of Service': 'terms-of-service',
+      'Refund Policy': 'refund-policy',
+      'Community': 'community',
+      'Verify Certificate': 'verify-certificate',
+      'Hire With Us': 'hire-with-us'
     };
     const target = pageMap[link] || 'home';
     setCurrentPage(target);
@@ -182,16 +183,8 @@ const Footer = ({ setCurrentPage, theme }) => {
         <div className="footer-grid">
           {/* Brand & Address Column */}
           <div className="footer-col" style={{ paddingBottom: isMobile ? '24px' : '0' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
-              <div style={{
-                width: 40, height: 40, background: 'var(--red)', borderRadius: 8,
-                display: 'flex', alignItems: 'center', justifyContent: 'center'
-              }}>
-                <span style={{ color: '#fff', fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18 }}>i</span>
-              </div>
-              <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, letterSpacing: -0.5, color: 'var(--text-primary)' }}>
-                <span style={{ color: 'var(--red)' }}>i</span>SCALE
-              </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20, cursor: 'pointer' }} onClick={() => setCurrentPage('home')}>
+              <img src={iscaleLogo} alt="iSCALE Logo" style={{ height: 52, objectFit: 'contain' }} />
             </div>
             <p style={{ color: '#94a3b8', lineHeight: 1.7, fontSize: 14, marginBottom: 24, maxWidth: 320 }}>
               India's Trusted Upskilling & E-Learning Platform for Future Readiness. Democratizing premium quality tech education with complete affordability.
@@ -227,16 +220,16 @@ const Footer = ({ setCurrentPage, theme }) => {
             </h4>
             <ul className={`footer-list ${isMobile && openSections.programs ? 'open' : ''}`} style={{ listStyle: 'none', display: isSectionVisible('programs') ? 'flex' : 'none', flexDirection: 'column', gap: 12, padding: 0 }}>
               {[
-                'Data Science with GenAI',
-                'Data Analytics Program',
-                'AI Cohort Course',
-                'AI Engineer Advance',
-                'Python with AI Tools',
-                'Power BI & Tableau'
-              ].map(link => (
-                <li key={link}>
-                  <button className="footer-link-btn" onClick={() => handleCourseClick(link)} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <ChevronRight size={14} color="var(--red)" /> {link}
+                { name: 'Data Science with GenAI', slug: 'data-science-with-generative-ai-course' },
+                { name: 'Data Analytics Program', slug: 'master-of-data-analytics-program' },
+                { name: 'AI Cohort Course', slug: 'ai-cohort-course' },
+                { name: 'AI Engineer Advance', slug: 'ai-engineer-advance-program' },
+                { name: 'Python with AI Tools', slug: 'advance-python-with-ai-tools' },
+                { name: 'Power BI & Tableau', slug: 'power-bi-tableau-for-data-visualization' }
+              ].map(course => (
+                <li key={course.slug}>
+                  <button className="footer-link-btn" onClick={() => handleCourseClick(course.slug)} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <ChevronRight size={14} color="var(--red)" /> {course.name}
                   </button>
                 </li>
               ))}
@@ -251,12 +244,12 @@ const Footer = ({ setCurrentPage, theme }) => {
             </h4>
             <ul className={`footer-list ${isMobile && openSections.freeCourses ? 'open' : ''}`} style={{ listStyle: 'none', display: isSectionVisible('freeCourses') ? 'flex' : 'none', flexDirection: 'column', gap: 12, padding: 0 }}>
               {[
-                'Free Data Science Course',
-                'Free Data Analytics Course'
-              ].map(link => (
-                <li key={link}>
-                  <button className="footer-link-btn" onClick={() => handleCourseClick(link)} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <ChevronRight size={14} color="var(--red)" /> {link}
+                { name: 'Free Data Science Course', slug: 'free-data-science-course' },
+                { name: 'Free Data Analytics Course', slug: 'free-data-analytics-course' }
+              ].map(course => (
+                <li key={course.slug}>
+                  <button className="footer-link-btn" onClick={() => handleCourseClick(course.slug)} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <ChevronRight size={14} color="var(--red)" /> {course.name}
                   </button>
                 </li>
               ))}
@@ -270,7 +263,7 @@ const Footer = ({ setCurrentPage, theme }) => {
               {isMobile && (openSections.quickLinks ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
             </h4>
             <ul className={`footer-list ${isMobile && openSections.quickLinks ? 'open' : ''}`} style={{ listStyle: 'none', display: isSectionVisible('quickLinks') ? 'flex' : 'none', flexDirection: 'column', gap: 12, padding: 0 }}>
-              {['Home', 'Explore Courses', 'Events', 'About Us', 'Contact', 'Verify Certificate'].map(link => (
+              {['Home', 'Explore Courses', 'Events', 'About Us', 'Hire With Us', 'Contact', 'Verify Certificate'].map(link => (
                 <li key={link}>
                   <button className="footer-link-btn" onClick={() => handleQuickLink(link)}>
                     {link}
