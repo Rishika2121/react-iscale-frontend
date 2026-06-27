@@ -160,7 +160,7 @@ const AppContent = () => {
           </Routes>
         )}
       </main>
-      {showNavAndFooter && <Footer setCurrentPage={handleNavigate} />}
+      {showNavAndFooter && <Footer setCurrentPage={handleNavigate} theme={theme} />}
       {showNavAndFooter && <EnrollmentPopup />}
     </div>
   );

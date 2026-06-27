@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, ChevronDown, ChevronRight, Youtube, Sun, Moon, Calendar, Trophy, MessageSquare, Briefcase, Mic, ShieldCheck, TrendingUp, Award, Sparkles } from 'lucide-react';
-import iscaleLogo from '../assets/images/iscale-logo.jpeg';
+import iscaleLogo from '../assets/images/iscale-logo-v3.png';
 
 const Logo = () => (
-  <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-    <img src={iscaleLogo} alt="iSCALE Logo" style={{ height: 44, objectFit: 'contain' }} />
+  <div className="logo-container" style={{ cursor: 'pointer' }}>
+    <img src={iscaleLogo} alt="iSCALE Logo" style={{ height: 'var(--logo-height, 52px)', objectFit: 'contain' }} className="responsive-logo" />
   </div>
 );
 
@@ -155,6 +155,39 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
         .nav-links { display: flex; gap: clamp(8px, 1.5vw, 24px); flex: 1; justify-content: center; align-items: center; }
         .nav-ctas { display: flex; gap: 12px; align-items: center; }
         .mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: var(--text-primary); }
+        
+        /* Responsive Logo */
+        :root {
+          --logo-height: 52px;
+        }
+        .logo-container {
+          display: flex;
+          align-items: center;
+          transition: transform 0.2s ease;
+        }
+        .logo-container:hover {
+          transform: scale(1.02);
+        }
+        .responsive-logo {
+          max-width: 100%;
+          transition: all 0.2s ease;
+        }
+
+        @media (max-width: 1024px) {
+          :root {
+            --logo-height: 44px;
+          }
+        }
+        @media (max-width: 768px) {
+          :root {
+            --logo-height: 38px;
+          }
+        }
+        @media (max-width: 480px) {
+          :root {
+            --logo-height: 32px;
+          }
+        }
         
         /* Mega Dropdown CSS */
         .mega-dropdown-overlay {
@@ -582,18 +615,6 @@ const Navbar = ({ currentPage, setCurrentPage, theme, toggleTheme }) => {
                 Login/Register
               </button>
             )}
-            
-            <button style={{
-              padding: '8px 16px', background: '#000', color: '#fff',
-              borderRadius: 8, fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 12,
-              display: 'flex', alignItems: 'center', gap: 6, border: '1px solid #222'
-            }}>
-              <span style={{ fontSize: 16 }}>â–¶</span>
-              <div style={{ textAlign: 'left', lineHeight: 1.2 }}>
-                <div style={{ fontSize: 9, opacity: 0.7 }}>GET IT ON</div>
-                <div style={{ fontSize: 12, fontWeight: 700 }}>Google Play</div>
-              </div>
-            </button>
           </div>
 
           <button className="mobile-menu-btn" onClick={() => setMobileOpen(!mobileOpen)}>

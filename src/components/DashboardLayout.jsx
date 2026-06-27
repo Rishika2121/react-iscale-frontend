@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Home,
   User,
@@ -9,6 +9,7 @@ import {
   Settings as SettingsIcon,
   LogOut,
   ChevronDown,
+  ChevronRight,
   Search,
   Bell,
   Menu,
@@ -18,11 +19,78 @@ import {
   Briefcase
 } from 'lucide-react';
 
-import iscaleLogo from '../assets/images/iscale-logo.jpeg';
+import iscaleLogo from '../assets/images/iscale-logo-v3.png';
+
+const MegaDropdown = ({ type, isOpen, onClose, setCurrentPage, categories }) => {
+  const [activeCategory, setActiveCategory] = useState(
+    type === 'cohort' ? 'Cohort Courses' : 'All Courses'
+  );
+
+  useEffect(() => {
+    if (type === 'cohort') {
+      setActiveCategory('Cohort Courses');
+    } else if (activeCategory === 'Cohort Courses') {
+      setActiveCategory('Data Science Courses');
+    }
+  }, [type]);
+
+  if (!isOpen) return null;
+
+  const activeCategories = type === 'cohort' ? ['Cohort Courses'] : Object.keys(categories).filter(c => c !== 'Cohort Courses');
+
+  return (
+    <div className="mega-dropdown-overlay" onMouseLeave={onClose} onClick={onClose}>
+      <div className="mega-dropdown-inner-bg" onClick={e => e.stopPropagation()}>
+        <div className="container-fluid mega-dropdown-content" style={{ padding: '24px' }}>
+          <div className={type === 'cohort' ? 'mega-grid-cohort' : 'mega-grid-all'}>
+            {/* Left Column: Categories List (Only for All Courses) */}
+            {type !== 'cohort' && (
+              <div className="mega-dropdown-categories">
+                {activeCategories.map(cat => (
+                  <div
+                    key={cat}
+                    onMouseEnter={() => setActiveCategory(cat)}
+                    className={`category-item ${activeCategory === cat ? 'active' : ''}`}
+                  >
+                    <span>{cat}</span>
+                    <ChevronRight size={16} />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Middle Column: Course Cards Grid */}
+            <div className="mega-dropdown-courses">
+              <div className="courses-grid-header">
+                <h3>{activeCategory}</h3>
+                <p>Certified programs and hands-on syllabus engineered for career success.</p>
+              </div>
+              <div className="courses-list-grid">
+                {categories[activeCategory]?.map((course, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => { setCurrentPage(`course-details/${course.path}`); onClose(); }}
+                    className="course-link-card"
+                  >
+                    <h4>{course.name}</h4>
+                    <span>6 Months</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop: 20, paddingTop: 20, borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'flex-end' }}>
+                <span onClick={() => { setCurrentPage('explore-courses'); onClose(); }} style={{ fontSize: 13, textDecoration: 'underline', color: 'var(--text-secondary)', cursor: 'pointer', fontWeight: 600 }}>View All Courses</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const ShieldLogo = ({ onClick }) => (
-  <div onClick={onClick} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-    <img src={iscaleLogo} alt="iSCALE Logo" style={{ height: 44, objectFit: 'contain' }} />
+  <div onClick={onClick} className="logo-container" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+    <img src={iscaleLogo} alt="iSCALE Logo" style={{ height: 'var(--logo-height, 52px)', objectFit: 'contain' }} className="responsive-logo" />
   </div>
 );
 
@@ -33,6 +101,71 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
   const [moreDropdownOpen, setMoreDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [dbCourses, setDbCourses] = useState([]);
+
+  const categoriesMap = {
+    'All Courses': [],
+    'Data Science Courses': [],
+    'AI Courses': [],
+    'Data Analyst Courses': [],
+    'Foundation Courses': [],
+    'Cohort Courses': [],
+    'Free Category': []
+  };
+
+  dbCourses.forEach((c) => {
+    const catName = c.category && c.category !== 'N/A' ? c.category : 'Foundation Courses';
+    const courseItem = { name: c.title, path: c._id };
+    if (!categoriesMap[catName]) {
+      categoriesMap[catName] = [];
+    }
+    categoriesMap[catName].push(courseItem);
+    categoriesMap['All Courses'].push(courseItem);
+  });
+
+  const coursesRef = useRef(null);
+  const moreRef = useRef(null);
+  const notificationsRef = useRef(null);
+  const profileRef = useRef(null);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const res = await fetch('https://iscale-backend.onrender.com/api/course/public-all-courses');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && Array.isArray(data.data)) {
+            setDbCourses(data.data);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch courses for layout dropdown:", err);
+      }
+    };
+    fetchCourses();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (coursesRef.current && !coursesRef.current.contains(event.target)) {
+        setCoursesDropdownOpen(false);
+      }
+      if (moreRef.current && !moreRef.current.contains(event.target)) {
+        setMoreDropdownOpen(false);
+      }
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
+        setNotificationsOpen(false);
+      }
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setProfileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const getDisplayFullName = (value) => {
     const resolved = value?.name || value?.fullName || value?.firstName || value?.fname || value?.first_name || value?.username || value?.userName || value?.c_first_name || value?.m_first_name || value?.displayName;
@@ -102,6 +235,8 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
     };
   }, []);
 
+
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -128,15 +263,40 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
           font-family: 'Inter', sans-serif;
           color: var(--text-primary);
         }
+        
+        /* Responsive Logo */
+        :root {
+          --logo-height: 52px;
+        }
+        .responsive-logo {
+          max-width: 100%;
+          transition: all 0.2s ease;
+        }
+        @media (max-width: 1024px) {
+          :root {
+            --logo-height: 44px;
+          }
+        }
+        @media (max-width: 768px) {
+          :root {
+            --logo-height: 38px;
+          }
+        }
+        @media (max-width: 480px) {
+          :root {
+            --logo-height: 32px;
+          }
+        }
         .db-header {
           position: sticky;
           top: 0;
-          z-index: 50;
+          z-index: 9999 !important;
           background: var(--nav-bg);
           border-bottom: 1px solid var(--border-color);
           box-shadow: var(--card-shadow);
           backdrop-filter: blur(12px);
           -webkit-backdrop-filter: blur(12px);
+          overflow: visible !important;
         }
         .db-header-inner {
           max-width: 1320px;
@@ -146,11 +306,13 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
           display: flex;
           align-items: center;
           justify-content: space-between;
+          overflow: visible !important;
         }
         .db-nav-left {
           display: flex;
           align-items: center;
           gap: 20px;
+          overflow: visible !important;
         }
         .courses-trigger-btn {
           display: flex;
@@ -210,6 +372,7 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
           display: flex;
           align-items: center;
           gap: 16px;
+          overflow: visible !important;
         }
         .header-profile-trigger {
           display: flex;
@@ -326,14 +489,142 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
         }
         
         /* Dropdowns */
-        .dropdown-menu {
-          position: absolute;
+        .db-custom-dropdown {
+          position: absolute !important;
+          display: block !important;
           background: var(--dropdown-bg);
           border: 1px solid var(--border-color);
           border-radius: 12px;
           box-shadow: var(--card-shadow);
           padding: 8px;
-          z-index: 100;
+          z-index: 100000 !important;
+        }
+
+        /* Mega Dropdown CSS */
+        .mega-dropdown-overlay {
+          position: fixed;
+          top: 72px;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.4);
+          z-index: 100000 !important;
+          animation: navFadeIn 0.2s forwards;
+          cursor: default;
+        }
+        .mega-dropdown-inner-bg {
+          background: var(--bg-primary);
+          width: 100%;
+          max-width: 1060px;
+          margin-left: 4%;
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+          border: 1px solid var(--border-color);
+          border-top: none;
+          border-radius: 0 0 12px 12px;
+          overflow: hidden;
+          animation: navSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes navFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes navSlideDown {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .mega-dropdown-content {
+          display: grid;
+          min-height: 380px;
+          padding: 32px 24px;
+          gap: 32px;
+          flex: 1;
+          overflow-y: auto;
+        }
+        .mega-grid-all {
+          display: grid;
+          grid-template-columns: 320px 1fr;
+        }
+        .mega-grid-cohort {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+        .mega-dropdown-categories {
+          border-right: 1px solid var(--border-color);
+          padding-right: 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .category-item {
+          padding: 14px 18px;
+          border-radius: 8px;
+          cursor: pointer;
+          font-size: 15px;
+          font-weight: 600;
+          color: var(--text-secondary);
+          transition: all 0.2s;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .category-item:hover, .category-item.active {
+          color: var(--red);
+          background: rgba(239, 68, 68, 0.08);
+        }
+        .mega-dropdown-courses {
+          padding: 0 18px;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          text-align: left;
+        }
+        .courses-grid-header h3 {
+          font-size: 20px;
+          font-weight: 800;
+          color: var(--text-primary);
+          margin-bottom: 4px;
+        }
+        .courses-grid-header p {
+          font-size: 14px;
+          color: var(--text-muted);
+        }
+        .courses-list-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 18px;
+        }
+        .course-link-card {
+          background: var(--bg-primary);
+          border: 1px solid var(--border-color);
+          padding: 24px;
+          min-height: 120px;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.2s;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          gap: 16px;
+          text-align: left;
+        }
+        .course-link-card:hover {
+          border-color: rgba(0,0,0,0.1);
+          box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+          transform: translateY(-2px);
+        }
+        .course-link-card h4 {
+          font-size: 15px;
+          font-weight: 700;
+          color: var(--text-primary);
+          margin: 0;
+          line-height: 1.4;
+        }
+        .course-link-card span {
+          font-size: 13px;
+          font-weight: 500;
+          color: var(--text-secondary);
         }
         .dropdown-item {
           display: block;
@@ -474,28 +765,18 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
             <ShieldLogo onClick={() => setCurrentPage('home')} />
 
             <div style={{ position: 'relative', marginLeft: 8 }}>
-              <button onClick={() => setCoursesDropdownOpen(!coursesDropdownOpen)} className="courses-trigger-btn">
+              <button
+                onClick={() => {
+                  setCoursesDropdownOpen(!coursesDropdownOpen);
+                  setMoreDropdownOpen(false);
+                  setNotificationsOpen(false);
+                  setProfileDropdownOpen(false);
+                }}
+                className="courses-trigger-btn"
+              >
                 <span>▦ Courses</span>
                 <ChevronDown size={14} />
               </button>
-              {coursesDropdownOpen && (
-                <div className="dropdown-menu" style={{ top: '100%', left: 0, minWidth: 220, marginTop: 8 }}>
-                  {['Data Science & ML', 'Full Stack Developer', 'Generative AI', 'Business Analytics', 'Digital Marketing'].map((course, idx) => {
-                    return (
-                      <button
-                        key={idx}
-                        onClick={() => {
-                          setCoursesDropdownOpen(false);
-                          navigateToTab('explore-courses');
-                        }}
-                        className="dropdown-item"
-                      >
-                        {course}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
             </div>
           </div>
 
@@ -506,15 +787,26 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
               Cohort Courses
               <span className="cohort-badge">New</span>
             </button>
-            <div style={{ position: 'relative' }}>
-              <button onClick={() => setMoreDropdownOpen(!moreDropdownOpen)} className="db-nav-link">
+            <div ref={moreRef} style={{ position: 'relative' }}>
+              <button
+                onClick={() => {
+                  setMoreDropdownOpen(!moreDropdownOpen);
+                  setCoursesDropdownOpen(false);
+                  setNotificationsOpen(false);
+                  setProfileDropdownOpen(false);
+                }}
+                className="db-nav-link more-trigger-btn"
+              >
                 More <ChevronDown size={14} />
               </button>
               {moreDropdownOpen && (
-                <div className="dropdown-menu" style={{ top: '100%', right: 0, minWidth: 180, marginTop: 8 }}>
-                  <button onClick={() => { setMoreDropdownOpen(false); setCurrentPage('job-updates'); }} className="dropdown-item">Job Updates</button>
+                <div className="db-custom-dropdown" style={{ top: '100%', right: 0, minWidth: 180, marginTop: 8, zIndex: 110, background: 'var(--dropdown-bg, #ffffff)', border: '1px solid var(--border-color, #e2e8f0)' }}>
+                  <button onClick={() => { setMoreDropdownOpen(false); setCurrentPage('events'); }} className="dropdown-item">Events</button>
                   <button onClick={() => { setMoreDropdownOpen(false); setCurrentPage('success-story'); }} className="dropdown-item">Success Stories</button>
+                  <button onClick={() => { setMoreDropdownOpen(false); setCurrentPage('student-testimonials'); }} className="dropdown-item">Testimonials</button>
+                  <button onClick={() => { setMoreDropdownOpen(false); setCurrentPage('job-updates'); }} className="dropdown-item">Job Updates</button>
                   <button onClick={() => { setMoreDropdownOpen(false); setCurrentPage('placement-talks'); }} className="dropdown-item">Placement Talks</button>
+                  <button onClick={() => { setMoreDropdownOpen(false); setCurrentPage('verify-certificate'); }} className="dropdown-item">Verify Certificate</button>
                 </div>
               )}
             </div>
@@ -527,13 +819,22 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
             </div>
             <style dangerouslySetInnerHTML={{__html: `@media (max-width: 640px) { .db-search-wrapper { display: none !important; } }`}} />
 
-            <div style={{ position: 'relative' }}>
-              <button onClick={() => setNotificationsOpen(!notificationsOpen)} style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', cursor: 'pointer', transition: 'all 0.2s' }}>
+            <div ref={notificationsRef} style={{ position: 'relative' }}>
+              <button
+                onClick={() => {
+                  setNotificationsOpen(!notificationsOpen);
+                  setCoursesDropdownOpen(false);
+                  setMoreDropdownOpen(false);
+                  setProfileDropdownOpen(false);
+                }}
+                className="notifications-trigger-btn"
+                style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', cursor: 'pointer', transition: 'all 0.2s' }}
+              >
                 <Bell size={18} />
                 {notifications.some(n => !n.read) && <span style={{ position: 'absolute', top: 2, right: 2, width: 8, height: 8, background: '#2563eb', borderRadius: '50%' }} />}
               </button>
               {notificationsOpen && (
-                <div className="dropdown-menu" style={{ top: '100%', right: 0, width: 280, marginTop: 8, padding: 12 }}>
+                <div className="db-custom-dropdown" style={{ top: '100%', right: 0, width: 280, marginTop: 8, padding: 12, zIndex: 110, background: 'var(--dropdown-bg, #ffffff)', border: '1px solid var(--border-color, #e2e8f0)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, borderBottom: '1px solid var(--border-color)', paddingBottom: 6 }}>
                     <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--text-primary)' }}>Notifications</span>
                     <button onClick={markAllNotificationsRead} style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: 11, fontWeight: 500, cursor: 'pointer' }}>Mark read</button>
@@ -572,14 +873,22 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
               {theme === 'dark' ? '☀️' : '🌙'}
             </button>
 
-            <div style={{ position: 'relative' }}>
-              <button onClick={() => setProfileDropdownOpen(!profileDropdownOpen)} className="header-profile-trigger">
+            <div ref={profileRef} style={{ position: 'relative' }}>
+              <button
+                onClick={() => {
+                  setProfileDropdownOpen(!profileDropdownOpen);
+                  setCoursesDropdownOpen(false);
+                  setMoreDropdownOpen(false);
+                  setNotificationsOpen(false);
+                }}
+                className="header-profile-trigger"
+              >
                 <div className="header-profile-icon"><User size={16} /></div>
                 <span className="profile-name-text" style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-primary)' }}>{getDisplayFullName(user)}</span>
                 <ChevronDown className="profile-name-text" size={14} style={{ color: 'var(--text-secondary)' }} />
               </button>
               {profileDropdownOpen && (
-                <div className="dropdown-menu" style={{ top: '100%', right: 0, minWidth: 180, marginTop: 8 }}>
+                <div className="db-custom-dropdown" style={{ top: '100%', right: 0, minWidth: 180, marginTop: 8, zIndex: 110, background: 'var(--dropdown-bg, #ffffff)', border: '1px solid var(--border-color, #e2e8f0)' }}>
                   <button onClick={() => { setProfileDropdownOpen(false); navigateToTab('my-profile'); }} className="dropdown-item" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><User size={14} /> My Profile</button>
                   <button onClick={() => { setProfileDropdownOpen(false); navigateToTab('settings'); }} className="dropdown-item" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><SettingsIcon size={14} /> Settings</button>
                   <div style={{ height: 1, background: 'var(--border-color)', margin: '4px 0' }} />
@@ -589,6 +898,15 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
             </div>
           </div>
         </div>
+        <MegaDropdown 
+          type="all"
+          isOpen={coursesDropdownOpen} 
+          onClose={() => setCoursesDropdownOpen(false)} 
+          setCurrentPage={(page) => {
+            setCurrentPage(page);
+          }}
+          categories={categoriesMap}
+        />
       </header>
 
       <div className="main-layout">
@@ -650,7 +968,6 @@ const DashboardLayout = ({ children, activeTab, setCurrentPage, theme, toggleThe
               <ShieldLogo onClick={() => {}} />
             </div>
             <p style={{ fontSize: 14, color: '#94A3B8', lineHeight: 1.6, marginBottom: 20 }}>Mastering Skills, Scaling Success.</p>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" height="40" style={{ cursor: 'pointer' }} />
           </div>
           <div>
             <h3 className="footer-heading">Quick Links</h3>

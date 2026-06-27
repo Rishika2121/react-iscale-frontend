@@ -3,12 +3,17 @@ import { BookOpen, Search, ArrowRight, CheckCircle, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 // ── API endpoints ────────────────────────────────────────────────────────────
-// The enroll endpoint expects a real test-package _id, NOT a category id.
-// We fetch actual packages from the test-packages list endpoint so the user
-// can pick the right thing.
-const TEST_PACKAGES_LIST_URL    = 'https://iscale-backend.onrender.com/api/test-packages';
-const TEST_PACKAGES_DROPDOWN_URL= 'https://iscale-backend.onrender.com/api/test-packages/dropdown';
-const TEST_CATEGORY_DROPDOWN_URL= 'https://iscale-backend.onrender.com/api/test-category/test-category-dropdown';
+// Try endpoints in order until one returns actual test package data.
+// test-category/test-package-dropdown → returns master test packages (what enroll needs)
+// Fallback: test-category/dropdown-packages, test-category/get-packages-dropdown
+const BASE = 'https://iscale-backend.onrender.com/api';
+const PACKAGE_DROPDOWN_URLS = [
+  `${BASE}/test-category/test-package-dropdown`,
+  `${BASE}/test-category/dropdown-packages`,
+  `${BASE}/test-category/get-packages-dropdown`,
+  `${BASE}/test-category/test-category-dropdown`,
+];
+const ENROLL_URL = `${BASE}/enrolled-test-packages/enroll`;
 
 const MyTestPackages = ({ setCurrentPage }) => {
   const navigate = useNavigate();
@@ -37,28 +42,30 @@ const MyTestPackages = ({ setCurrentPage }) => {
   }, []);
 
   // Fetch the list of test packages the user can enroll in.
-  // Tries multiple endpoints until one succeeds.
+  // Tries multiple known endpoints in order — stops at the first that returns data.
   const fetchAvailablePackages = async () => {
     const token = localStorage.getItem('token');
     if (!token) { setAvailablePackages([]); return; }
 
-    const endpoints = [TEST_PACKAGES_DROPDOWN_URL, TEST_PACKAGES_LIST_URL];
-
-    for (const url of endpoints) {
+    for (const url of PACKAGE_DROPDOWN_URLS) {
       try {
-        const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await fetch(url, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
         if (!res.ok) continue;
         const data = await res.json();
-        const list = Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : null);
-        if (list && list.length > 0) {
+        const list = Array.isArray(data)
+          ? data
+          : Array.isArray(data.data)
+          ? data.data
+          : [];
+        if (list.length > 0) {
           setAvailablePackages(list);
-          return; // success – stop trying
+          return;
         }
-      } catch (_) { /* try next endpoint */ }
+      } catch (_) { /* try next */ }
     }
 
-    // If both test package endpoints fail, keep the dropdown empty.
-    // Do not fall back to categories here, because enrollment expects a real test package ID.
     setAvailablePackages([]);
   };
 
@@ -93,20 +100,32 @@ const MyTestPackages = ({ setCurrentPage }) => {
       return;
     }
 
+    // Check if already enrolled in this test package
+    const isAlreadyEnrolled = packages.some(pkg => {
+      const displayPkg = resolveEntity(pkg.test_package_id) || resolveEntity(pkg.packageId) || resolveEntity(pkg.testId) || resolveEntity(pkg);
+      const enrolledId = resolveEntityId(displayPkg);
+      return enrolledId === selectedPackageId;
+    });
+
+    if (isAlreadyEnrolled) {
+      alert('You are already enrolled in this test package.');
+      return;
+    }
+
     try {
       setEnrolling(true);
       const token = localStorage.getItem('token');
 
-      // Send ALL common field names so the backend finds the right one
+      // The enrolled-test-packages schema stores test_package_id.
+      // Send the primary field name plus common aliases so the backend finds the right one.
       const body = {
         test_package_id:  selectedPackageId,
         testPackageId:    selectedPackageId,
         package_id:       selectedPackageId,
-        test_category_id: selectedPackageId,
-        category_id:      selectedPackageId,
+        id:               selectedPackageId,
       };
 
-      const res = await fetch('https://iscale-backend.onrender.com/api/enrolled-test-packages/enroll', {
+      const res = await fetch(ENROLL_URL, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -223,16 +242,27 @@ const MyTestPackages = ({ setCurrentPage }) => {
             required
           >
             <option value="">-- Select a Test Package --</option>
-            {availablePackages.map(pkg => {
-              const optionPackage = resolveEntity(pkg);
-              const optionId = resolveEntityId(optionPackage);
-              if (!optionId) return null;
-              return (
-                <option key={optionId} value={optionId}>
-                  {optionPackage?.title || optionPackage?.name || optionPackage?.m_test_category_title || optionPackage?.m_test_package_title || 'Test Package'}
-                </option>
-              );
-            })}
+            {availablePackages
+              .filter(pkg => {
+                const optionPackage = resolveEntity(pkg);
+                const optionId = resolveEntityId(optionPackage);
+                if (!optionId) return false;
+                // Exclude if already enrolled
+                return !packages.some(p => {
+                  const displayPkg = resolveEntity(p.test_package_id) || resolveEntity(p.packageId) || resolveEntity(p.testId) || resolveEntity(p);
+                  const enrolledId = resolveEntityId(displayPkg);
+                  return enrolledId === optionId;
+                });
+              })
+              .map(pkg => {
+                const optionPackage = resolveEntity(pkg);
+                const optionId = resolveEntityId(optionPackage);
+                return (
+                  <option key={optionId} value={optionId}>
+                    {optionPackage?.m_test_category_title || optionPackage?.m_test_package_title || optionPackage?.m_package_title || optionPackage?.title || optionPackage?.name || 'Test Package'}
+                  </option>
+                );
+              })}
           </select>
           <button type="submit" className="enroll-btn" disabled={enrolling || !selectedPackageId}>
             {enrolling ? 'Enrolling...' : <>Enroll Now <Plus size={18} /></>}
@@ -251,14 +281,11 @@ const MyTestPackages = ({ setCurrentPage }) => {
           {packages.map((pkg, idx) => {
             const displayPkg = resolveEntity(pkg.test_package_id) || resolveEntity(pkg.packageId) || resolveEntity(pkg.testId) || resolveEntity(pkg);
             const enrollmentId = pkg._id || pkg.id || resolveEntityId(displayPkg) || idx;
-            console.log('package item:', pkg);
-            console.log('display package:', displayPkg);
-            console.log('navigate id:', enrollmentId);
             return (
               <div key={enrollmentId} className="pkg-card" onClick={() => enrollmentId && handleNavigate(enrollmentId)}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <h3 style={{ margin: 0, fontSize: 18, color: 'var(--text-primary)', lineHeight: 1.4 }}>
-                    {displayPkg?.title || displayPkg?.name || displayPkg?.m_test_category_title || `Test Package ${idx + 1}`}
+                    {displayPkg?.m_package_title || displayPkg?.m_test_category_title || displayPkg?.m_test_package_title || displayPkg?.title || displayPkg?.name || `Test Package ${idx + 1}`}
                   </h3>
                   <div style={{ background: '#ecfdf5', color: '#10b981', padding: '4px 8px', borderRadius: 4, fontSize: 12, fontWeight: 600 }}>
                     Enrolled

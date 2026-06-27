@@ -1175,6 +1175,14 @@ const isCertUnlocked = isEnrolled && currentLectures.length > 0 && currentLectur
   };
 
   const handleEnrollClick = async () => {
+    if (isEnrolled) {
+      const element = document.getElementById('coursecontent');
+      if (element) {
+        const y = element.getBoundingClientRect().top + window.scrollY - 150;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+      return;
+    }
     try {
       const token = localStorage.getItem('token');
       if (!token) {

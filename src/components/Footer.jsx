@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, Mail, Phone, Globe, MapPin, Facebook, Twitter, Linkedin, Instagram, Youtube, ChevronRight } from 'lucide-react';
 
-const Footer = ({ setCurrentPage }) => {
+const Footer = ({ setCurrentPage, theme }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [openSections, setOpenSections] = useState({
     programs: false,
@@ -57,7 +57,12 @@ const Footer = ({ setCurrentPage }) => {
   };
 
   return (
-    <footer style={{ background: '#090a10', color: '#fff', padding: '80px 0 32px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+    <footer style={{ 
+      background: theme === 'light' ? '#f8fafc' : '#090a10', 
+      color: theme === 'light' ? 'var(--text-secondary)' : '#fff', 
+      padding: '80px 0 32px', 
+      borderTop: theme === 'light' ? '1px solid var(--border-color)' : '1px solid rgba(255, 255, 255, 0.08)' 
+    }}>
       <style dangerouslySetInnerHTML={{ __html: `
         .footer-grid {
           display: grid;
@@ -69,7 +74,7 @@ const Footer = ({ setCurrentPage }) => {
           background: none;
           border: none;
           padding: 0;
-          color: #94a3b8;
+          color: var(--text-muted, #94a3b8);
           font-size: 14px;
           text-align: left;
           transition: all 0.2s ease;
@@ -88,9 +93,9 @@ const Footer = ({ setCurrentPage }) => {
         }
         .seo-tag {
           font-size: 11px;
-          color: #64748b;
-          border: 1px solid rgba(255,255,255,0.06);
-          background: rgba(255,255,255,0.02);
+          color: var(--text-muted, #64748b);
+          border: 1px solid var(--border-color, rgba(255,255,255,0.06));
+          background: var(--bg-secondary, rgba(255,255,255,0.02));
           padding: 6px 12px;
           border-radius: 100px;
           transition: all 0.2s ease;
@@ -99,13 +104,13 @@ const Footer = ({ setCurrentPage }) => {
         .seo-tag:hover {
           border-color: var(--red);
           color: var(--red);
-          background: rgba(37,99,235,0.05);
+          background: rgba(239, 68, 68, 0.05);
         }
         .footer-header {
           font-family: var(--font-display);
           font-size: 16px;
           font-weight: 800;
-          color: #fff;
+          color: var(--text-primary, #fff);
           margin-bottom: 24px;
           text-transform: uppercase;
           letter-spacing: 0.5px;
@@ -117,9 +122,9 @@ const Footer = ({ setCurrentPage }) => {
           width: 38px;
           height: 38px;
           border-radius: 50%;
-          background: rgba(255,255,255,0.02);
-          border: 1px solid rgba(255,255,255,0.08);
-          color: #94a3b8;
+          background: var(--bg-secondary, rgba(255,255,255,0.02));
+          border: 1px solid var(--border-color, rgba(255,255,255,0.08));
+          color: var(--text-secondary, #94a3b8);
           font-size: 14px;
           cursor: pointer;
           display: flex;
@@ -184,7 +189,7 @@ const Footer = ({ setCurrentPage }) => {
               }}>
                 <span style={{ color: '#fff', fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18 }}>i</span>
               </div>
-              <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, letterSpacing: -0.5, color: '#fff' }}>
+              <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, letterSpacing: -0.5, color: 'var(--text-primary)' }}>
                 <span style={{ color: 'var(--red)' }}>i</span>SCALE
               </span>
             </div>

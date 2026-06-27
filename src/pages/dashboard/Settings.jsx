@@ -173,8 +173,10 @@ const Settings = () => {
       `}</style>
       
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.5px', marginBottom: 8 }}>Settings</h1>
-        <p style={{ color: '#64748b', fontSize: '1rem', fontWeight: 500 }}>Manage your account preferences and personal information.</p>
+        <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px', marginBottom: 8 }}>
+          Account <span className="animated-text-gradient">Settings</span>
+        </h1>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', fontWeight: 500 }}>Manage your account preferences and personal information.</p>
       </div>
       
       <div className="settings-card">

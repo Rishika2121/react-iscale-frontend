@@ -66,8 +66,10 @@ const TestSeriesResult = () => {
         }
       `}</style>
         <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.5px', marginBottom: 8 }}>Test Series Results</h1>
-        <p style={{ color: '#64748b', fontSize: '1rem', fontWeight: 500 }}>Track your performance and improve your All India Rank.</p>
+        <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px', marginBottom: 8 }}>
+          Test Series <span className="animated-text-gradient">Results</span>
+        </h1>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', fontWeight: 500 }}>Track your performance and improve your All India Rank.</p>
       </div>
 
       <div style={{ background: '#ffffff', border: '1px solid #f1f5f9', borderRadius: 24, overflow: 'hidden', boxShadow: '0 4px 25px rgba(0,0,0,0.03)' }}>

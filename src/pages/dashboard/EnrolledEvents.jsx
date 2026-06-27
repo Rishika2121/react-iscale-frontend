@@ -185,8 +185,10 @@ const EnrolledEvents = () => {
         }
       `}</style>
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.5px', marginBottom: 8 }}>Enrolled Events & Webinars</h1>
-        <p style={{ color: '#64748b', fontSize: '1rem', fontWeight: 500 }}>Join upcoming live sessions, workshops, and exclusive talks.</p>
+        <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px', marginBottom: 8 }}>
+          Enrolled Events & <span className="animated-text-gradient">Webinars</span>
+        </h1>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', fontWeight: 500 }}>Join upcoming live sessions, workshops, and exclusive talks.</p>
       </div>
 
       <div className="enroll-box" style={{ background: 'var(--card-bg)', padding: '24px', borderRadius: '16px', marginBottom: '32px', border: '1px solid var(--border-color)', boxShadow: '0 4px 15px rgba(0,0,0,0.02)' }}>
